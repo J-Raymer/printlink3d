@@ -9,7 +9,7 @@ example date | example time | example task
 ## James
 Date | Time Spent | Task
 --- | --- | --- |
-example date | example time | example task
+January 31st | 2 hours | Project Setup
 ## Dylan
 Date | Time Spent | Task
 --- | --- | --- |
