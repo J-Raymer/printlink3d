@@ -13,7 +13,8 @@ example date | example time | example task
 ## Dylan
 Date | Time Spent | Task
 --- | --- | --- |
-example date | example time | example task
+January 31st | 1 hour | MVP Meeting |
+February 1st | 1 hour | UI Mockups |
 ## Matt
 Date | Time Spent | Task
 --- | --- | --- |
