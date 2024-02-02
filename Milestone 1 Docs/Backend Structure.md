@@ -5,8 +5,8 @@ Job ID
     - Printer email
     - Filters
         - Radius (int)
-        - Material (float percentage)
-        - Infill
+        - Material (float)
+        - Infill (percentage)
     - Cost (3-4x)
 
 List of materials gotten from backend
