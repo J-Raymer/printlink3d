@@ -23,7 +23,8 @@ February 1st | 1 hour | UI Mockups |
 ## Matt
 Date | Time Spent | Task
 --- | --- | --- |
-example date | example time | example task
+January 31 | 1 Hour | MVP Meeting
+February 1 | 1 Hour | UI Mockup Sketches
 
 ## Joey
 Date | Time Spent | Task
