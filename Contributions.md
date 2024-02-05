@@ -19,6 +19,8 @@ Date | Time Spent | Task
 --- | --- | --- |
 January 31st | 1 hour | MVP Meeting |
 February 1st | 1 hour | UI Mockups |
+February 4th | 1 hour | Started on interview questions and persona creation |
+
 
 ## Matt
 Date | Time Spent | Task
