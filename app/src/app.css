@@ -1,0 +1,32 @@
+nav {
+  background-color: #ccc;
+  color: #333;
+}
+
+.cta-button {
+  position: relative;
+  height: 40vh;
+  max-height: 40vh;
+  border: 3px solid #000;
+  display: inline-block;
+  transition: ease-out 0.1s;
+}
+
+.cta-button:hover {
+  background-color: rgba(0,0,0,0.1);
+  transition: ease-in 0.1s;
+}
+
+.cta-button span{
+  position: absolute;
+  bottom: 30px;
+  width: 100%;
+  text-align: center;
+}
+
+@media screen(sm) {
+  .cta-button {
+    height: 40vw;
+    max-height: 600px;
+  }
+}
