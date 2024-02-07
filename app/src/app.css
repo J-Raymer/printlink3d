@@ -3,17 +3,12 @@ nav {
   color: #333;
 }
 
-.container {
-  width: 1280px;
-  margin: 0 auto;
-}
-
 .cta-button {
   position: relative;
+  height: 40vh;
+  max-height: 40vh;
   border: 3px solid #000;
   display: inline-block;
-  height: 40vw;
-  max-height: 600px;
   transition: ease-out 0.1s;
 }
 
@@ -27,4 +22,11 @@ nav {
   bottom: 30px;
   width: 100%;
   text-align: center;
+}
+
+@media screen(sm) {
+  .cta-button {
+    height: 40vw;
+    max-height: 600px;
+  }
 }

@@ -7,7 +7,7 @@ import Browse from './routes/browse.js';
 
 function Layout() {
   return (
-    <div className="container">
+    <div className="container mx-auto">
       <nav>
         <h2>PrintLink3D</h2>
       </nav>
