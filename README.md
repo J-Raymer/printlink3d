@@ -1,4 +1,6 @@
-# PrintLink3D Front End
+# PrintLink3D
+
+PrintLink3D is an innovative online platform that connects individuals in need of 3D printing services with local 3D printing enthusiasts. Submit a printing request, find a nearby printer, and bring your ideas to life with ease through PrintLink3D's user-friendly website.
 
 ## Requirements
 - nodejs
@@ -18,3 +20,6 @@ To start the local dev server execute in the /app directory:
 ```
 npm start
 ```
+
+## License
+This project is licensed under the Apache version 2.0
