@@ -8,8 +8,8 @@ import Browse from './routes/browse.js';
 function Layout() {
   return (
     <div className="container mx-auto">
-      <nav>
-        <h2>PrintLink3D</h2>
+      <nav className="p-4">
+        <h2 className="text-xl font-bold">PrintLink3D</h2>
       </nav>
       <Outlet />
     </div>
