@@ -17,7 +17,7 @@ export default function MultiStepForm({children, submitText, handleSubmit}) {
       <div className="md:flex flex-col w-56">
         {
           Children.map(children, (child, idx) => {
-            if (idx == step) {
+            if (idx === step) {
              return (
                 <div className="block font-bold pl-5 pt-3 pb-3 bg-blue-200 rounded-lg">
                   <div className="inline-block mr-2">
@@ -42,7 +42,7 @@ export default function MultiStepForm({children, submitText, handleSubmit}) {
       <div className="p-3">
         {
           Children.map(children, (child, idx) => {
-            if (idx == step) {
+            if (idx === step) {
               return (child)
             }
           })
