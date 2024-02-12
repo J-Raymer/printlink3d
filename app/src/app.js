@@ -4,6 +4,8 @@ import './app.css';
 import Home from './routes/home.js';
 import Create from './routes/create.js';
 import Browse from './routes/browse.js';
+import {addDoc,collection,getDocs,query} from "firebase/firestore";
+import {getStorage,ref,uploadBytes,getBlob} from "firebase/storage";
 
 function Layout() {
   return (
@@ -30,7 +32,7 @@ function App() {
 
 export default App;
 
-async function AddJob(db) {
+export async function AddJob(db) {
   const docRef = await addDoc(collection(db, "Job"), {
     Customer_ID: 1,
     Fill_Percentage: 0.1,
@@ -43,43 +45,56 @@ async function AddJob(db) {
   });
 }
 
-async function AddCustomer(db){
+
+export async function AddCustomer(db){
   const docRef = await addDoc(collection(db,"Customers"), {
     Email: "customer_email@gmail.com",
     ID: 1
   });
 }
 
-async function AddPrinter(db){
+export async function AddPrinter(db){
   const docRef = await addDoc(collection(db,"Printers"), {
     Email: "printer_email@gmail.com",
     ID: 1
 });
 }
 
-async function GetJob(field,comp,value,db){
+export async function GetJob(field,comp,value,db){
   const job = collection(db,"Job");
   q = query(job,where(field,comp,value));
   const querySnapshot = await getDocs(q);
   return querySnapshot;
 }
 
-async function GetCustomer(field,comp,value,db){
+export async function GetCustomer(field,comp,value,db){
   const job = collection(db,"Customers");
   q =  query(job,where(field,comp,value));
   const querySnapshot = await getDocs(q);
   return querySnapshot;
 }
 
-async function GetPrinters(field,comp,value,db){
+export async function GetPrinters(field,comp,value,db){
   const job = collection(db,"Printers");
   q = query(job,where(field,comp,value));
   const querySnapshot = await getDocs(q);
   return querySnapshot;
 }
 
-async function GetMaterial(db){
+export async function GetMaterial(db){
   const docRef = collection(db,"Material");
   const querySnapshot = await getDocs(docRef);
   return querySnapshot;
+}
+
+export function addFile(file,path){
+  const storage = getStorage();
+  const reference = ref(storage,path);
+  uploadBytes(reference,file);
+}
+
+export function getFile(path){
+  const storage = getStorage();
+  const reference = ref(storage,path);
+  return getBlob(reference,5000000);
 }
