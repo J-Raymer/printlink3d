@@ -19,7 +19,7 @@ export default function MultiStepForm({children, submitText, handleSubmit}) {
           Children.map(children, (child, idx) => {
             if (idx === step) {
              return (
-              <div className="block font-bold pl-5 pt-3 pb-3 bg-gradient-to-b from-purple-600 to-blue-500 rounded-lg" style={{backgroundImage: 'linear-gradient(to bottom, #D799D5, #B5B9F1)'}}>
+              <div className="block font-bold pl-5 pt-3 pb-3 rounded-lg" style={{backgroundImage: 'linear-gradient(to bottom, #D799D5, #B5B9F1)'}}>
                   <div className="inline-block mr-2">
                     <span className="flex h-6 w-6 text-md items-center justify-center rounded-full border border-2 border-black">{idx + 1}</span> 
                   </div>
