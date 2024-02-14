@@ -35,21 +35,19 @@ export default function Create() {
               <div className="h-1/2">
                 <div {...getRootProps()} className="h-full border-dashed border-2 border-gray-400 p-4 flex text-center justify-center items-center">
                   <input {...getInputProps()} />
-                  <div>
-                    <p className="text-3xl">Drag and drop</p>
-                    <p className="text-3xl">or</p>
+                  <div className="text-3xl">
+                    <p>Drag and drop<br/>or</p>
                     <span onClick={open} className="text-3xl text-blue-500 cursor-pointer underline">Browse files</span>
                   </div>
                 </div>
               </div>
             :
             <div className="flex flex-col items-center justify-center h-full h-2/3">
-              <div className="flex items-center mb-5">
-                  <p className="text-4xl mr-2">Selected:</p>
-                  <p className="text-4xl">{file.name}</p>
+              <div className="flex items-center mb-5 text-4xl">
+                  <p className="mr-2">Selected: {file.name}</p>
               </div>
               <div className="flex items-center">
-                  <p onClick={() => setFile(null)}className="text-3xl text-blue-500 cursor-pointer underline">Change</p>
+                  <p onClick={() => setFile(null)} className="text-3xl text-blue-500 cursor-pointer underline">Change</p>
               </div>
           </div>
           }
