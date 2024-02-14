@@ -4,8 +4,7 @@ import './app.css';
 import Home from './routes/home.js';
 import Create from './routes/create.js';
 import Browse from './routes/browse.js';
-import {addDoc,collection,getDocs,query} from "firebase/firestore";
-import {getStorage,ref,uploadBytes,getBlob} from "firebase/storage";
+
 
 function Layout() {
   return (

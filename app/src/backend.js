@@ -1,3 +1,6 @@
+import {addDoc,collection,getDocs,query} from "firebase/firestore";
+import {getStorage,ref,uploadBytes,getBlob} from "firebase/storage";
+
 /*
 DocData for AddJob format:
   Customer_ID: 
