@@ -43,7 +43,15 @@ export default function Create() {
                 </div>
               </div>
             :
-            <div>Hello World</div>
+            <div className="flex flex-col items-center justify-center h-full h-2/3">
+              <div className="flex items-center mb-5">
+                  <p className="text-4xl font-bold mr-2">Selected:</p>
+                  <p className="text-4xl font-bold">{file.name}</p>
+              </div>
+              <div className="flex items-center">
+                  <p className="text-3xl text-blue-500 cursor-pointer underline">Change</p>
+              </div>
+          </div>
           }
         </MultiStepFormPage>
         <MultiStepFormPage title="Configure">
