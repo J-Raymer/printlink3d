@@ -3,16 +3,19 @@ import { Link } from "react-router-dom";
 import MultiStepForm from "../components/multistepform";
 import MultiStepFormPage from "../components/multistepformpage";
 import Configure from "./configure";
+import ConfirmPrint from "./confirmPrint"
 
 
 
 export default function Create() {
   const materials = ["PLA", "ABS"]
   const emptyPrintJob = {file:null, 
+                         distance_km:5,
                          material:materials[0],
                          materials:materials,
                          infill:25,
-                         email:null};
+                         email:null,
+                         name:null};
   const [printJob,setPrintJob] = useState(emptyPrintJob);
 
   const updatePrintJob = (value, property) => {
