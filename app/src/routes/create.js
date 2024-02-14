@@ -27,6 +27,9 @@ export default function Create() {
       <h1 className="text-4xl font-extrabold p-6 pl-4">Create</h1>
       <MultiStepForm submitText="Submit Job">
         <MultiStepFormPage title="Upload">
+          <div className="flex justify-center">
+            <p className="text-4xl bold mb-5">Upload an stl file</p>
+          </div>
           {
             file === null ?
               <div className="h-1/2">
