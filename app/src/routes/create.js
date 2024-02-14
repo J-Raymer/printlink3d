@@ -33,12 +33,12 @@ export default function Create() {
           {
             file === null ?
               <div className="h-1/2">
-                <div className="h-full border-dashed border-2 border-gray-400 p-4 flex text-center justify-center items-center">
-                  <div {...getRootProps()}>
-                    <input {...getInputProps()} />
-                      <p className="text-3xl">Drag and drop</p>
-                      <p className="text-3xl">or</p>
-                      <span onClick={open} className="text-3xl text-blue-500 cursor-pointer underline">Browse files</span>
+                <div {...getRootProps()} className="h-full border-dashed border-2 border-gray-400 p-4 flex text-center justify-center items-center">
+                  <input {...getInputProps()} />
+                  <div>
+                    <p className="text-3xl">Drag and drop</p>
+                    <p className="text-3xl">or</p>
+                    <span onClick={open} className="text-3xl text-blue-500 cursor-pointer underline">Browse files</span>
                   </div>
                 </div>
               </div>
