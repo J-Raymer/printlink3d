@@ -39,7 +39,7 @@ export default function MultiStepForm({children, submitText, handleSubmit}) {
           })
         }
       </div>
-      <div className="p-3">
+      <div className="p-3 flex-grow">
         {
           Children.map(children, (child, idx) => {
             if (idx === step) {
