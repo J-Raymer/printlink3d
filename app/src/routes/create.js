@@ -25,7 +25,7 @@ export default function Create() {
   return (
     <div>
       <p className="text-4xl font-extrabold p-6 pl-4">Create</p>
-      <MultiStepForm submitText="Submit Job">
+      <MultiStepForm submitText="Submit Job" showNext={file !== null}>
         <MultiStepFormPage title="Upload">
           <div className="flex justify-center">
             <p className="text-4xl font-bold mb-5">Upload an stl file</p>

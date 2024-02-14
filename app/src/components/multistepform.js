@@ -1,6 +1,6 @@
 import {Children, useState} from 'react';
 
-export default function MultiStepForm({children, submitText, handleSubmit}) {
+export default function MultiStepForm({children, submitText, handleSubmit, showNext}) {
 
   const [step, setStep] = useState(0);
 
@@ -10,6 +10,23 @@ export default function MultiStepForm({children, submitText, handleSubmit}) {
 
   function handleBackStep(e) {
     setStep(step-1);
+  }
+
+  function renderBackBtn() {
+    return step > 0
+    ? <button className="bg-gray-200 border border-gray-400 text-gray-700 font-bold py-2 px-4 rounded mr-2" onClick={handleBackStep}>Back</button>
+    : <button className="bg-gray-200 border border-gray-400 text-gray-700 font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed mr-2">Back</button>
+  }
+
+  function renderNextOrSubmitBtn() {
+    if (step < Children.count(children) - 1) {
+      return showNext ?
+          <button className="bg-blue-500 hover:bg-blue-700 border border-blue-500 text-white font-bold py-2 px-4 rounded" onClick={handleNextStep}>Next</button>
+        : <button className="bg-gray-200 border border-gray-400 text-gray-700 font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed mr-2">Next</button>
+    }
+    else {
+      return <button className="bg-blue-500 hover:bg-blue-700 border border-blue-500 text-white font-bold py-2 px-4 rounded" onClick={handleSubmit}>{submitText}</button>
+    }
   }
 
   return (
@@ -48,14 +65,8 @@ export default function MultiStepForm({children, submitText, handleSubmit}) {
           })
         }
         <div className="absolute bottom-5 right-5">
-          { step > 0
-            ? <button className="bg-gray-200 border border-gray-400 text-gray-700 font-bold py-2 px-4 rounded mr-2" onClick={handleBackStep}>Back</button>
-            : <button className="bg-gray-200 border border-gray-400 text-gray-700 font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed mr-2">Back</button>
-          }
-          { step < Children.count(children) - 1
-            ? <button className="bg-blue-500 hover:bg-blue-700 border border-blue-500 text-white font-bold py-2 px-4 rounded" onClick={handleNextStep}>Next</button>
-            : <button className="bg-blue-500 hover:bg-blue-700 border border-blue-500 text-white font-bold py-2 px-4 rounded" onClick={handleSubmit}>{submitText}</button>
-          }
+          {renderBackBtn()}
+          {renderNextOrSubmitBtn()}
         </div>
       </div>
     </div>
