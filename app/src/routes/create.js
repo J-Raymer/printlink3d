@@ -7,7 +7,6 @@ import { useDropzone } from 'react-dropzone';
 export default function Create() {
   const [file, setFile] = useState(null)
 
-  // TODO prevent multiple files from being accepted
   const onDrop = useCallback((uploadedFiles) => {
     setFile(uploadedFiles[0]);
   }, []);
