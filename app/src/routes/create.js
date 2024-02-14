@@ -49,7 +49,7 @@ export default function Create() {
                   <p className="text-4xl font-bold">{file.name}</p>
               </div>
               <div className="flex items-center">
-                  <p className="text-3xl text-blue-500 cursor-pointer underline">Change</p>
+                  <p onClick={() => setFile(null)}className="text-3xl text-blue-500 cursor-pointer underline">Change</p>
               </div>
           </div>
           }
