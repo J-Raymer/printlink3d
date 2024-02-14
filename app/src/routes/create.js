@@ -28,7 +28,7 @@ export default function Create() {
       <MultiStepForm submitText="Submit Job">
         <MultiStepFormPage title="Upload">
           <div className="flex justify-center">
-            <p className="text-4xl bold mb-5">Upload an stl file</p>
+            <p className="text-4xl font-bold mb-5">Upload an stl file</p>
           </div>
           {
             file === null ?
@@ -45,8 +45,8 @@ export default function Create() {
             :
             <div className="flex flex-col items-center justify-center h-full h-2/3">
               <div className="flex items-center mb-5">
-                  <p className="text-4xl font-bold mr-2">Selected:</p>
-                  <p className="text-4xl font-bold">{file.name}</p>
+                  <p className="text-4xl mr-2">Selected:</p>
+                  <p className="text-4xl">{file.name}</p>
               </div>
               <div className="flex items-center">
                   <p onClick={() => setFile(null)}className="text-3xl text-blue-500 cursor-pointer underline">Change</p>
