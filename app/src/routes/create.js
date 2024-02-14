@@ -24,7 +24,7 @@ export default function Create() {
 
   return (
     <div>
-      <h1 className="text-4xl font-extrabold p-6 pl-4">Create</h1>
+      <p className="text-4xl font-extrabold p-6 pl-4">Create</p>
       <MultiStepForm submitText="Submit Job">
         <MultiStepFormPage title="Upload">
           <div className="flex justify-center">
@@ -47,7 +47,7 @@ export default function Create() {
           }
         </MultiStepFormPage>
         <MultiStepFormPage title="Configure">
-          <h1>Step 2</h1>
+          <p>Step 2</p>
         </MultiStepFormPage>
       </MultiStepForm>
       <Link to="/">Back</Link>
