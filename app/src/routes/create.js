@@ -30,7 +30,11 @@ export default function Create() {
           {
             file === null ?
               <div className="h-1/2 w-full flex justify-center items-center">
-                <div className="h-full w-full border-dashed border-2 border-gray-400 p-4 text-center justify-center">
+                <div className="h-full w-full border-dashed border-2 border-gray-400 p-4 text-center justify-center" style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                }}>
                   <div {...getRootProps()}>
                     <input {...getInputProps()} />
                       <p className="text-3xl">Drag and drop</p>
