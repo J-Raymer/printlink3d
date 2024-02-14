@@ -29,12 +29,8 @@ export default function Create() {
         <MultiStepFormPage title="Upload">
           {
             file === null ?
-              <div className="h-1/2 w-full flex justify-center items-center">
-                <div className="h-full w-full border-dashed border-2 border-gray-400 p-4 text-center justify-center" style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                }}>
+              <div className="h-1/2 w-full">
+                <div className="h-full w-full border-dashed border-2 border-gray-400 p-4 flex text-center justify-center items-center">
                   <div {...getRootProps()}>
                     <input {...getInputProps()} />
                       <p className="text-3xl">Drag and drop</p>
