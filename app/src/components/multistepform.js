@@ -30,7 +30,7 @@ export default function MultiStepForm({children, submitText, handleSubmit, showN
   }
 
   return (
-    <div className="flex h-screen rounded-lg border border-gray-300 h-fit min-h-96 relative p-4">
+    <div className="flex h-[80vh] rounded-lg border border-gray-300 h-fit min-h-96 relative p-4">
       <div className="md:flex flex-col w-56">
         {
           Children.map(children, (child, idx) => {
