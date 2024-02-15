@@ -1,58 +1,54 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import MultiStepForm from "../components/multistepform";
 import MultiStepFormPage from "../components/multistepformpage";
-import React, { useCallback, useState } from 'react';
-import { useDropzone } from 'react-dropzone';
+import Configure from "./configure";
+import Upload from "./upload";
+import { firebaseDb } from "../firebase";
+import { AddJob } from "../backend";
+
 
 export default function Create() {
-  const [file, setFile] = useState(null)
+    const materials = ["PLA", "ABS"]
+    const emptyPrintJob = {file:null, 
+                           distance_km:5,
+                           material:materials[0],
+                           materials:materials,
+                           infill:25,
+                           email:null,
+                           name:null};
+    const [printJob,setPrintJob] = useState(emptyPrintJob);
+  
+    const updatePrintJob = (value, property) => {
+      setPrintJob({...printJob, [property]:value});
+    }
 
-  const onDrop = useCallback((uploadedFiles) => {
-    setFile(uploadedFiles[0]);
-  }, []);
+    const onJobSubmit = () => {
+      console.log(printJob);
 
-  const { getRootProps, getInputProps, open } = useDropzone({
-    onDrop,
-    accept: {
-      'model/stl': ['.stl'],
-    },
-    noClick: true,
-    noKeyboard: true,
-    maxFiles: 1,
-  });
+      const db_entry = {
+        Customer_ID: 1,
+        Fill_Percentage: printJob.infill,
+        ID: 1,
+        Material: printJob.material,
+        Printer_ID: 1,
+        Radius: printJob.distance_km,
+        STL: "",
+        Status: false
+      };
+      
+      AddJob(firebaseDb,db_entry);
+    }
 
   return (
     <div>
       <p className="text-4xl font-extrabold p-6 pl-4">Create</p>
-      <MultiStepForm submitText="Submit Job" showNext={file !== null}>
+      <MultiStepForm submitText="Submit Job" showNext={printJob.file !== null} validDetails={printJob.email !== null && printJob.name !== null} handleSubmit={onJobSubmit}>
         <MultiStepFormPage title="Upload">
-          <div className="flex justify-center">
-            <p className="text-4xl font-bold mb-5">Upload an stl file</p>
-          </div>
-          {
-            file === null ?
-              <div className="h-1/2">
-                <div {...getRootProps()} className="h-full border-dashed border-2 border-gray-400 p-4 flex text-center justify-center items-center">
-                  <input {...getInputProps()} />
-                  <div className="text-3xl">
-                    <p>Drag and drop<br/>or</p>
-                    <span onClick={open} className="text-3xl text-blue-500 cursor-pointer underline">Browse files</span>
-                  </div>
-                </div>
-              </div>
-            :
-            <div className="flex flex-col items-center justify-center h-full h-2/3">
-              <div className="flex items-center mb-5 text-4xl">
-                  <p className="mr-2">Selected: {file.name}</p>
-              </div>
-              <div className="flex items-center">
-                  <p onClick={() => setFile(null)} className="text-3xl text-blue-500 cursor-pointer underline">Change</p>
-              </div>
-          </div>
-          }
+          <Upload printJob={printJob} updateFile={(newFile) => updatePrintJob(newFile, "file")}/>
         </MultiStepFormPage>
         <MultiStepFormPage title="Configure">
-          <p>Step 2</p>
+          <Configure printJob={printJob} onChange={updatePrintJob}/>
         </MultiStepFormPage>
       </MultiStepForm>
       <Link to="/">Back</Link>
