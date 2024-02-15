@@ -1,7 +1,6 @@
 import React from 'react'
 
-
-// TODO:
+// TODO: implement pagination
 export default function Pagination() {
   return (
     <div>Pagination</div>
