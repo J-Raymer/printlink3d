@@ -45,7 +45,7 @@ export default function Create() {
       <p className="text-4xl font-extrabold p-6 pl-4">Create</p>
       <MultiStepForm submitText="Submit Job" showNext={printJob.file !== null} validDetails={printJob.email !== null && printJob.name !== null} handleSubmit={onJobSubmit}>
         <MultiStepFormPage title="Upload">
-          <Upload printJob={printJob} updateFile={(x) => updatePrintJob(x, "file")}/>
+          <Upload printJob={printJob} updateFile={(newFile) => updatePrintJob(newFile, "file")}/>
         </MultiStepFormPage>
         <MultiStepFormPage title="Configure">
           <Configure printJob={printJob} onChange={updatePrintJob}/>

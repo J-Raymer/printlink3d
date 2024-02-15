@@ -6,7 +6,7 @@ export default function Selector({label, options, onChange}) {
     return (
       <>
         <select name="selector" id={label} onChange={handleChange}
-        className="block appearance-none bg-blue-500 hover:bg-blue-700 border border-blue-500 text-white font-bold py-2 px-4 rounded leading-tight focus:outline-none focus:bg-blue-700">
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
               {options.map((option, index) => (
               <option key={index} value={option}>
                 {option}

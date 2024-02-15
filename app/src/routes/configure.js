@@ -51,10 +51,10 @@ export default function Configure({printJob, onChange}) {
         <StyledLine title="Printer Distance"
                     inputValue={printJob.distance_km} inputUnits={"km"}
                     inputComponent={<Slider label="distance" init={printJob.distance_km} onChange={changeDistance} step={1} max={20} markers={[0,5,10,15,20]}/>} 
-                    helpButtonComponent={<HelpButton helpText={"The distance which you are willing to meet with a printer to exchange $$$$ for prints"}/>} />
+                    helpButtonComponent={<HelpButton helpText={"The distance that you are willing to travel to meet the printer"}/>} />
         <StyledLine title="Material"
                     inputComponent={<Selector label="material" options={printJob.materials} onChange={changeMaterial} />}
-                    helpButtonComponent={<HelpButton helpText={"What type of material your print will be made of"}/>}/>
+                    helpButtonComponent={<HelpButton helpText={"The material used in your print"}/>}/>
         <StyledLine title="Infill"
                     inputValue={printJob.infill} inputUnits={"%"}
                     inputComponent={<Slider label="infill" init={printJob.infill} onChange={changeInfill} markers={[0,25,50,75,100]}/>}
@@ -66,11 +66,9 @@ export default function Configure({printJob, onChange}) {
           <h2 className="text-3xl font-semibold text-gray-800"> Contact Details </h2>
         </div>
         <StyledLine title="Name"
-                    inputComponent={<NameForm onChange={changeName} />}
-                    helpButtonComponent={<HelpButton helpText={"Your name"}/>}/>
+                    inputComponent={<NameForm onChange={changeName} />}/>
         <StyledLine title="Email"
-                    inputComponent={<EmailForm onChange={changeEmail} />}
-                    helpButtonComponent={<HelpButton helpText={"Contact email required for coordination with printer"}/>}/>
+                    inputComponent={<EmailForm onChange={changeEmail} />}/>
       </div>
     </div>
   );
