@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import "./JobCard.css";
 
 export default function JobCard({ title, material, infill, image }) {
   const [isSelected, setIsSelected] = useState(false);
