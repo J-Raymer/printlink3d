@@ -1,4 +1,3 @@
-
 import Selector from "../components/selector";
 import Slider from "../components/slider";
 import HelpButton from "../components/helpButton";
@@ -22,15 +21,15 @@ function StyledLine({ title, inputValue, inputUnits, inputComponent, helpButtonC
   );
 }
 
-function EmailForm({onChange}) {
+function EmailForm({onChange, email}) {
   return(
-    <TextForm type="email" placeholder="Enter your email" onChange={onChange} />
+    <TextForm type="email" placeholder="Enter your email" onChange={onChange} value={email}/>
   )
 }
 
-function NameForm({onChange}) {
+function NameForm({onChange, name}) {
   return(
-    <TextForm type="text" placeholder="Enter your name" onChange={onChange} />
+    <TextForm type="text" placeholder="Enter your name" onChange={onChange} value={name}/>
   )
 }
 
@@ -41,7 +40,7 @@ export default function Configure({printJob, onChange}) {
   const changeMaterial = (x) => onChange(x, "material");
   const changeEmail = (x) => onChange(x.target.value, "email");
   const changeName = (x) => onChange(x.target.value, "name");
-
+  
   return (
     <div>
       <div className="p-5">
@@ -50,14 +49,14 @@ export default function Configure({printJob, onChange}) {
         </div>
         <StyledLine title="Printer Distance"
                     inputValue={printJob.distance_km} inputUnits={"km"}
-                    inputComponent={<Slider label="distance" init={printJob.distance_km} onChange={changeDistance} step={1} max={20} markers={[0,5,10,15,20]}/>} 
+                    inputComponent={<Slider label="distance" init={printJob.distance_km} onChange={changeDistance} step={1} max={20}/>} 
                     helpButtonComponent={<HelpButton helpText={"The distance that you are willing to travel to meet the printer"}/>} />
         <StyledLine title="Material"
                     inputComponent={<Selector label="material" options={printJob.materials} onChange={changeMaterial} />}
                     helpButtonComponent={<HelpButton helpText={"The material used in your print"}/>}/>
         <StyledLine title="Infill"
                     inputValue={printJob.infill} inputUnits={"%"}
-                    inputComponent={<Slider label="infill" init={printJob.infill} onChange={changeInfill} markers={[0,25,50,75,100]}/>}
+                    inputComponent={<Slider label="infill" init={printJob.infill} onChange={changeInfill}/>}
                     helpButtonComponent={<HelpButton helpText={"The density of the internal structure of your print"}/>}/>
       </div>
       
@@ -65,10 +64,9 @@ export default function Configure({printJob, onChange}) {
         <div className="my-4">
           <h2 className="text-3xl font-semibold text-gray-800"> Contact Details </h2>
         </div>
-        <StyledLine title="Name"
-                    inputComponent={<NameForm onChange={changeName} />}/>
+        <StyledLine title="Name" inputComponent={<NameForm onChange={changeName} name={(printJob.name !== null) ? printJob.name : ""}/>}/>        
         <StyledLine title="Email"
-                    inputComponent={<EmailForm onChange={changeEmail} />}/>
+                    inputComponent={<EmailForm onChange={changeEmail} email={(printJob.email !== null) ? printJob.email : ""}/>}/>
       </div>
     </div>
   );
