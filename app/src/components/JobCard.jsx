@@ -1,14 +1,15 @@
-import React from 'react'
+import React from 'react';
 
-// TODO: replace with job data
-export default function JobCard({title, description, image}) {
+export default function JobCard({ title, description, image }) {
   return (
-    <div className="w-full bg-white shadow-xl rounded-lg hover:scale-105 duration-300">
-      <img className="w-full h-48 object-cover rounded-t-lg" src={image} alt="Card" />
-      <div className="p-4">
-        <h3 className="text-xl font-semibold mb-2">{title}</h3>
-        <p className="text-gray-700">{description}</p>
+    <div className="max-w-xl mx-auto bg-white shadow-md rounded-lg overflow-hidden md:flex">
+      <div className="md:flex-shrink-0">
+        <img className="h-48 w-full object-cover md:w-48" src={image} alt={title} />
+      </div>
+      <div className="p-8">
+        <div className="uppercase tracking-wide text-sm text-indigo-500 font-semibold">{title}</div>
+        <p className="mt-2 text-gray-600">{description}</p>
       </div>
     </div>
-  )
+  );
 }
