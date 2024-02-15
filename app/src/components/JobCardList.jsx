@@ -1,19 +1,15 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import JobCard from './JobCard'
 
-// TODO:
-export default function JobCardList({ jobs }) {
-
+export default function JobCardList({ jobs, selectedJob, onSelectJob }) {
   return (
     <div className='mx-auto'>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {jobs.map((job) => (
           <JobCard
-            key={job.id}
-            title={job.title}
-            infill={job.infill}
-            material={job.material}
-            image={job.image}
+            job={job}
+            isSelected={selectedJob===job}
+            onSelectJob={(job) => onSelectJob(job)}
           />
         ))}
       </div>
