@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import "./JobCard.css";
+import "./jobCard.css";
 
 export default function JobCard({ job, isSelected, onSelectJob, onUnselectJob }) {
 
