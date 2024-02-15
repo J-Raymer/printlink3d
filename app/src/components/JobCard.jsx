@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function JobCard({ title, material, infill, image }) {
   return (
-    <div className="max-w-xl mx-auto bg-white shadow-md rounded-lg overflow-hidden md:flex w-full">
+    <div className="max-w-xl mx-auto bg-white shadow-md rounded-lg overflow-hidden md:flex w-full transition-transform duration-300 transform hover:scale-105">
       <div className="md:flex-shrink-0">
         <img className="h-48 w-full object-cover md:w-48" src={image} alt={title} />
       </div>
