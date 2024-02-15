@@ -2,6 +2,7 @@
 import Selector from "../components/selector";
 import Slider from "../components/slider";
 import HelpButton from "../components/helpButton";
+import TextForm from "../components/textForm";
 
 function StyledLine({ title, inputValue, inputUnits, inputComponent, helpButtonComponent}) {
   return (
@@ -16,19 +17,9 @@ function StyledLine({ title, inputValue, inputUnits, inputComponent, helpButtonC
         </div>
         {helpButtonComponent}
       </div>
-        
-        
       
     </div>
   );
-}
-
-function TextForm({type, placeholder, onChange}) {
-  return(
-    <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
-                        id={type} required 
-                        placeholder={placeholder} type={type} onChange={onChange}/>
-  )
 }
 
 function EmailForm({onChange}) {
@@ -43,12 +34,13 @@ function NameForm({onChange}) {
   )
 }
 
+
 export default function Configure({printJob, onChange}) {
-  const changeDistance = (x) => onChange(x, "distance_km");
-  const changeInfill = (x) => onChange(x, "infill");
+  const changeDistance = (x) => onChange(parseInt(x), "distance_km");
+  const changeInfill = (x) => onChange(parseInt(x), "infill");
   const changeMaterial = (x) => onChange(x, "material");
-  const changeEmail = (x) => onChange(x, "email");
-  const changeName = (x) => onChange(x, "name");
+  const changeEmail = (x) => onChange(x.target.value, "email");
+  const changeName = (x) => onChange(x.target.value, "name");
 
   return (
     <div>
@@ -80,7 +72,6 @@ export default function Configure({printJob, onChange}) {
                     inputComponent={<EmailForm onChange={changeEmail} />}
                     helpButtonComponent={<HelpButton helpText={"Contact email required for coordination with printer"}/>}/>
       </div>
-      
     </div>
   );
 }
