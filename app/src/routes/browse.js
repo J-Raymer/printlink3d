@@ -23,7 +23,9 @@ export default function Browse() {
       <h1 className="text-4xl font-extrabold p-6 pl-4">Browse</h1>
       <MultiStepForm submitText="Accept Job">
         <MultiStepFormPage title="Select Print">
-          <h1>Step 1</h1>
+          <div className="flex justify-center">
+            <p className="text-4xl font-bold mb-10">Select a job</p>
+          </div>
           <JobCardList jobs={tempJobs} />
         </MultiStepFormPage>
         <MultiStepFormPage title="Confirm">
