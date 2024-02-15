@@ -42,6 +42,10 @@ export default function Browse() {
     setSelectedJob(job);
   }
 
+  const onUnselectJob = () => {
+    setSelectedJob(null);
+  }
+
   return (
     <div>
       <h1 className="text-4xl font-extrabold p-6 pl-4">Browse</h1>
@@ -50,7 +54,12 @@ export default function Browse() {
           <div className="flex justify-center">
             <p className="text-4xl font-bold mb-10">Select a job</p>
           </div>
-          <JobCardList jobs={tempJobs} onSelectJob={onSelectJob} selectedJob={selectedJob}/>
+          <JobCardList
+            jobs={tempJobs}
+            onSelectJob={onSelectJob}
+            onUnselectJob={onUnselectJob}
+            selectedJob={selectedJob}
+          />
         </MultiStepFormPage>
         <MultiStepFormPage title="Confirm">
           <h1>Step 2</h1>

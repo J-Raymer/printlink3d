@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import "./JobCard.css";
 
-export default function JobCard({ job, isSelected, onSelectJob }) {
+export default function JobCard({ job, isSelected, onSelectJob, onUnselectJob }) {
 
   const handleClick = () => {
-    onSelectJob(job);
+    !isSelected ? onSelectJob(job) : onUnselectJob();
   };
 
   return (
