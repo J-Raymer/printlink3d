@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import MultiStepForm from "../components/multistepform";
 import MultiStepFormPage from "../components/multistepformpage";
 import Configure from "./configure";
@@ -9,6 +9,7 @@ import { AddJob } from "../backend";
 
 
 export default function Create() {
+    const navigate = useNavigate();
     const materials = ["PLA", "ABS"]
     const emptyPrintJob = {file:null, 
                            distance_km:5,
@@ -24,8 +25,6 @@ export default function Create() {
     }
 
     const onJobSubmit = () => {
-      console.log(printJob);
-
       const db_entry = {
         Customer_ID: 1,
         Fill_Percentage: printJob.infill,
@@ -38,6 +37,7 @@ export default function Create() {
       };
       
       AddJob(firebaseDb,db_entry);
+      navigate('/');
     }
 
   return (
