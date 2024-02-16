@@ -1,6 +1,6 @@
 import { Children, useState } from "react";
 
-export default function MultiStepForm({ children, submitText, handleSubmit, showNext }) {
+export default function MultiStepForm({children, submitText, validDetails, handleSubmit, showNext}) {
 
   const [step, setStep] = useState(0);
 
@@ -25,7 +25,9 @@ export default function MultiStepForm({ children, submitText, handleSubmit, show
         : <button className="bg-gray-200 border border-gray-400 text-gray-700 font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed mr-2">Next</button>
     }
     else {
-      return <button className="bg-blue-500 hover:bg-blue-700 border border-blue-500 text-white font-bold py-2 px-4 rounded" onClick={handleSubmit}>{submitText}</button>
+      return validDetails ?
+          <button className="bg-blue-500 hover:bg-blue-700 border border-blue-500 text-white font-bold py-2 px-4 rounded" onClick={handleSubmit}>{submitText}</button>
+        : <button className="bg-gray-200 border border-gray-400 text-gray-700 font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed mr-2">{submitText}</button>
     }
   }
 

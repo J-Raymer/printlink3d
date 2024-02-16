@@ -1,4 +1,4 @@
-import {addDoc,collection,getDocs,query} from "firebase/firestore";
+import {addDoc,collection,getDocs,query,where} from "firebase/firestore";
 import {getStorage,ref,uploadBytes,getBlob} from "firebase/storage";
 
 /*
@@ -40,21 +40,21 @@ DocData for AddJob format:
   
   export async function GetJob(field,comp,value,db){
     const job = collection(db,"Job");
-    q = query(job,where(field,comp,value));
+    const q = query(job,where(field,comp,value));
     const querySnapshot = await getDocs(q);
     return querySnapshot;
   }
   
   export async function GetCustomer(field,comp,value,db){
     const job = collection(db,"Customers");
-    q =  query(job,where(field,comp,value));
+    const q =  query(job,where(field,comp,value));
     const querySnapshot = await getDocs(q);
     return querySnapshot;
   }
   
   export async function GetPrinters(field,comp,value,db){
     const job = collection(db,"Printers");
-    q = query(job,where(field,comp,value));
+    const q = query(job,where(field,comp,value));
     const querySnapshot = await getDocs(q);
     return querySnapshot;
   }
