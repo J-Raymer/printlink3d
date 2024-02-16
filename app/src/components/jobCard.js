@@ -1,4 +1,5 @@
 import "./jobCard.css";
+import boat from "../images/boat.jpg"
 
 export default function JobCard({ job, isSelected, onSelectJob, onUnselectJob }) {
 
@@ -15,10 +16,10 @@ export default function JobCard({ job, isSelected, onSelectJob, onUnselectJob })
       style={{ height: isSelected ? 'auto' : 'fit-content' }}
     >
       <div className="md:flex-shrink-0">
-        <img className="h-48 w-full object-cover md:w-48" src={job.image} alt={job.title} />
+        <img className="h-48 w-full object-cover md:w-48" src={boat} alt={job.fileName} />
       </div>
       <div className="p-8">
-        <div className="uppercase tracking-wide text-sm text-indigo-500 font-semibold">{job.title}</div>
+        <div className="uppercase tracking-wide text-sm text-indigo-500 font-semibold">{job.fileName}</div>
         <p className="mt-2 text-gray-600">
           <span className="font-semibold">Material: </span><span className="font-normal">{job.material}</span>
         </p>

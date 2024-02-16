@@ -1,5 +1,6 @@
 import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getBlob } from "firebase/storage";
+import { firebaseDb } from "./firebase";
 
 // TODO add data types for each example
 /*
@@ -37,7 +38,29 @@ export async function AddPrinter(db, DocData) {
   const docRef = await addDoc(collection(db, "Printers"), DocData);
 }
 
-export async function GetJobs(field, comp, value, db) {
+export async function GetAllJobs(db) {
+  const jobCollectionRef = collection(db, "Jobs");
+  const querySnapshot = await getDocs(jobCollectionRef);
+  
+  const jobs = [];
+
+  querySnapshot.forEach((doc) => {
+    const data = doc.data();
+    jobs.push({
+      // TODO should rename Fill_Percentage to infill in database?
+      infill: data.Fill_Percentage,
+      material: data.Material,
+      distance: data.Radius,
+      fileName: data.STL,
+      name: data.Name,
+      email: data.Email,
+    });
+  });
+
+  return jobs;
+}
+
+export async function GetJob(field, comp, value, db) {
   const job = collection(db, "Jobs");
   const q = query(job, where(field, comp, value));
   const querySnapshot = await getDocs(q);

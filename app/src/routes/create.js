@@ -7,7 +7,6 @@ import Upload from "./upload";
 import { firebaseDb } from "../firebase";
 import { AddJob } from "../backend";
 
-
 export default function Create() {
     const navigate = useNavigate();
     const materials = ["PLA", "ABS"]
