@@ -2,15 +2,37 @@ import { Link } from "react-router-dom";
 import MultiStepForm from "../components/multistepform";
 import MultiStepFormPage from "../components/multistepformpage";
 import JobCardList from "../components/jobCardList";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { GetAllJobs } from "../backend";
-import { firebaseDb } from "../firebase";
-
-let jobs = await GetAllJobs(firebaseDb)
-console.log(jobs);
+import { firebaseDb } from '../firebase';
+import { collection, onSnapshot } from "firebase/firestore";
 
 export default function Browse() {
   const [selectedJob, setSelectedJob] = useState(null);
+  const [jobs, setJobs] = useState([]);
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(collection(firebaseDb, 'Jobs'), (snapshot) => {
+      const fetchedJobs = [];
+      snapshot.docs.forEach((doc) => {
+        const data = doc.data();
+        fetchedJobs.push({
+          infill: data.Fill_Percentage,
+          material: data.Material,
+          distance: data.Radius,
+          fileName: data.STL,
+          name: data.Name,
+          email: data.Email,
+      });
+
+        setJobs(fetchedJobs);
+      });
+    })
+
+    return () => {
+      unsubscribe(); // Cleanup function to unsubscribe from real-time updates when the component unmounts
+    };
+  }, []);
 
   const onSelectJob = (job) => {
     setSelectedJob(job);
