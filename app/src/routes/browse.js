@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import MultiStepForm from "../components/multistepform";
 import MultiStepFormPage from "../components/multistepformpage";
 import JobCardList from "../components/jobCardList";
@@ -55,8 +54,6 @@ export default function Browse() {
           </div>
         </MultiStepFormPage>
       </MultiStepForm>
-      
-      <Link to="/">Back</Link>
     </div>
   );
 }
