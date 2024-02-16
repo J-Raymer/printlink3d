@@ -12,14 +12,31 @@ export default function MultiStepForm({children, submitText, validDetails, handl
     setStep(step - 1);
   }
 
+  // TODO remove step == 2 logic
   function renderBackBtn() {
+    if (step == 2) {
+      return;
+    }
+
     return step > 0
       ? <button className="bg-gray-200 border border-gray-400 text-gray-700 font-bold py-2 px-4 rounded mr-2" onClick={handleBackStep}>Back</button>
       : <button className="bg-gray-200 border border-gray-400 text-gray-700 font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed mr-2">Back</button>
   }
 
+  // TODO remove children count == 3 logic
   function renderNextOrSubmitBtn() {
-    if (step < Children.count(children) - 1) {
+    if (Children.count(children) == 3) {
+      console.log(step)
+      if (step === 0) {
+        return showNext ?
+          <button className="bg-blue-500 hover:bg-blue-700 border border-blue-500 text-white font-bold py-2 px-4 rounded" onClick={handleNextStep}>Next</button>
+          : <button className="bg-gray-200 border border-gray-400 text-gray-700 font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed mr-2">Next</button>
+      }
+      else if (step === 1) {
+        return <button className="bg-blue-500 hover:bg-blue-700 border border-blue-500 text-white font-bold py-2 px-4 rounded" onClick={handleNextStep}>{submitText}</button>
+      }
+    }
+    else if (step < Children.count(children) - 1) {
       return showNext ?
         <button className="bg-blue-500 hover:bg-blue-700 border border-blue-500 text-white font-bold py-2 px-4 rounded" onClick={handleNextStep}>Next</button>
         : <button className="bg-gray-200 border border-gray-400 text-gray-700 font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed mr-2">Next</button>
