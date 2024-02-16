@@ -7,10 +7,10 @@ import { GetAllJobs } from "../backend";
 import { firebaseDb } from "../firebase";
 
 let jobs = await GetAllJobs(firebaseDb)
+console.log(jobs);
 
 export default function Browse() {
   const [selectedJob, setSelectedJob] = useState(null);
-  console.log(jobs)
 
   const onSelectJob = (job) => {
     setSelectedJob(job);
@@ -23,10 +23,10 @@ export default function Browse() {
   return (
     <div>
       <h1 className="text-4xl font-extrabold p-6 pl-4">Browse</h1>
-      <MultiStepForm submitText="Accept Job" showNext={selectedJob !== null}>
+      <MultiStepForm submitText="Accept Job" showNext={selectedJob !== null} validDetails={true}>
         <MultiStepFormPage title="Select Print">
           <div className="flex justify-center">
-            <p className="text-4xl font-bold mb-10">Select a job</p>
+            <p className="text-4xl font-bold mb-10">Select a Job</p>
           </div>
           <JobCardList
             jobs={jobs}
@@ -36,7 +36,14 @@ export default function Browse() {
           />
         </MultiStepFormPage>
         <MultiStepFormPage title="Confirm">
-          <h1>Step 2</h1>
+          <div className="flex justify-center">
+            <p className="text-4xl font-bold">Confirm Job Selection</p>
+          </div>
+          <div className="text-3xl leading-loose">
+            <p>Distance: {selectedJob !== null && selectedJob.distance}km</p>
+            <p>Material: {selectedJob !== null && selectedJob.material}</p>
+            <p>Infill: {selectedJob !== null && selectedJob.infill}%</p>
+          </div>
         </MultiStepFormPage>
       </MultiStepForm>
       <Link to="/">Back</Link>
