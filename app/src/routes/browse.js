@@ -46,7 +46,6 @@ export default function Browse() {
           </div>
         </MultiStepFormPage>
       </MultiStepForm>
-      <Link to="/">Back</Link>
     </div>
   );
 }
