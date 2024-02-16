@@ -3,40 +3,14 @@ import MultiStepForm from "../components/multistepform";
 import MultiStepFormPage from "../components/multistepformpage";
 import JobCardList from "../components/jobCardList";
 import React, { useState } from 'react';
+import { GetAllJobs } from "../backend";
+import { firebaseDb } from "../firebase";
 
-let tempJobs = [
-  {
-    id: 1,
-    title: "boat",
-    infill: "25%",
-    material: "PLA",
-    image: "https://picsum.photos/200/300",
-  },
-  {
-    id: 2,
-    title: "boat",
-    infill: "25%",
-    material: "PLA",
-    image: "https://picsum.photos/200/300",
-  },
-  {
-    id: 3,
-    title: "boat",
-    infill: "25%",
-    material: "PLA",
-    image: "https://picsum.photos/200/300",
-  },
-  {
-    id: 4,
-    title: "boat",
-    infill: "25%",
-    material: "PLA",
-    image: "https://picsum.photos/200/300",
-  },
-];
+let jobs = await GetAllJobs(firebaseDb)
 
 export default function Browse() {
   const [selectedJob, setSelectedJob] = useState(null);
+  console.log(jobs)
 
   const onSelectJob = (job) => {
     setSelectedJob(job);
@@ -55,7 +29,7 @@ export default function Browse() {
             <p className="text-4xl font-bold mb-10">Select a job</p>
           </div>
           <JobCardList
-            jobs={tempJobs}
+            jobs={jobs}
             onSelectJob={onSelectJob}
             onUnselectJob={onUnselectJob}
             selectedJob={selectedJob}

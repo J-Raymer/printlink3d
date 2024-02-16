@@ -7,7 +7,6 @@ import Upload from "./upload";
 import { firebaseDb } from "../firebase";
 import { AddJob } from "../backend";
 
-
 export default function Create() {
     const navigate = useNavigate();
     const materials = ["PLA", "ABS"]
@@ -18,7 +17,7 @@ export default function Create() {
                            infill:25,
                            email:null,
                            name:null};
-    const [printJob,setPrintJob] = useState(emptyPrintJob);
+    const [printJob, setPrintJob] = useState(emptyPrintJob);
   
     const updatePrintJob = (value, property) => {
       setPrintJob({...printJob, [property]:value});
@@ -32,11 +31,13 @@ export default function Create() {
         Material: printJob.material,
         Printer_ID: 1,
         Radius: printJob.distance_km,
-        STL: "",
+        STL: printJob.file.name,
+        Name: printJob.name,
+        Email: printJob.email,
         Status: false
       };
       
-      AddJob(firebaseDb,db_entry);
+      AddJob(firebaseDb, db_entry);
       navigate('/');
     }
 
