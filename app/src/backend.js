@@ -1,20 +1,20 @@
 import {addDoc,collection,getDocs,query,where} from "firebase/firestore";
 import {getStorage,ref,uploadBytes,getBlob} from "firebase/storage";
 
-/*
-DocData for AddJob format:
-  Customer_ID: 
-  Fill_Percentage: 
-  ID: 
-  Material: 
-  Printer_ID: 
-  Radius: 
-  STL: 
-  Status: 
+// TODO add data types for each example
+  /*
+  DocData for AddJob format:
+    Customer_ID:
+    Fill_Percentage: 
+    ID: 
+    Material: 
+    Printer_ID: 
+    Radius: 
+    STL: 
+    Status: 
   */
-
   export async function AddJob(db,DocData) {
-    const docRef = await addDoc(collection(db, "Job"),DocData);
+    const docRef = await addDoc(collection(db, "Jobs"),DocData);
   }
   
   
@@ -23,7 +23,6 @@ DocData for AddJob format:
     Email:
     ID:
   */
-  
   export async function AddCustomer(db,DocData){
     const docRef = await addDoc(collection(db,"Customers"), DocData);
   }
@@ -33,13 +32,12 @@ DocData for AddJob format:
     Email:
     ID:
   */
-  
   export async function AddPrinter(db,DocData){
     const docRef = await addDoc(collection(db,"Printers"), DocData);
   }
   
   export async function GetJob(field,comp,value,db){
-    const job = collection(db,"Job");
+    const job = collection(db,"Jobs");
     const q = query(job,where(field,comp,value));
     const querySnapshot = await getDocs(q);
     return querySnapshot;
