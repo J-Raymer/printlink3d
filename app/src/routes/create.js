@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import MultiStepForm from "../components/multistepform";
 import MultiStepFormPage from "../components/multistepformpage";
 import Configure from "./configure";
@@ -52,7 +52,6 @@ export default function Create() {
           <Configure printJob={printJob} onChange={updatePrintJob}/>
         </MultiStepFormPage>
       </MultiStepForm>
-      <Link to="/">Back</Link>
     </div>
   );
 }
