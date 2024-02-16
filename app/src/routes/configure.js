@@ -42,7 +42,7 @@ export default function Configure({printJob, onChange}) {
   const changeName = (x) => onChange(x.target.value, "name");
   
   return (
-    <div>
+    <div className="pb-10">
       <div className="p-5">
         <div className="my-4">
           <h2 className="text-3xl font-semibold text-gray-800"> Print Parameters </h2>
