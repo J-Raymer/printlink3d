@@ -44,6 +44,15 @@ export default function Browse() {
             <p>Infill: {selectedJob !== null && selectedJob.infill}%</p>
           </div>
         </MultiStepFormPage>
+        <MultiStepFormPage title="Job Details">
+          <div className="flex justify-center">
+            <p className="text-4xl font-bold">Job Details</p>
+          </div>
+          <div className="text-3xl leading-loose">
+            <p>Name: {selectedJob !== null && selectedJob.name}</p>
+            <p>Email: {selectedJob !== null && selectedJob.email}</p>
+          </div>
+        </MultiStepFormPage>
       </MultiStepForm>
     </div>
   );
