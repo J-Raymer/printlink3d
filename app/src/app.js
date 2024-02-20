@@ -9,10 +9,10 @@ import Browse from './routes/browse.js';
 function Layout() {
   const navigate = useNavigate();
   return (
-    <div className="container mx-auto">
-      <nav className="p-4">
+    <div>
+      <nav className=" w-full p-2">
         <button className="bg-transparent rounded-lg px-4 py-2" onClick={() => navigate('/')}>
-          <h2 className="text-xl font-bold">PrintLink3D</h2>
+          <h2 className="text-4xl font-bold">PrintLink3D</h2>
         </button>        
       </nav>
       <Outlet />
