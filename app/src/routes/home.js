@@ -1,5 +1,7 @@
 import HomePageStep from '../components/homePageStep';
 import printing_home_photo from '../images/3D_printing_home_photo_cropped.jpg';
+import printer_photo from '../images/3D_printer.jpg';
+import "./home.css";
 
 export default function Home() {
   const steps = [
@@ -22,8 +24,8 @@ export default function Home() {
   return (
     <div>
       <div className="relative text-center">
-      <img src={printing_home_photo} alt="3D printing"/>
-      <div className="absolute w-full top-0 left-0 text-center mt-10">
+        <img src={printing_home_photo} alt="3D printing" />
+        <div className="absolute w-full top-0 left-0 text-center mt-10">
           <h1 className="absolute mt-20 left-1/2 transform -translate-x-1/2 font-extrabold text-8xl text-white whitespace-nowrap">
             3D Printing Made Local
           </h1>
@@ -35,6 +37,31 @@ export default function Home() {
       <div className="text-center mt-5">
         <h1 className="text-4xl font-extrabold">How It Works</h1>
         {renderSteps()}
+      </div>
+      <div className="flex justify-center mt-10 mb-10">
+        <div className="w-4/5 h-0.5 bg-gradient-to-r from-purple-400 to-purple-600"></div>
+      </div>
+      <div className="text-center mt-5">
+        <h1 className="text-4xl font-extrabold">Own a 3D Printer?</h1>
+      </div>
+      <div className="flex mt-5">
+        <div className="flex items-center">
+          <div>
+            <p className="ml-10 text-lg font-medium">
+              Select a job in your local area and start making extra money! It’s as easy as that.
+              <br/><br/>
+              Our mission at PrintLink3D is to connect customers with local 3D printing enthusiasts. Interested?
+            </p>
+            <div className="flex justify-center">
+              <button className="mt-5 bg-custom-purple hover:bg-custom-purple-hover text-white font-bold py-5 px-8 rounded-lg text-4xl">
+                Get Started
+              </button>
+            </div>
+          </div>
+          <div>
+            <img src={printer_photo} alt="3D printer" className="w-full ml-10" />
+          </div>
+        </div>
       </div>
     </div>
   );
