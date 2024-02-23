@@ -9,6 +9,7 @@ import { AddJob } from "../backend";
 
 export default function Create() {
     const navigate = useNavigate();
+    // TODO get materials from backend
     const materials = ["PLA", "ABS"]
     const emptyPrintJob = {file:null, 
                            distance_km:5,
@@ -43,8 +44,12 @@ export default function Create() {
 
   return (
     <div>
-      <p className="text-4xl font-extrabold p-6 pl-4">Create</p>
-      <MultiStepForm submitText="Submit Job" showNext={printJob.file !== null} validDetails={printJob.email !== null && printJob.name !== null} handleSubmit={onJobSubmit}>
+      <MultiStepForm 
+        submitText="Submit Job"
+        showNext={printJob.file !== null}
+        validDetails={printJob.email !== null && printJob.name !== null}
+        handleSubmit={onJobSubmit}
+      >
         <MultiStepFormPage title="Upload">
           <Upload printJob={printJob} updateFile={(newFile) => updatePrintJob(newFile, "file")}/>
         </MultiStepFormPage>
