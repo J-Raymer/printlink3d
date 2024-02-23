@@ -25,9 +25,9 @@ function ProfileDropdown() {
 
   const renderItems = () => {
     return items.map((item, index) => (
-      <div key={index} className="p-3 flex items-center">
+      <div key={index} className="p-3 flex items-center hover:bg-gray-200 rounded-lg">
         <img src={item.icon} className="w-10 h-10" alt={`${item.text} icon`} />
-        <button onClick={() => navigate(item.route)} className="block px-4 py-2 text-lg text-gray-700 hover:bg-gray-100">{item.text}</button>
+        <button onClick={() => navigate(item.route)} className="block px-4 py-2 text-lg text-gray-700">{item.text}</button>
       </div>
     ));
   }
