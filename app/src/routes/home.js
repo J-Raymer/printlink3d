@@ -43,9 +43,9 @@ export default function Home() {
       <div className="text-center mt-5">
         <h1 className="text-4xl font-extrabold">Own a 3D Printer?</h1>
       </div>
-      <div className="flex mt-5">
-        <div className="flex items-center">
-          <div>
+      <div className="flex flex-col sm:flex-row mt-5">
+        <div className="flex flex-col sm:flex-row items-center">
+          <div className="order-2 sm:order-1 mt-5 sm:mt-0">
             <p className="ml-10 text-lg font-medium">
               Select a job in your local area and start making extra money! It’s as easy as that.
               <br /><br />
@@ -57,8 +57,8 @@ export default function Home() {
               </button>
             </div>
           </div>
-          <div>
-            <img src={printer_photo} alt="3D printer" className="w-full ml-10" />
+          <div className="order-1 sm:order-2">
+            <img src={printer_photo} alt="3D printer" className="w-1/2 sm:w-full mx-auto" />
           </div>
         </div>
       </div>
