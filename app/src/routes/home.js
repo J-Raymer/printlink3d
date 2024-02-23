@@ -52,7 +52,7 @@ export default function Home() {
               Our mission at PrintLink3D is to connect customers with local 3D printing enthusiasts. Interested?
             </p>
             <div className="flex justify-center">
-              <button className="mt-5 bg-custom-purple hover:bg-custom-purple-hover text-white font-bold py-5 px-8 rounded-lg text-4xl">
+              <button className="mt-10 bg-custom-purple hover:bg-custom-purple-hover border-black text-white font-bold py-3 px-4 rounded-lg text-2xl sm:text-1xl md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl">
                 Get Started
               </button>
             </div>
