@@ -4,6 +4,9 @@ import './app.css';
 import Home from './routes/home.js';
 import Create from './routes/create.js';
 import Browse from './routes/browse.js';
+import profileIcon from './images/profile_icon.png';
+import settingsIcon from './images/settings_icon.png';
+import ordersIcon from './images/orders_icon.png';
 
 function Layout() {
   const navigate = useNavigate();
@@ -48,8 +51,17 @@ function Layout() {
                 onMouseEnter={() => handleMouseEnter()}
                 onMouseLeave={() => handleMouseLeave()}
               >
-                <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
-                  <button onClick={() => navigate('/profile')} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Profile</button>
+                <div className="p-3 flex items-center" role="menu">
+                  <img src={profileIcon} className="w-10 h-10" alt="profile icon" />
+                  <button onClick={() => navigate('/profile')} className="block px-4 py-2 text-lg text-gray-700 hover:bg-gray-100" role="menuitem">Profile</button>
+                </div>
+                <div className="p-3 flex items-center" role="menu">
+                  <img src={ordersIcon} className="w-10 h-10" alt="orders icon" />
+                  <button onClick={() => navigate('/orders')} className="block px-4 py-2 text-lg text-gray-700 hover:bg-gray-100" role="menuitem">Orders</button>
+                </div>
+                <div className="p-3 flex items-center" role="menu">
+                  <img src={settingsIcon} className="w-10 h-10" alt="settings icon" />
+                  <button onClick={() => navigate('/settings')} className="block px-4 py-2 text-lg text-gray-700 hover:bg-gray-100" role="menuitem">Settings</button>
                 </div>
               </div>
             )}
