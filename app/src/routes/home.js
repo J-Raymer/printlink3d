@@ -23,13 +23,12 @@ export default function Home() {
 
   return (
     <div>
-      <div className="relative text-center">
-        <img src={printing_home_photo} alt="3D printing" />
-        <div className="absolute w-full top-0 left-0 text-center mt-10">
-          <h1 className="absolute mt-20 left-1/2 transform -translate-x-1/2 font-extrabold text-8xl text-white whitespace-nowrap">
+      <div className="flex items-center justify-center">
+        <div className="w-full bg-center bg-cover bg-no-repeat flex flex-col items-center justify-center" style={{ backgroundImage: `url(${printing_home_photo})` }}>
+          <h1 className="text-8xl text-white p-10 overflow-hidden">
             3D Printing Made Local
           </h1>
-          <button className="absolute mt-64 left-1/2 transform -translate-x-1/2 bg-custom-purple hover:bg-custom-purple-hover border-black text-white font-bold py-5 px-8 rounded-lg text-4xl">
+          <button className="bg-custom-purple hover:bg-custom-purple-hover border-black text-white font-bold py-3 px-4 rounded-lg text-4xl mb-10">
             Create An Order
           </button>
         </div>
@@ -49,7 +48,7 @@ export default function Home() {
           <div>
             <p className="ml-10 text-lg font-medium">
               Select a job in your local area and start making extra money! It’s as easy as that.
-              <br/><br/>
+              <br /><br />
               Our mission at PrintLink3D is to connect customers with local 3D printing enthusiasts. Interested?
             </p>
             <div className="flex justify-center">
