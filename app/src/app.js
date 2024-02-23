@@ -5,15 +5,22 @@ import Home from './routes/home.js';
 import Create from './routes/create.js';
 import Browse from './routes/browse.js';
 
-
 function Layout() {
   const navigate = useNavigate();
   return (
-    <div className="container mx-auto">
-      <nav className="p-4">
-        <button className="bg-transparent rounded-lg px-4 py-2" onClick={() => navigate('/')}>
-          <h2 className="text-xl font-bold">PrintLink3D</h2>
-        </button>        
+    <div>
+      <nav className="flex justify-between w-full p-1 bg-transparent px-4 py-2 text-xl font-bold">
+        <button onClick={() => navigate('/')}>
+          <h2>PrintLink3D</h2>
+        </button>
+        <div className="flex space-x-4">
+          <button onClick={() => navigate('/create')}>
+            <h2>Order</h2>
+          </button>
+          <button onClick={() => navigate('/browse')}>
+            <h2>View Jobs</h2>
+          </button>
+        </div>     
       </nav>
       <Outlet />
     </div>
