@@ -42,50 +42,52 @@ export default function Browse() {
     setSelectedJob(null);
   }
 
-  const changeMaterial = (x) => {};
-  const changeColor = (x) => {};
-  const changeBid = (x) => {};
+  const changeMaterial = (x) => { };
+  const changeColor = (x) => { };
+  const changeBid = (x) => { };
 
   return (
-    <div className="flex">
-      <div className="w-1/4 border-2 m-10 border-black overflow-auto">
-        <div className="m-5">
-          <p className="font-bold">Material:</p>
-          <div className="ml-10">
-            <input type="checkbox" id="material1" name="material1" value="PLA" />
-            <label htmlFor="material1">PLA</label><br />
-            <input type="checkbox" id="material2" name="material2" value="ABS" />
-            <label htmlFor="material2">ABS</label><br />
-            <input type="checkbox" id="material3" name="material3" value="PETG" />
-            <label htmlFor="material3">PETG</label><br />
-          </div>
-          <p className="font-bold">Color:</p>
-          <div className="ml-10">
-            <input type="checkbox" id="red" name="red" value="Red" />
-            <label htmlFor="red">Red</label><br />
-            <input type="checkbox" id="green" name="green" value="Green" />
-            <label htmlFor="green">Green</label><br />
-            <input type="checkbox" id="blue" name="blue" value="Blue" />
-            <label htmlFor="blue">Blue</label><br />
-          </div>
-          <div className="flex mt-2">
-            <p className="font-bold mr-3">Bid:</p>
-            <div>
-              <Selector label="Bid" options={["Lowest", "Highest"]} padding={1} onChange={changeBid}/>
-            </div>  
-          </div>
-        </div>
+    <div>
+      <div className="flex justify-center">
+        <p className="text-4xl font-bold mb-10 mt-10">Select a Job</p>
       </div>
-      <div className="w-3/4">
-        <div className="flex justify-center">
-          <p className="text-4xl font-bold mb-10 mt-10">Select a Job</p>
+      <div className="flex">
+        <div className="w-1/4 border-2 ml-10 mr-10 border-black overflow-auto">
+          <div className="ml-5">
+            <p className="font-bold">Material:</p>
+            <div className="ml-10">
+              <input type="checkbox" id="material1" name="material1" value="PLA" />
+              <label htmlFor="material1">PLA</label><br />
+              <input type="checkbox" id="material2" name="material2" value="ABS" />
+              <label htmlFor="material2">ABS</label><br />
+              <input type="checkbox" id="material3" name="material3" value="PETG" />
+              <label htmlFor="material3">PETG</label><br />
+            </div>
+            <p className="font-bold">Color:</p>
+            <div className="ml-10">
+              <input type="checkbox" id="red" name="red" value="Red" />
+              <label htmlFor="red">Red</label><br />
+              <input type="checkbox" id="green" name="green" value="Green" />
+              <label htmlFor="green">Green</label><br />
+              <input type="checkbox" id="blue" name="blue" value="Blue" />
+              <label htmlFor="blue">Blue</label><br />
+            </div>
+            <div className="flex mt-2">
+              <p className="font-bold mr-3">Bid:</p>
+              <div>
+                <Selector label="Bid" options={["Lowest", "Highest"]} padding={1} onChange={changeBid} />
+              </div>
+            </div>
+          </div>
         </div>
-        <JobCardList
-          jobs={jobs}
-          onSelectJob={onSelectJob}
-          onUnselectJob={onUnselectJob}
-          selectedJob={selectedJob}
-        />
+        <div className="w-3/4">
+          <JobCardList
+            jobs={jobs}
+            onSelectJob={onSelectJob}
+            onUnselectJob={onUnselectJob}
+            selectedJob={selectedJob}
+          />
+        </div>
       </div>
     </div>
   );
