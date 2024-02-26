@@ -53,7 +53,7 @@ export default function Browse() {
       </div>
       <div className="flex">
         <div className="w-1/4 border-2 ml-10 mr-10 border-black overflow-auto">
-          <div className="ml-5">
+          <div className="m-5">
             <p className="font-bold">Material:</p>
             <div className="ml-10">
               <input type="checkbox" id="material1" name="material1" value="PLA" />
