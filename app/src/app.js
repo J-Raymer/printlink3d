@@ -4,6 +4,7 @@ import './app.css';
 import Home from './routes/home.js';
 import Create from './routes/create.js';
 import Browse from './routes/browse.js';
+import Profile from './routes/profile.js';
 import ProfileDropdown from "./components/profileDropdown.js";
 
 function Layout() {
@@ -66,6 +67,7 @@ function App() {
         <Route index element={<Home />} />
         <Route path="create" element={<Create />} />
         <Route path="browse" element={<Browse />} />
+        <Route path="profile" element={<Profile />} />
       </Route>
     </Routes>
   );
