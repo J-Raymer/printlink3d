@@ -1,8 +1,20 @@
 import { useDropzone } from 'react-dropzone';
+import FileCard from '../components/fileCard'
+import { useState } from 'react';
 
 export default function Upload({printJob, updateFile}) {
+    const [uploaded, setUploaded] = useState((printJob.file !== null));
     
-    const onDrop = (files) => updateFile(files[0]);
+    const onDrop = (files) => {
+      updateFile(files[0])
+      setUploaded(true)
+    };
+
+    const onCancel = () => {
+      updateFile(null)
+      setUploaded(false)
+    }
+    
 
     const { getRootProps, getInputProps, open } = useDropzone({
       onDrop,
@@ -20,7 +32,7 @@ export default function Upload({printJob, updateFile}) {
             <p className="text-4xl font-bold">Upload an stl file</p>
           </div>
           {
-            printJob.file === null ?
+            !uploaded ?
               <div className="h-1/2 mt-10">
                 <div {...getRootProps()} className="h-full border-dashed border-2 border-gray-400 p-4 flex text-center justify-center items-center">
                   <input {...getInputProps()} />
@@ -31,13 +43,8 @@ export default function Upload({printJob, updateFile}) {
                 </div>
               </div>
             :
-              <div className="flex flex-col items-center justify-center h-full mt-5">
-                <div className="flex items-center mb-5 text-4xl">
-                    <p className="mr-2">Selected: {printJob.file.name}</p>
-                </div>
-                <div className="flex items-center">
-                    <p onClick={() => updateFile(null)} className="text-3xl text-blue-500 cursor-pointer underline">Change</p>
-                </div>
+              <div className="py-4 px-10">
+                <FileCard file={printJob.file} onClick={onCancel} />
               </div>
           }
         </>

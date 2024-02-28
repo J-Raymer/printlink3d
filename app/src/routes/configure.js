@@ -2,71 +2,132 @@ import Selector from "../components/selector";
 import Slider from "../components/slider";
 import HelpButton from "../components/helpButton";
 import TextForm from "../components/textForm";
+import { useEffect, useState } from "react";
+import { collection, onSnapshot } from "firebase/firestore";
+import { firebaseDb } from "../firebase";
 
 function StyledLine({ title, inputValue, inputUnits, inputComponent, helpButtonComponent}) {
   return (
-    <div  className="border-b border-gray-300 pb-2">
-      <div className="p-2 grid grid-cols-4 gap-2">
-        <h4 className="text-lg font-semibold">{title} </h4>
-        <div className="flex items-center">
-          <span className="mr-1">{inputValue} {inputUnits}</span>
-        </div>
-        <div className="flex justify-center items-center">
-          {inputComponent}
-        </div>
-        {helpButtonComponent}
+    <div>
+      <div className="flex py-6">
+          <div className="w-60 flex pl-3">
+              <div className="mx-2">
+                <div className="text-lg font-semibold">{title} </div>
+              </div>
+              <div className="">
+                  {helpButtonComponent}
+              </div>
+          </div>
+          <div className="">
+              {inputComponent}
+          </div>
       </div>
-      
     </div>
+    
   );
 }
 
-function EmailForm({onChange, email}) {
-  return(
-    <TextForm type="email" placeholder="Enter your email" onChange={onChange} value={email}/>
-  )
-}
+export default function Configure({printJob, changePrintJob}) {
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [materials, setMaterials] = useState([]);
+  
+  const changeMaterial = (x) => changePrintJob(x, "material");
+  const changeColor = (x) => {
+    console.log(x)
+    changePrintJob(x, "color")
+  }
+  const changeCompletionDate = (x) => {
+    console.log(x.target.valueAsNumber)
+    changePrintJob(x.target.valueAsNumber, "completionDate");
+  }
+  const changeStartingBid = (e) => {
+    const newStartingBid = e.target.value;
+    (newStartingBid !== "") ?
+      changePrintJob(newStartingBid, "startingBid")
+      : changePrintJob("0", "startingBid")
+  }
+  const changeInfill = (x) => changePrintJob(parseInt(x), "infill");
+  
+  const changeLayerHeight = (e) => {
+    const newLayerHeight = e.target.value;
+    (newLayerHeight !== "") ?
+      changePrintJob(newLayerHeight, "layerHeight")
+      : changePrintJob("0.2", "layerHeight")
+  };
 
-function NameForm({onChange, name}) {
-  return(
-    <TextForm type="text" placeholder="Enter your name" onChange={onChange} value={name}/>
-  )
-}
+  //do for colors too
+  useEffect(() => {
+    const unsubscribe = onSnapshot(collection(firebaseDb, 'Material'), (snapshot) => {
+      const fetchedMaterials = [];
+      snapshot.docs.forEach((doc) => {
+        const data = doc.data();
+        fetchedMaterials.push(data.Type);
+        setMaterials(fetchedMaterials);
+      });
 
+      changeMaterial(materials[0]);
+    })
 
-export default function Configure({printJob, onChange}) {
-  const changeDistance = (x) => onChange(parseInt(x), "distance_km");
-  const changeInfill = (x) => onChange(parseInt(x), "infill");
-  const changeMaterial = (x) => onChange(x, "material");
-  const changeEmail = (x) => onChange(x.target.value, "email");
-  const changeName = (x) => onChange(x.target.value, "name");
+    return () => {
+      unsubscribe(); // Cleanup function to unsubscribe from real-time updates when the component unmounts
+    };
+  }, []);
   
   return (
-    <div className="pb-10">
+    <div>
       <div className="p-5">
         <div className="my-4">
           <h2 className="text-3xl font-semibold text-gray-800"> Print Parameters </h2>
         </div>
-        <StyledLine title="Printer Distance"
-                    inputValue={printJob.distance_km} inputUnits={"km"}
-                    inputComponent={<Slider label="distance" init={printJob.distance_km} onChange={changeDistance} step={1} max={20}/>} 
-                    helpButtonComponent={<HelpButton helpText={"The distance that you are willing to travel to meet the printer"}/>} />
-        <StyledLine title="Material"
-                    inputComponent={<Selector label="material" options={printJob.materials} onChange={changeMaterial} />}
-                    helpButtonComponent={<HelpButton helpText={"The material used in your print"}/>}/>
-        <StyledLine title="Infill"
-                    inputValue={printJob.infill} inputUnits={"%"}
-                    inputComponent={<Slider label="infill" init={printJob.infill} onChange={changeInfill}/>}
-                    helpButtonComponent={<HelpButton helpText={"The density of the internal structure of your print"}/>}/>
-      </div>
-      
-      <div className="p-5">
-        <div className="my-4">
-          <h2 className="text-3xl font-semibold text-gray-800"> Contact Details </h2>
+        <div className="flex-col">
+          <StyledLine title="Material"
+                      inputComponent={<Selector label="material" options={materials} onChange={changeMaterial} />}
+                      helpButtonComponent={<HelpButton helpText={"The material used in your print"}/>}/>
+          <StyledLine title="Color"
+                      inputComponent={<Selector label="color" options={["No Preference", "Black", "Grey", "White", "Red", "Yellow", "Green", "Blue"]} onChange={changeColor} />}
+                      helpButtonComponent={<HelpButton helpText={"The material color used in your print"}/>}/>
+          <StyledLine title="Complete By"
+                      inputComponent={<TextForm type="date" value={printJob.completionDate.valueAsDate} onChange={changeCompletionDate}/>}
+                      helpButtonComponent={<HelpButton helpText={"The complete by date for your print"}/>}/>
+          <StyledLine title="Starting Bid"
+                      inputComponent={<TextForm type="number" min="0" step="0.01" value={printJob.startingBid} onChange={changeStartingBid}/>}
+                      helpButtonComponent={<HelpButton helpText={"The price you are willing to pay"}/>}/>
         </div>
-        <StyledLine title="Name" inputComponent={<NameForm onChange={changeName} name={(printJob.name !== null) ? printJob.name : ""}/>}/>        
-        <StyledLine title="Email"
-                    inputComponent={<EmailForm onChange={changeEmail} email={(printJob.email !== null) ? printJob.email : ""}/>}/>
+      </div>
+      <div className="p-5">
+      <button onClick={() => setShowAdvanced(!showAdvanced)}>
+        <div className="flex">
+          <div className="pr-3 font-semibold">
+            Advanced Options
+          </div>
+          {showAdvanced ? 
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+              </svg>
+            :
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+              </svg>
+            }
+        </div>
+      </button>
+      {
+        showAdvanced ?
+          <div className="p-5">
+            <div className="rounded-lg bg-slate-50">
+              <StyledLine title="Infill Density"
+                      inputValue={printJob.infill} inputUnits={"%"}
+                      inputComponent={<Slider label="infill" init={printJob.infill} onChange={changeInfill}/>}
+                      helpButtonComponent={<HelpButton helpText={"The density of the internal structure of your print"}/>}/>
+               <StyledLine title="Layer Height"
+                      inputValue={printJob.layerHeight} inputUnits={"mm"}
+                      inputComponent={<TextForm type="number" min="0.1" max="0.32" step="0.01" value={printJob.layerHeight} onChange={changeLayerHeight}/>}
+                      helpButtonComponent={<HelpButton helpText={"The density of the internal structure of your print"}/>}/>
+            </div>
+          </div>
+        :
+          <div />
+      }
       </div>
     </div>
   );

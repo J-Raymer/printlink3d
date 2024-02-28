@@ -4,26 +4,26 @@ import MultiStepForm from "../components/multistepform";
 import MultiStepFormPage from "../components/multistepformpage";
 import Configure from "./configure";
 import Upload from "./upload";
-import { firebaseDb } from "../firebase";
-import { AddJob } from "../backend";
 
 export default function Create() {
     const navigate = useNavigate();
-    // TODO get materials from backend
-    const materials = ["PLA", "ABS"]
-    const emptyPrintJob = {file:null, 
-                           distance_km:5,
-                           material:materials[0],
-                           materials:materials,
-                           infill:25,
-                           email:null,
-                           name:null};
-    const [printJob, setPrintJob] = useState(emptyPrintJob);
-  
-    const updatePrintJob = (value, property) => {
-      setPrintJob({...printJob, [property]:value});
-    }
 
+    const emptyPrintJob = {
+      file:null,
+      material:null,
+      color:"No Preference",
+      completionDate:0,
+      startingBid:null,
+      infill:25,
+      layerHeight:null
+    };
+    
+    const [printJob, setPrintJob] = useState(emptyPrintJob);  
+    
+    const updatePrintJob = (value, property) => {
+      setPrintJob(prevState => ({...prevState, [property]:value}));
+    }
+    
     const onJobSubmit = () => {
       const db_entry = {
         Customer_ID: 1,
@@ -38,8 +38,9 @@ export default function Create() {
         Status: false
       };
       
-      AddJob(firebaseDb, db_entry);
-      navigate('/');
+      console.log(printJob);
+      //AddJob(firebaseDb, db_entry);
+      //navigate('/');
     }
 
   return (
@@ -54,7 +55,7 @@ export default function Create() {
           <Upload printJob={printJob} updateFile={(newFile) => updatePrintJob(newFile, "file")}/>
         </MultiStepFormPage>
         <MultiStepFormPage title="Configure">
-          <Configure printJob={printJob} onChange={updatePrintJob}/>
+          <Configure printJob={printJob} changePrintJob={updatePrintJob}/>
         </MultiStepFormPage>
       </MultiStepForm>
     </div>
