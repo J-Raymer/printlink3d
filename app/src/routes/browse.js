@@ -75,7 +75,7 @@ export default function Browse() {
             <div className="flex mt-2">
               <p className="font-bold mr-3">Bid:</p>
               <div>
-                <Selector label="Bid" options={["Lowest", "Highest"]} padding={1} onChange={changeBid} />
+                <Selector label="Bid" options={["Lowest to highest", "Highest to lowest"]} padding={1} onChange={changeBid} />
               </div>
             </div>
           </div>
