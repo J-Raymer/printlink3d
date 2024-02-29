@@ -1,12 +1,11 @@
 import Selector from "../components/selector";
-import Slider from "../components/slider";
 import HelpButton from "../components/helpButton";
 import TextForm from "../components/textForm";
 import { useEffect, useState } from "react";
 import { collection, onSnapshot } from "firebase/firestore";
 import { firebaseDb } from "../firebase";
 
-function StyledLine({ title, inputValue, inputUnits, inputComponent, helpButtonComponent}) {
+function StyledLine({ title, inputComponent, helpButtonComponent}) {
   return (
     <div>
       <div className="flex py-6">
@@ -95,28 +94,22 @@ export default function Configure({printJob, changePrintJob}) {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [materials, setMaterials] = useState([]);
   
-  const changeQuantity = (x) => changePrintJob(x.target.value, "quantity")
-  const changeMaterial = (x) => {
-    changePrintJob(x, "material");
+  const changeQuantity = (e) => {
+    const newQuantity = e.target.value;
+    changePrintJob(newQuantity, "quantity");
   }
-  const changeColor = (x) => {
-    changePrintJob(x, "color")
-  }
-  const changeCompletionDate = (x) => {
-    changePrintJob(x.target.valueAsNumber, "completionDate");
+  const changeMaterial = (x) => changePrintJob(x, "material");
+  const changeColor = (x) => changePrintJob(x, "color");
+  const changeCompletionDate = (e) => {
+    const completionUnixDate = e.target.valueAsNumber;
+    changePrintJob(completionUnixDate, "completionDate");
   }
   const changeComment = (e) => {
     const newComment = e.target.value
     changePrintJob(newComment, "comment")
   }
-  const changeInfill = (x) => changePrintJob(parseInt(x), "infill");
-  
-  const changeLayerHeight = (e) => {
-    const newLayerHeight = e.target.value;
-    (newLayerHeight !== "") ?
-      changePrintJob(newLayerHeight, "layerHeight")
-      : changePrintJob("0.2", "layerHeight")
-  };
+  const changeInfill = (x) => changePrintJob(x, "infill");
+  const changeLayerHeight = (x) => changePrintJob(x, "layerHeight");
 
   //do for colors too
   useEffect(() => {
@@ -145,15 +138,15 @@ export default function Configure({printJob, changePrintJob}) {
                       inputComponent={<TextForm type="number" min="1" value={printJob.quantity} onChange={changeQuantity}/>}/>
           <StyledLine title="Complete By"
                       inputComponent={<TextForm type="date" value={printJob.completionDate.valueAsDate} onChange={changeCompletionDate}/>}
-                      helpButtonComponent={<HelpButton helpText={"The complete by date for your print"}/>}/>
+                      helpButtonComponent={<HelpButton helpText={"The date by which you want your print. You can leave it blank if there is no time constraint."}/>}/>
           <StyledLine title="Color"
-                      inputComponent={<Selector label="color" options={["No Preference", "Black", "Grey", "White", "Red", "Yellow", "Green", "Blue"]} onChange={changeColor} />}
-                      helpButtonComponent={<HelpButton helpText={"The material color used in your print"}/>}/>
+                      inputComponent={<Selector label="color" options={["No Preference", "Black", "Grey", "White", "Red", "Yellow", "Green", "Blue"]} onChange={changeColor} />}/>
           <StyledLine title="Material"
                       inputComponent={<MaterialSelector init={{Type: printJob.material}} materials={materials} changeMaterial={changeMaterial}/>}
-                      helpButtonComponent={<HelpButton helpText={"The material used in your print"}/>}/>
+                      helpButtonComponent={<HelpButton helpText={"The material used in your print. The plastic option allows the printer to decide, but other options are available."}/>}/>
           <StyledLine title="Comment" 
-                      inputComponent={<TextArea value={printJob.comment} onChange={changeComment}/>}/>
+                      inputComponent={<TextArea value={printJob.comment} onChange={changeComment}/>}
+                      helpButtonComponent={<HelpButton helpText={"Enter any additional print details or specifications you want to communicate to the printer."}/>}/>
           
         </div>
       </div>
@@ -179,13 +172,11 @@ export default function Configure({printJob, changePrintJob}) {
           <div className="p-5">
             <div className="rounded-lg bg-slate-50">
               <StyledLine title="Infill Density"
-                      inputValue={printJob.infill} inputUnits={"%"}
-                      inputComponent={<Slider label="infill" init={printJob.infill} onChange={changeInfill}/>}
-                      helpButtonComponent={<HelpButton helpText={"The density of the internal structure of your print"}/>}/>
+                      inputComponent={<Selector options={Array.from({length:21}, (_, index) => (index * 5).toString()+"%")} initValue={printJob.infill} onChange={changeInfill}/>}
+                      helpButtonComponent={<HelpButton helpText={"The density of the internal structure of your print. A higher density is stronger but more expensive."}/>}/>
                <StyledLine title="Layer Height"
-                      inputValue={printJob.layerHeight} inputUnits={"mm"}
-                      inputComponent={<TextForm type="number" min="0.1" max="0.32" step="0.01" value={printJob.layerHeight} onChange={changeLayerHeight}/>}
-                      helpButtonComponent={<HelpButton helpText={"The density of the internal structure of your print"}/>}/>
+                      inputComponent={<Selector options={["0.1 mm", "0.2 mm", "0.3 mm"]} initValue={printJob.layerHeight} onChange={changeLayerHeight}/>}
+                      helpButtonComponent={<HelpButton helpText={"The height of each print layer. Lower values produce a higher resolution print."}/>}/>
             </div>
           </div>
         :

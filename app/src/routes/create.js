@@ -17,8 +17,8 @@ export default function Create() {
       color:"No Preference",
       completionDate:0,
       comment:"",
-      infill:25,
-      layerHeight:null
+      infill:"25%",
+      layerHeight:"0.2 mm"
     };
     
     const [printJob, setPrintJob] = useState(emptyPrintJob);  
