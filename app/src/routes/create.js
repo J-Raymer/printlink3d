@@ -15,7 +15,7 @@ export default function Create() {
       quantity:1,
       material:"Plastic",
       color:"No Preference",
-      completionDate:0,
+      completionDate:"",
       comment:"",
       infill:"25%",
       layerHeight:"0.2 mm"

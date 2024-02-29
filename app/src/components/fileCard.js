@@ -17,7 +17,7 @@ function CancelIcon() {
 export default function FileCard({file, onClick}) {
     return (
         <>
-            <div class="flex justify-between w-96 rounded-lg bg-slate-100 py-6">
+            <div class="flex justify-between w-96 border border-gray-300 rounded-lg bg-gray-50 py-6">
                 <div className="flex pl-3">
                     <div className="mx-2">
                         <FileIcon/> 
