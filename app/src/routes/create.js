@@ -4,16 +4,19 @@ import MultiStepForm from "../components/multistepform";
 import MultiStepFormPage from "../components/multistepformpage";
 import Configure from "./configure";
 import Upload from "./upload";
+import { AddJob } from "../backend"
+import { firebaseDb } from "../firebase";
 
 export default function Create() {
     const navigate = useNavigate();
 
     const emptyPrintJob = {
       file:null,
-      material:null,
+      quantity:1,
+      material:"Plastic",
       color:"No Preference",
       completionDate:0,
-      startingBid:null,
+      comment:"",
       infill:25,
       layerHeight:null
     };
@@ -26,21 +29,18 @@ export default function Create() {
     
     const onJobSubmit = () => {
       const db_entry = {
-        Customer_ID: 1,
-        Fill_Percentage: printJob.infill,
-        ID: 1,
+        File: printJob.file.name,
+        Quantity: printJob.quantity,
         Material: printJob.material,
-        Printer_ID: 1,
-        Radius: printJob.distance_km,
-        STL: printJob.file.name,
-        Name: printJob.name,
-        Email: printJob.email,
-        Status: false
+        Color: printJob.color,
+        CompletionDate: printJob.completionDate,
+        Comment: printJob.comment,
+        Infill: printJob.infill,
+        LayerHeight: printJob.layerHeight
       };
       
-      console.log(printJob);
-      //AddJob(firebaseDb, db_entry);
-      //navigate('/');
+      AddJob(firebaseDb, db_entry);
+      navigate('/');
     }
 
   return (

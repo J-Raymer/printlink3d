@@ -27,24 +27,87 @@ function StyledLine({ title, inputValue, inputUnits, inputComponent, helpButtonC
   );
 }
 
+function TextArea({value, onChange}) {
+  return (
+    <div className="">
+      <textarea class="px-2 py-1 bg-gray-50 border border-gray-300 text-gray-900 rounded-md focus:ring-blue-500 focus:border-blue-500 block" 
+                value={value} onChange={onChange} rows="4" cols="50"/>
+    </div>
+  );
+}
+
+function MaterialSelector({init, materials, changeMaterial}) {
+  const [showOptions, setShowOptions] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(init);
+
+  const handleItemClick = (item) => {
+    setSelectedItem(item);
+    changeMaterial(item.Type)
+  };
+
+  return (
+    <div>
+      <button onClick={() => setShowOptions(true)}>
+        <div className="flex">
+          {showOptions ? 
+              materials.map((m,idx) => {
+                return (
+                  <div className="pr-3">
+                    <div key={idx} onClick={() => handleItemClick(m)} 
+                        className={`rounded-md px-2 py-1 cursor-pointer transform transition-transform duration-200
+                                   ${selectedItem.Type === m.Type ? 'bg-blue-200' : 'bg-gray-100'}`}>
+                      <div className="relative group">
+                        <div className="w-96 absolute hidden bg-white border border-gray-300 p-2 mt-7 group-hover:block z-10">
+                          <p className="text-left text-sm">
+                            {m.Description}
+                          </p>
+                        </div>
+                        {m.Type}
+                      </div>
+                    </div>
+                  </div>
+                )
+              })
+            :
+              <div className="flex">
+                <div className="pr-3">
+                  <div className="rounded-md px-2 py-1 cursor-pointer bg-blue-200">
+                    {selectedItem.Type}
+                  </div> 
+                </div>
+                <div className="pr-3 flex">
+                <div className="rounded-md px-2 py-1 cursor-pointer bg-white">
+                  More Material Options
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="pt-2 w-6 h-6">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                </svg>
+                </div>
+              </div>
+            }
+        </div>
+      </button>
+    </div>
+  )
+}
+
 export default function Configure({printJob, changePrintJob}) {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [materials, setMaterials] = useState([]);
   
-  const changeMaterial = (x) => changePrintJob(x, "material");
+  const changeQuantity = (x) => changePrintJob(x.target.value, "quantity")
+  const changeMaterial = (x) => {
+    changePrintJob(x, "material");
+  }
   const changeColor = (x) => {
-    console.log(x)
     changePrintJob(x, "color")
   }
   const changeCompletionDate = (x) => {
-    console.log(x.target.valueAsNumber)
     changePrintJob(x.target.valueAsNumber, "completionDate");
   }
-  const changeStartingBid = (e) => {
-    const newStartingBid = e.target.value;
-    (newStartingBid !== "") ?
-      changePrintJob(newStartingBid, "startingBid")
-      : changePrintJob("0", "startingBid")
+  const changeComment = (e) => {
+    const newComment = e.target.value
+    changePrintJob(newComment, "comment")
   }
   const changeInfill = (x) => changePrintJob(parseInt(x), "infill");
   
@@ -61,18 +124,16 @@ export default function Configure({printJob, changePrintJob}) {
       const fetchedMaterials = [];
       snapshot.docs.forEach((doc) => {
         const data = doc.data();
-        fetchedMaterials.push(data.Type);
+        fetchedMaterials.push(data);
         setMaterials(fetchedMaterials);
       });
-
-      changeMaterial(materials[0]);
     })
 
     return () => {
       unsubscribe(); // Cleanup function to unsubscribe from real-time updates when the component unmounts
     };
   }, []);
-  
+
   return (
     <div>
       <div className="p-5">
@@ -80,18 +141,20 @@ export default function Configure({printJob, changePrintJob}) {
           <h2 className="text-3xl font-semibold text-gray-800"> Print Parameters </h2>
         </div>
         <div className="flex-col">
-          <StyledLine title="Material"
-                      inputComponent={<Selector label="material" options={materials} onChange={changeMaterial} />}
-                      helpButtonComponent={<HelpButton helpText={"The material used in your print"}/>}/>
-          <StyledLine title="Color"
-                      inputComponent={<Selector label="color" options={["No Preference", "Black", "Grey", "White", "Red", "Yellow", "Green", "Blue"]} onChange={changeColor} />}
-                      helpButtonComponent={<HelpButton helpText={"The material color used in your print"}/>}/>
+          <StyledLine title="Quantity"
+                      inputComponent={<TextForm type="number" min="1" value={printJob.quantity} onChange={changeQuantity}/>}/>
           <StyledLine title="Complete By"
                       inputComponent={<TextForm type="date" value={printJob.completionDate.valueAsDate} onChange={changeCompletionDate}/>}
                       helpButtonComponent={<HelpButton helpText={"The complete by date for your print"}/>}/>
-          <StyledLine title="Starting Bid"
-                      inputComponent={<TextForm type="number" min="0" step="0.01" value={printJob.startingBid} onChange={changeStartingBid}/>}
-                      helpButtonComponent={<HelpButton helpText={"The price you are willing to pay"}/>}/>
+          <StyledLine title="Color"
+                      inputComponent={<Selector label="color" options={["No Preference", "Black", "Grey", "White", "Red", "Yellow", "Green", "Blue"]} onChange={changeColor} />}
+                      helpButtonComponent={<HelpButton helpText={"The material color used in your print"}/>}/>
+          <StyledLine title="Material"
+                      inputComponent={<MaterialSelector init={{Type: printJob.material}} materials={materials} changeMaterial={changeMaterial}/>}
+                      helpButtonComponent={<HelpButton helpText={"The material used in your print"}/>}/>
+          <StyledLine title="Comment" 
+                      inputComponent={<TextArea value={printJob.comment} onChange={changeComment}/>}/>
+          
         </div>
       </div>
       <div className="p-5">
