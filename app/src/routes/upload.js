@@ -1,44 +1,166 @@
+import * as THREE from 'three';
+import React, {useState, useEffect, useRef} from 'react';
 import { useDropzone } from 'react-dropzone';
+import {STLLoader} from 'three/examples/jsm/loaders/STLLoader';
+import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
 
 export default function Upload({printJob, updateFile}) {
     
-    const onDrop = (files) => updateFile(files[0]);
+    /* 
+     * Setup ThreeJS Scene
+     */
+    const containerRef = useRef(null);
+    const [selected, setSelected] = useState(false);
+    const [sceneState, setScene] = useState(null);
 
-    const { getRootProps, getInputProps, open } = useDropzone({
-      onDrop,
+    const scene = new THREE.Scene();
+    scene.add(new THREE.AxesHelper(5));
+
+    // Create lighting
+    // Grey ambient
+    // Grey spotlight with large intensity to cover even large objects
+    const light = new THREE.AmbientLight(0xf0f0f0, 0.2);
+    const spotlight = new THREE.SpotLight(0xf0f0f0);
+    spotlight.position.set(40, 40, 40);
+    spotlight.intensity = 3000;
+    scene.add(light);
+    scene.add(spotlight);
+
+    // Create standard perspective camera
+    const camera = new THREE.PerspectiveCamera(
+      75,
+      1.0,
+      0.1,
+      1000
+    );
+    camera.position.z = -10;
+
+    // Create render and set background to a very light grey
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setClearColor(0xdddddd, 1.0);
+    
+    // "Arcball" style controls with smoothed movement
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+
+    // Now the STL loading logic
+    const loader = new STLLoader();
+    const material = new THREE.MeshPhysicalMaterial({
+      color: 0x888888,
+    });
+
+    /* Create ThreeJS container 
+    * Build the logic for rendering chosen STL
+    */
+    useEffect(() => {
+      if (sceneState === null) return;
+
+      if (containerRef.current !== null && sceneState.children.length > 3) {
+        console.debug("added renderer");
+        // Init the renderer object
+        // Add the dom object the the containerRef so we can add it via react
+        renderer.setSize(800, 600);
+        camera.aspect = 800 / 600;
+        camera.updateProjectionMatrix();
+
+        window.addEventListener('resize', onWindowResize, false);
+        resize3DViewer();
+
+        containerRef.current.appendChild(renderer.domElement);
+        draw();
+        return () => {
+          console.debug("attempting to remove renderer");
+          window.removeEventListener('resize', onWindowResize, false);
+          if (containerRef.current !== null && containerRef.current.hasChildNodes()) {
+            console.debug("removed renderer");
+            containerRef.current.removeChild(renderer.domElement);
+            updateFile(null);
+            setSelected(false);
+          }
+        }
+      }
+    }, [sceneState]);
+    
+    function draw() {
+      controls.update();  
+      renderer.render(sceneState, camera);
+
+      window.requestAnimationFrame(draw);
+    }
+
+    function removeSTL() {
+      while(scene.children.length > 0){ 
+        scene.remove(scene.children[0]); 
+      }
+      setScene(scene);
+    }
+
+    function resize3DViewer() {
+      let canvasdiv = document.getElementById("canvas-rect").getBoundingClientRect();
+      renderer.setSize(canvasdiv.width, canvasdiv.height);
+      camera.aspect = canvasdiv.width / canvasdiv.height;
+      camera.updateProjectionMatrix();
+    }
+
+    function onWindowResize() {
+      if (printJob.file !== null) {
+        resize3DViewer();
+      }
+    }
+
+    /* 
+     * Setup DropZone
+     */
+    const { acceptedFiles, getRootProps, getInputProps, open } = useDropzone({
       accept: {
         'model/stl': ['.stl'],
       },
       noClick: true,
       noKeyboard: true,
       maxFiles: 1,
+      onDrop: acceptedFiles => {
+        updateFile(acceptedFiles[0]);
+        setSelected(true);
+        loader.load(
+          URL.createObjectURL(acceptedFiles[0]),
+          function (geometry) {
+            scene.add(new THREE.Mesh(geometry, material));
+            setScene(scene);
+          },
+          (xhr) => { /* do nothing */ },
+          (error) => {console.log(error);}
+        )
+      }
     });
 
     return (
         <>
-        <div className="flex justify-center">
-            <p className="text-4xl font-bold">Upload an stl file</p>
-          </div>
           {
-            printJob.file === null ?
-              <div className="h-1/2 mt-10">
-                <div {...getRootProps()} className="h-full border-dashed border-2 border-gray-400 p-4 flex text-center justify-center items-center">
-                  <input {...getInputProps()} />
-                  <div className="text-3xl">
-                    <p>Drag and drop<br/>or</p>
-                    <span onClick={open} className="text-3xl text-blue-500 cursor-pointer underline">Browse files</span>
+             !selected ?
+              <>
+                <div className="flex justify-center">
+                  <p className="text-4xl font-bold">Upload an STL file</p>
+                </div>
+                <div className="flex flex-col full-without-title grow mt-10">
+                  <div {...getRootProps()} className="h-full border-dashed border-2 border-gray-400 p-4 flex text-center justify-center items-center">
+                    <input {...getInputProps()} />
+                    <div className="text-3xl">
+                      <p>Drag and drop<br/>or</p>
+                      <span onClick={open} className="text-3xl text-blue-500 cursor-pointer underline">Browse files</span>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </>
             :
-              <div className="flex flex-col items-center justify-center h-full mt-5">
-                <div className="flex items-center mb-5 text-4xl">
-                    <p className="mr-2">Selected: {printJob.file.name}</p>
+              <>
+                <div className="flex w-full items-center mb-[20px] justify-between">
+                    <p className="text-4xl font-bold">Selected: {printJob.file.name}</p>
+                    <p onClick={() => removeSTL()} className="text-4xl text-blue-500 cursor-pointer underline">Change File</p>
                 </div>
-                <div className="flex items-center">
-                    <p onClick={() => updateFile(null)} className="text-3xl text-blue-500 cursor-pointer underline">Change</p>
+                <div className="flex flex-col items-center justify-center full-without-title" id="canvas-rect">
+                  <div className="" ref={containerRef}></div>
                 </div>
-              </div>
+              </>
           }
         </>
     );
