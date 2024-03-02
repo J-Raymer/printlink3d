@@ -1,8 +1,5 @@
-import MultiStepForm from "../components/multistepform";
-import MultiStepFormPage from "../components/multistepformpage";
 import JobCardList from "../components/jobCardList";
 import React, { useState, useEffect } from 'react';
-import { GetAllJobs } from "../backend";
 import { firebaseDb } from '../firebase';
 import { collection, onSnapshot } from "firebase/firestore";
 import Selector from "../components/selector";
