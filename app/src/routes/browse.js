@@ -57,20 +57,20 @@ export default function Browse() {
             <p className="font-bold">Material:</p>
             <div className="ml-10">
               <input type="checkbox" id="material1" name="material1" value="PLA" />
-              <label htmlFor="material1">PLA</label><br />
+              <label htmlFor="material1"> PLA</label><br />
               <input type="checkbox" id="material2" name="material2" value="ABS" />
-              <label htmlFor="material2">ABS</label><br />
+              <label htmlFor="material2"> ABS</label><br />
               <input type="checkbox" id="material3" name="material3" value="PETG" />
-              <label htmlFor="material3">PETG</label><br />
+              <label htmlFor="material3"> PETG</label><br />
             </div>
             <p className="font-bold">Color:</p>
             <div className="ml-10">
               <input type="checkbox" id="red" name="red" value="Red" />
-              <label htmlFor="red">Red</label><br />
+              <label htmlFor="red"> Red</label><br />
               <input type="checkbox" id="green" name="green" value="Green" />
-              <label htmlFor="green">Green</label><br />
+              <label htmlFor="green"> Green</label><br />
               <input type="checkbox" id="blue" name="blue" value="Blue" />
-              <label htmlFor="blue">Blue</label><br />
+              <label htmlFor="blue"> Blue</label><br />
             </div>
             <div className="flex mt-2">
               <p className="font-bold mr-3">Bid:</p>
