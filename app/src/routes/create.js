@@ -4,38 +4,39 @@ import MultiStepForm from "../components/multistepform";
 import MultiStepFormPage from "../components/multistepformpage";
 import Configure from "./configure";
 import Upload from "./upload";
+import { AddJob } from "../backend"
 import { firebaseDb } from "../firebase";
-import { AddJob } from "../backend";
 
 export default function Create() {
     const navigate = useNavigate();
-    // TODO get materials from backend
-    const materials = ["PLA", "ABS"]
-    const emptyPrintJob = {file:null, 
-                           distance_km:5,
-                           material:materials[0],
-                           materials:materials,
-                           infill:25,
-                           email:null,
-                           name:null};
-    const [printJob, setPrintJob] = useState(emptyPrintJob);
-  
-    const updatePrintJob = (value, property) => {
-      setPrintJob({...printJob, [property]:value});
-    }
 
+    const emptyPrintJob = {
+      file:null,
+      quantity:1,
+      material:"Plastic",
+      color:"No Preference",
+      completionDate:"",
+      comment:"",
+      infill:"25%",
+      layerHeight:"0.2 mm"
+    };
+    
+    const [printJob, setPrintJob] = useState(emptyPrintJob);  
+    
+    const updatePrintJob = (value, property) => {
+      setPrintJob(prevState => ({...prevState, [property]:value}));
+    }
+    
     const onJobSubmit = () => {
       const db_entry = {
-        Customer_ID: 1,
-        Fill_Percentage: printJob.infill,
-        ID: 1,
+        File: printJob.file.name,
+        Quantity: printJob.quantity,
         Material: printJob.material,
-        Printer_ID: 1,
-        Radius: printJob.distance_km,
-        STL: printJob.file.name,
-        Name: printJob.name,
-        Email: printJob.email,
-        Status: false
+        Color: printJob.color,
+        CompletionDate: printJob.completionDate,
+        Comment: printJob.comment,
+        Infill: printJob.infill,
+        LayerHeight: printJob.layerHeight
       };
       
       AddJob(firebaseDb, db_entry);
@@ -54,7 +55,7 @@ export default function Create() {
           <Upload printJob={printJob} updateFile={(newFile) => updatePrintJob(newFile, "file")}/>
         </MultiStepFormPage>
         <MultiStepFormPage title="Configure">
-          <Configure printJob={printJob} onChange={updatePrintJob}/>
+          <Configure printJob={printJob} changePrintJob={updatePrintJob}/>
         </MultiStepFormPage>
       </MultiStepForm>
     </div>

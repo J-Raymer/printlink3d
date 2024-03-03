@@ -5,6 +5,17 @@ import {STLLoader} from 'three/examples/jsm/loaders/STLLoader';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
 
 export default function Upload({printJob, updateFile}) {
+    const [uploaded, setUploaded] = useState((printJob.file !== null));
+    
+    const onDrop = (files) => {
+      updateFile(files[0])
+      setUploaded(true)
+    };
+
+    const onCancel = () => {
+      updateFile(null)
+      setUploaded(false)
+    }
     
     /* 
      * Setup ThreeJS Scene
@@ -60,7 +71,6 @@ export default function Upload({printJob, updateFile}) {
       }
 
       if (containerRef.current !== null && sceneState.children.length > 3) {
-        console.debug("added renderer");
         // Init the renderer object
         // Add the dom object the the containerRef so we can add it via react
         renderer.setSize(800, 600);
@@ -73,10 +83,8 @@ export default function Upload({printJob, updateFile}) {
         containerRef.current.appendChild(renderer.domElement);
         draw();
         return () => {
-          console.debug("attempting to remove renderer");
           window.removeEventListener('resize', onWindowResize, false);
           if (containerRef.current !== null && containerRef.current.hasChildNodes()) {
-            console.debug("removed renderer");
             containerRef.current.removeChild(renderer.domElement);
             updateFile(null);
           }

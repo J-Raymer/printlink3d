@@ -49,8 +49,8 @@ export default function MultiStepForm({children, submitText, validDetails, handl
   }
 
   return (
-    <div className="full-screen flex rounded-lg border border-gray-300 relative p-4">
-      <div className="md:flex flex-col w-56">
+    <div className="full-screen flex rounded-lg relative p-4 divide-x divide-violet-200">
+      <div className="md:flex flex-col w-56 pr-2">
         {
           Children.map(children, (child, idx) => {
             if (idx === step) {
