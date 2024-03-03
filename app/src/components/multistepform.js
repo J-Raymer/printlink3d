@@ -83,7 +83,7 @@ export default function MultiStepForm({children, submitText, validDetails, handl
             }
           })
         }
-        <div className="relative top-5">
+        <div className="absolute bottom-5 right-5">
           {renderBackBtn()}
           {renderNextOrSubmitBtn()}
         </div>
