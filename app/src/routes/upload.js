@@ -10,7 +10,6 @@ export default function Upload({printJob, updateFile}) {
      * Setup ThreeJS Scene
      */
     const containerRef = useRef(null);
-    const [selected, setSelected] = useState(false);
     const [sceneState, setScene] = useState(null);
 
     const scene = new THREE.Scene();
@@ -80,7 +79,6 @@ export default function Upload({printJob, updateFile}) {
             console.debug("removed renderer");
             containerRef.current.removeChild(renderer.domElement);
             updateFile(null);
-            setSelected(false);
           }
         }
       }
@@ -137,7 +135,6 @@ export default function Upload({printJob, updateFile}) {
       maxFiles: 1,
       onDrop: acceptedFiles => {
         updateFile(acceptedFiles[0]);
-        setSelected(true);
         addFileToScene(acceptedFiles[0]);
       }
     });
