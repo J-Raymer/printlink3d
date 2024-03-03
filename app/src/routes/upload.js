@@ -53,7 +53,12 @@ export default function Upload({printJob, updateFile}) {
     * Build the logic for rendering chosen STL
     */
     useEffect(() => {
-      if (sceneState === null) return;
+      if (sceneState === null) {
+        if (printJob.file !== null) {
+          addFileToScene(printJob.file);
+        }
+        return;
+      }
 
       if (containerRef.current !== null && sceneState.children.length > 3) {
         console.debug("added renderer");
@@ -108,6 +113,18 @@ export default function Upload({printJob, updateFile}) {
       }
     }
 
+    function addFileToScene(file) {
+      loader.load(
+        URL.createObjectURL(file),
+        function (geometry) {
+          scene.add(new THREE.Mesh(geometry, material));
+          setScene(scene);
+        },
+        (xhr) => { /* do nothing */ },
+        (error) => {console.log(error);}
+      );
+    }
+
     /* 
      * Setup DropZone
      */
@@ -121,22 +138,14 @@ export default function Upload({printJob, updateFile}) {
       onDrop: acceptedFiles => {
         updateFile(acceptedFiles[0]);
         setSelected(true);
-        loader.load(
-          URL.createObjectURL(acceptedFiles[0]),
-          function (geometry) {
-            scene.add(new THREE.Mesh(geometry, material));
-            setScene(scene);
-          },
-          (xhr) => { /* do nothing */ },
-          (error) => {console.log(error);}
-        )
+        addFileToScene(acceptedFiles[0]);
       }
     });
 
     return (
         <>
           {
-             !selected ?
+             printJob.file === null ?
               <>
                 <div className="flex justify-center">
                   <p className="text-4xl font-bold">Upload an STL file</p>
