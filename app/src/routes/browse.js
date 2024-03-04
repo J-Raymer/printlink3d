@@ -1,10 +1,8 @@
-import MultiStepForm from "../components/multistepform";
-import MultiStepFormPage from "../components/multistepformpage";
 import JobCardList from "../components/jobCardList";
 import React, { useState, useEffect } from 'react';
-import { GetAllJobs } from "../backend";
 import { firebaseDb } from '../firebase';
 import { collection, onSnapshot } from "firebase/firestore";
+import Selector from "../components/selector";
 
 export default function Browse() {
   const [selectedJob, setSelectedJob] = useState(null);
@@ -22,7 +20,7 @@ export default function Browse() {
           fileName: data.STL,
           name: data.Name,
           email: data.Email,
-      });
+        });
 
         setJobs(fetchedJobs);
       });
@@ -41,41 +39,53 @@ export default function Browse() {
     setSelectedJob(null);
   }
 
+  const changeMaterial = (x) => { };
+  const changeColor = (x) => { };
+  const changeBid = (x) => { };
+
   return (
     <div>
-      <h1 className="text-4xl font-extrabold p-6 pl-4">Browse</h1>
-      <MultiStepForm submitText="Accept Job" showNext={selectedJob !== null} validDetails={true}>
-        <MultiStepFormPage title="Select Print">
-          <div className="flex justify-center">
-            <p className="text-4xl font-bold mb-10">Select a Job</p>
+      <div className="flex justify-center">
+        <p className="text-4xl font-bold mb-10 mt-10">Select a Job</p>
+      </div>
+      <div className="flex">
+        <div className="w-1/4 border-2 ml-10 mr-10 border-black overflow-auto">
+          <div className="m-5">
+            <p className="font-bold">Material:</p>
+            <div className="ml-10">
+              <input type="checkbox" id="material1" name="material1" value="PLA" />
+              <label htmlFor="material1"> PLA</label><br />
+              <input type="checkbox" id="material2" name="material2" value="ABS" />
+              <label htmlFor="material2"> ABS</label><br />
+              <input type="checkbox" id="material3" name="material3" value="PETG" />
+              <label htmlFor="material3"> PETG</label><br />
+            </div>
+            <p className="font-bold">Color:</p>
+            <div className="ml-10">
+              <input type="checkbox" id="red" name="red" value="Red" />
+              <label htmlFor="red"> Red</label><br />
+              <input type="checkbox" id="green" name="green" value="Green" />
+              <label htmlFor="green"> Green</label><br />
+              <input type="checkbox" id="blue" name="blue" value="Blue" />
+              <label htmlFor="blue"> Blue</label><br />
+            </div>
+            <div className="flex mt-2">
+              <p className="font-bold mr-3">Bid:</p>
+              <div>
+                <Selector label="Bid" options={["Lowest to highest", "Highest to lowest"]} padding={1} onChange={changeBid} />
+              </div>
+            </div>
           </div>
+        </div>
+        <div className="w-3/4">
           <JobCardList
             jobs={jobs}
             onSelectJob={onSelectJob}
             onUnselectJob={onUnselectJob}
             selectedJob={selectedJob}
           />
-        </MultiStepFormPage>
-        <MultiStepFormPage title="Confirm">
-          <div className="flex justify-center">
-            <p className="text-4xl font-bold">Confirm Job Selection</p>
-          </div>
-          <div className="text-3xl leading-loose">
-            <p>Distance: {selectedJob !== null && selectedJob.distance}km</p>
-            <p>Material: {selectedJob !== null && selectedJob.material}</p>
-            <p>Infill: {selectedJob !== null && selectedJob.infill}%</p>
-          </div>
-        </MultiStepFormPage>
-        <MultiStepFormPage title="Job Details">
-          <div className="flex justify-center">
-            <p className="text-4xl font-bold">Job Details</p>
-          </div>
-          <div className="text-3xl leading-loose">
-            <p>Name: {selectedJob !== null && selectedJob.name}</p>
-            <p>Email: {selectedJob !== null && selectedJob.email}</p>
-          </div>
-        </MultiStepFormPage>
-      </MultiStepForm>
+        </div>
+      </div>
     </div>
   );
 }
