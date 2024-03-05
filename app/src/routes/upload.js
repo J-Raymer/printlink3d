@@ -151,11 +151,9 @@ export default function Upload({printJob, updateFile}) {
         <>
           {
              printJob.file === null ?
-              <>
-                <div className="flex">
-                  <p className="text-4xl font-bold mt-3">Upload an STL file</p>
-                </div>
-                <div className="flex flex-col full-without-title grow mt-4">
+              <div className="flex flex-col h-full">
+                <p className="text-4xl font-bold mt-3">Upload an STL file</p>
+                <div className="flex flex-col mt-4 grow">
                   <div {...getRootProps()} className="h-full border-dashed border-2 border-gray-400 p-4 flex text-center justify-center items-center rounded" style={{backgroundColor: "#f7f7f7"}}>
                     <input {...getInputProps()} />
                     <div className="text-3xl">
@@ -164,17 +162,17 @@ export default function Upload({printJob, updateFile}) {
                     </div>
                   </div>
                 </div>
-              </>
+              </div>
             :
-              <>
+              <div className="flex flex-col h-full">
                 <div className="flex w-full items-center mt-3 justify-between">
                     <p className="text-4xl font-bold">Selected: {printJob.file.name}</p>
                     <p onClick={() => removeSTL()} className="text-4xl text-blue-500 cursor-pointer underline">Change File</p>
                 </div>
-                <div className="flex flex-col items-center justify-center full-without-title mt-4" id="canvas-rect">
+                <div className="flex flex-col items-center justify-center full-without-title mt-4 grow" id="canvas-rect">
                   <div className="rounded" ref={containerRef}></div>
                 </div>
-              </>
+              </div>
           }
         </>
     );

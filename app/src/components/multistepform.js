@@ -49,13 +49,13 @@ export default function MultiStepForm({children, submitText, validDetails, handl
   }
 
   return (
-    <div className="full-screen flex rounded-lg relative divide-x divide-violet-200">
-      <div className="md:flex flex-col w-[300px] pr-2 p-4">
+    <div className="full-screen flex rounded-lg relative divide-x divide-gray-200">
+      <div className="md:flex flex-col w-[300px] p-2 mt-2">
         {
           Children.map(children, (child, idx) => {
             if (idx === step) {
               return (
-                <div className="flex block font-bold pl-5 pt-3 pb-3 rounded-lg brand-blue-accent">
+                <div className="flex block font-bold p-3 rounded-lg brand-blue-accent">
                   <div className="inline-block mr-2">
                     <span className="flex w-7 h-7 text-md items-center justify-center rounded-full border border-2 border-brand-blue">{idx + 1}</span>
                   </div>
@@ -64,7 +64,7 @@ export default function MultiStepForm({children, submitText, validDetails, handl
               )
             } else {
               return (
-                <div className="flex block font-bold pl-5 pt-3 pb-3">
+                <div className="flex block font-bold p-3">
                   <div className="inline-block mr-2">
                     <span className="flex h-7 w-7 text-md items-center justify-center rounded-full border border-2 border-black">{idx + 1}</span>
                   </div>
@@ -75,7 +75,8 @@ export default function MultiStepForm({children, submitText, validDetails, handl
           })
         }
       </div>
-      <div className="p-3 flex-grow">
+      <div className="flex flex-col flex-grow divide-gray-200">
+        <div className="p-3 h-full">
         {
           Children.map(children, (child, idx) => {
             if (idx === step) {
@@ -83,9 +84,12 @@ export default function MultiStepForm({children, submitText, validDetails, handl
             }
           })
         }
-        <div className="absolute bottom-5 right-5">
+        </div>
+        <div className="pt-2 pb-2 border-t border-gray">
+          <div className="float-right mr-3">
           {renderBackBtn()}
           {renderNextOrSubmitBtn()}
+          </div>
         </div>
       </div>
     </div>
