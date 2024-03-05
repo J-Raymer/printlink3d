@@ -1,9 +1,9 @@
 import MultiStepForm from "../components/multistepform";
 import MultiStepFormPage from "../components/multistepformpage";
 import JobCardList from "../components/jobCardList";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import { GetAllJobs } from "../backend";
-import { firebaseDb } from '../firebase';
+import { firebaseDb } from "../firebase/firebase";
 import { collection, onSnapshot } from "firebase/firestore";
 
 export default function Browse() {
@@ -11,22 +11,25 @@ export default function Browse() {
   const [jobs, setJobs] = useState([]);
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(collection(firebaseDb, 'Jobs'), (snapshot) => {
-      const fetchedJobs = [];
-      snapshot.docs.forEach((doc) => {
-        const data = doc.data();
-        fetchedJobs.push({
-          infill: data.Fill_Percentage,
-          material: data.Material,
-          distance: data.Radius,
-          fileName: data.STL,
-          name: data.Name,
-          email: data.Email,
-      });
+    const unsubscribe = onSnapshot(
+      collection(firebaseDb, "Jobs"),
+      (snapshot) => {
+        const fetchedJobs = [];
+        snapshot.docs.forEach((doc) => {
+          const data = doc.data();
+          fetchedJobs.push({
+            infill: data.Fill_Percentage,
+            material: data.Material,
+            distance: data.Radius,
+            fileName: data.STL,
+            name: data.Name,
+            email: data.Email,
+          });
 
-        setJobs(fetchedJobs);
-      });
-    })
+          setJobs(fetchedJobs);
+        });
+      }
+    );
 
     return () => {
       unsubscribe(); // Cleanup function to unsubscribe from real-time updates when the component unmounts
@@ -35,16 +38,20 @@ export default function Browse() {
 
   const onSelectJob = (job) => {
     setSelectedJob(job);
-  }
+  };
 
   const onUnselectJob = () => {
     setSelectedJob(null);
-  }
+  };
 
   return (
     <div>
       <h1 className="text-4xl font-extrabold p-6 pl-4">Browse</h1>
-      <MultiStepForm submitText="Accept Job" showNext={selectedJob !== null} validDetails={true}>
+      <MultiStepForm
+        submitText="Accept Job"
+        showNext={selectedJob !== null}
+        validDetails={true}
+      >
         <MultiStepFormPage title="Select Print">
           <div className="flex justify-center">
             <p className="text-4xl font-bold mb-10">Select a Job</p>

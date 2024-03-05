@@ -6,6 +6,9 @@ import Create from "./routes/create.js";
 import Browse from "./routes/browse.js";
 import Profile from "./routes/profile.js";
 import ProfileDropdown from "./components/profileDropdown.js";
+import Register from "./routes/register.js";
+import Login from "./routes/login.js";
+import { AuthProvider } from "./contexts/authContext/index.jsx";
 
 function Layout() {
   const navigate = useNavigate();
@@ -35,8 +38,12 @@ function Layout() {
           <button onClick={() => navigate("/create")}>
             <h2>Order</h2>
           </button>
+
           <button onClick={() => navigate("/browse")}>
             <h2>View Jobs</h2>
+          </button>
+          <button onClick={() => navigate("/login")}>
+            <h2>Login</h2>
           </button>
           <div
             className="relative"
@@ -64,14 +71,18 @@ function Layout() {
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Layout />}>
-        <Route index element={<Home />} />
-        <Route path="create" element={<Create />} />
-        <Route path="browse" element={<Browse />} />
-        <Route path="profile" element={<Profile />} />
-      </Route>
-    </Routes>
+    <AuthProvider>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Home />} />
+          <Route path="create" element={<Create />} />
+          <Route path="browse" element={<Browse />} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="register" element={<Register />} />
+          <Route path="login" element={<Login />} />
+        </Route>
+      </Routes>
+    </AuthProvider>
   );
 }
 
