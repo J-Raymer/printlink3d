@@ -1,4 +1,10 @@
-export default function Selector({ label, initValue, options, onChange }) {
+export default function Selector({
+  label,
+  initValue,
+  options,
+  onChange,
+  padding = 2.5,
+}) {
   const handleChange = (event) => {
     onChange(event.target.value);
   };
@@ -9,7 +15,7 @@ export default function Selector({ label, initValue, options, onChange }) {
         name="selector"
         id={label}
         onChange={handleChange}
-        className="shadow w-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+        className={`shadow w-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block p-${padding}`}
       >
         {options.map((option, index) =>
           option === initValue ? (

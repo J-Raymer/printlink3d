@@ -134,7 +134,7 @@ export default function MultiStepForm({
             return child;
           }
         })}
-        <div className="relative top-5">
+        <div className="absolute bottom-5 right-5">
           {renderBackBtn()}
           {renderNextOrSubmitBtn()}
         </div>
