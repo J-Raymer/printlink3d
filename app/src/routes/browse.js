@@ -9,6 +9,10 @@ import MultiStepFormPage from "../components/multistepformpage";
 export default function Browse() {
   const [selectedJob, setSelectedJob] = useState(null);
   const [jobs, setJobs] = useState([]);
+  const [filters, setFilters] = useState({
+    "materials": ["PLA", "ABS", "PETG"],
+    "bid_order": 0,
+  });
 
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(firebaseDb, 'Jobs'), (snapshot) => {
@@ -41,6 +45,16 @@ export default function Browse() {
     setSelectedJob(null);
   }
 
+  const handleCheck = (category, label) => {
+    let t = filters[category];
+    if (t.includes(label)) {
+      t.splice(t.indexOf(label), 1);
+    } else {
+      t.push(label);
+    }
+    setFilters({...filters, [category]: t});
+  }
+
   const changeMaterial = (x) => { };
   const changeColor = (x) => { };
   const changeBid = (x) => { };
@@ -57,10 +71,24 @@ export default function Browse() {
         <div className="flex h-full">
           <div className="md:flex flex-col w-[250px] border border-gray-300 rounded p-3">
             <h2 className="text-2xl font-bold">Job Filters</h2>
+            <div className="mt-3">
+              <h3>Material Type:</h3>
+              <input type="checkbox" id="material1" name="material1" value="PLA" defaultChecked={true} onChange={() => handleCheck("materials", "PLA")}/>
+              <label htmlFor="material1"> PLA</label><br />
+              <input type="checkbox" id="material2" name="material2" value="ABS" defaultChecked={true} onChange={() => handleCheck("materials", "ABS")}/>
+              <label htmlFor="material2"> ABS</label><br />
+              <input type="checkbox" id="material3" name="material3" value="PETG" defaultChecked={true} onChange={() => handleCheck("materials", "PETG")}/>
+              <label htmlFor="material3"> PETG</label><br />
+            </div>
+            <div className="mt-3">
+              <h3>Sort Bid:</h3>
+              <Selector label="Bid" options={["Lowest to highest", "Highest to lowest"]} padding={1} onChange={changeBid} />
+            </div>
           </div>
           <div className="grow p-3 pt-0 overflow-y-scroll">
             <JobCardList
               jobs={jobs}
+              filters={filters}
               onSelectJob={onSelectJob}
               onUnselectJob={onUnselectJob}
               selectedJob={selectedJob}
