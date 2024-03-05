@@ -12,14 +12,14 @@ function Layout() {
   const [delayHandler, setDelayHandler] = useState(null)
 
     const handleMouseEnter = () => {
-        clearTimeout(delayHandler)
+        //clearTimeout(delayHandler)
         setDropdownVisible(true)
     }
 
     const handleMouseLeave = () => {
-        setDelayHandler(setTimeout(() => {
+      //setDelayHandler(setTimeout(() => {
           setDropdownVisible(false)
-      }, 500))
+      //}, 100))
     }
 
   return (
@@ -31,10 +31,10 @@ function Layout() {
           </h2>
         </Link>
         <div className="flex space-x-4">
-          <Link to="/create"><h2>Order</h2></Link>
-          <Link to="/browse"><h2>View Jobs</h2></Link>
+          <Link to="/create" className="bg-brand-blue text-white p-2 px-4 rounded"><h2>Order</h2></Link>
+          <Link to="/browse" className="bg-brand-purple text-white p-2 px-4 rounded"><h2>View Jobs</h2></Link>
           <div
-            className="relative"
+            className="mt-2"
             onMouseEnter={() => handleMouseEnter()}
             onMouseLeave={() => handleMouseLeave()}
           >
