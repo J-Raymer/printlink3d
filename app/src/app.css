@@ -24,6 +24,10 @@ nav {
   text-align: center;
 }
 
+.full-screen {
+  height: calc(100vh - 2.75rem);
+}
+
 @media screen(sm) {
   .cta-button {
     height: 40vw;
