@@ -1,5 +1,5 @@
 import { Routes, Route, Outlet, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import "./app.css";
 import Home from "./routes/home.js";
 import Create from "./routes/create.js";
@@ -8,12 +8,25 @@ import Profile from "./routes/profile.js";
 import ProfileDropdown from "./components/profileDropdown.js";
 import Register from "./routes/register.js";
 import Login from "./routes/login.js";
-import { AuthProvider } from "./contexts/authContext/index.jsx";
+import { AuthProvider, useAuth } from "./contexts/authContext/index.jsx";
 
 function Layout() {
   const navigate = useNavigate();
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const [delayHandler, setDelayHandler] = useState(null);
+  const auth = useAuth();
+
+  // auth = {
+  //   currUser: {
+  //   displayName: String,
+  //   email: String,
+  //   photoURL: string
+  // },
+  //   loading: bool,
+  //   userLoggedIn: bool
+  // }
+
+  console.log(auth);
 
   const handleMouseEnter = () => {
     clearTimeout(delayHandler);
@@ -51,7 +64,11 @@ function Layout() {
             onMouseLeave={() => handleMouseLeave()}
           >
             <button>
-              <h2>Profile Name</h2>
+              {auth && auth.userLoggedIn && auth.currUser.displayName ? (
+                <h2>{auth.currUser.displayName}</h2>
+              ) : (
+                <h2>Profile Name</h2>
+              )}
             </button>
             {isDropdownVisible && (
               <div
