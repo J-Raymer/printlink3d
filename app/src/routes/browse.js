@@ -55,6 +55,10 @@ export default function Browse() {
     setFilters({...filters, [category]: t});
   }
 
+  const isFilterSelected = (category, label) => {
+    return filters[category].includes(label);
+  }
+
   const changeMaterial = (x) => { };
   const changeColor = (x) => { };
   const changeBid = (x) => { };
@@ -73,11 +77,11 @@ export default function Browse() {
             <h2 className="text-2xl font-bold">Job Filters</h2>
             <div className="mt-3">
               <h3>Material Type:</h3>
-              <input type="checkbox" id="material1" name="material1" value="PLA" defaultChecked={true} onChange={() => handleCheck("materials", "PLA")}/>
+              <input type="checkbox" id="material1" name="material1" value="PLA" defaultChecked={isFilterSelected("materials", "PLA")} onChange={() => handleCheck("materials", "PLA")}/>
               <label htmlFor="material1"> PLA</label><br />
-              <input type="checkbox" id="material2" name="material2" value="ABS" defaultChecked={true} onChange={() => handleCheck("materials", "ABS")}/>
+              <input type="checkbox" id="material2" name="material2" value="ABS" defaultChecked={isFilterSelected("materials", "ABS")} onChange={() => handleCheck("materials", "ABS")}/>
               <label htmlFor="material2"> ABS</label><br />
-              <input type="checkbox" id="material3" name="material3" value="PETG" defaultChecked={true} onChange={() => handleCheck("materials", "PETG")}/>
+              <input type="checkbox" id="material3" name="material3" value="PETG" defaultChecked={isFilterSelected("materials", "PETG")} onChange={() => handleCheck("materials", "PETG")}/>
               <label htmlFor="material3"> PETG</label><br />
             </div>
             <div className="mt-3">
