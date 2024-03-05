@@ -4,11 +4,10 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'custom-purple': '#BF4AD2',
-        'custom-purple-hover': "#AF43C0"
-      }
+        "custom-purple": "#BF4AD2",
+        "custom-purple-hover": "#AF43C0",
+      },
     },
   },
   plugins: [],
-}
-
+};

@@ -1,6 +1,6 @@
 import JobCardList from "../components/jobCardList";
-import React, { useState, useEffect } from 'react';
-import { firebaseDb } from '../firebase';
+import React, { useState, useEffect } from "react";
+import { firebaseDb } from "../firebase/firebase";
 import { collection, onSnapshot } from "firebase/firestore";
 import Selector from "../components/selector";
 import MultiStepForm from "../components/multistepform";
@@ -15,22 +15,25 @@ export default function Browse() {
   });
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(collection(firebaseDb, 'Jobs'), (snapshot) => {
-      const fetchedJobs = [];
-      snapshot.docs.forEach((doc) => {
-        const data = doc.data();
-        fetchedJobs.push({
-          infill: data.Fill_Percentage,
-          material: data.Material,
-          distance: data.Radius,
-          fileName: data.STL,
-          name: data.Name,
-          email: data.Email,
-        });
+    const unsubscribe = onSnapshot(
+      collection(firebaseDb, "Jobs"),
+      (snapshot) => {
+        const fetchedJobs = [];
+        snapshot.docs.forEach((doc) => {
+          const data = doc.data();
+          fetchedJobs.push({
+            infill: data.Fill_Percentage,
+            material: data.Material,
+            distance: data.Radius,
+            fileName: data.STL,
+            name: data.Name,
+            email: data.Email,
+          });
 
-        setJobs(fetchedJobs);
-      });
-    })
+          setJobs(fetchedJobs);
+        });
+      }
+    );
 
     return () => {
       unsubscribe(); // Cleanup function to unsubscribe from real-time updates when the component unmounts
@@ -39,11 +42,11 @@ export default function Browse() {
 
   const onSelectJob = (job) => {
     setSelectedJob(job);
-  }
+  };
 
   const onUnselectJob = () => {
     setSelectedJob(null);
-  }
+  };
 
   const handleCheck = (category, label) => {
     let t = filters[category];
@@ -123,26 +126,52 @@ export default function Browse() {
           <div className="m-5">
             <p className="font-bold">Material:</p>
             <div className="ml-10">
-              <input type="checkbox" id="material1" name="material1" value="PLA" />
-              <label htmlFor="material1"> PLA</label><br />
-              <input type="checkbox" id="material2" name="material2" value="ABS" />
-              <label htmlFor="material2"> ABS</label><br />
-              <input type="checkbox" id="material3" name="material3" value="PETG" />
-              <label htmlFor="material3"> PETG</label><br />
+              <input
+                type="checkbox"
+                id="material1"
+                name="material1"
+                value="PLA"
+              />
+              <label htmlFor="material1"> PLA</label>
+              <br />
+              <input
+                type="checkbox"
+                id="material2"
+                name="material2"
+                value="ABS"
+              />
+              <label htmlFor="material2"> ABS</label>
+              <br />
+              <input
+                type="checkbox"
+                id="material3"
+                name="material3"
+                value="PETG"
+              />
+              <label htmlFor="material3"> PETG</label>
+              <br />
             </div>
             <p className="font-bold">Color:</p>
             <div className="ml-10">
               <input type="checkbox" id="red" name="red" value="Red" />
-              <label htmlFor="red"> Red</label><br />
+              <label htmlFor="red"> Red</label>
+              <br />
               <input type="checkbox" id="green" name="green" value="Green" />
-              <label htmlFor="green"> Green</label><br />
+              <label htmlFor="green"> Green</label>
+              <br />
               <input type="checkbox" id="blue" name="blue" value="Blue" />
-              <label htmlFor="blue"> Blue</label><br />
+              <label htmlFor="blue"> Blue</label>
+              <br />
             </div>
             <div className="flex mt-2">
               <p className="font-bold mr-3">Bid:</p>
               <div>
-                <Selector label="Bid" options={["Lowest to highest", "Highest to lowest"]} padding={1} onChange={changeBid} />
+                <Selector
+                  label="Bid"
+                  options={["Lowest to highest", "Highest to lowest"]}
+                  padding={1}
+                  onChange={changeBid}
+                />
               </div>
             </div>
           </div>

@@ -1,7 +1,12 @@
 import { Children, useState } from "react";
 
-export default function MultiStepForm({children, submitText, validDetails, handleSubmit, showNext}) {
-
+export default function MultiStepForm({
+  children,
+  submitText,
+  validDetails,
+  handleSubmit,
+  showNext,
+}) {
   const [step, setStep] = useState(0);
 
   function handleNextStep() {
@@ -18,15 +23,24 @@ export default function MultiStepForm({children, submitText, validDetails, handl
       return;
     }
 
-    return step > 0
-      ? <button className="bg-gray-200 border border-gray-400 text-gray-700 font-bold py-2 px-4 rounded mr-2" onClick={handleBackStep}>Back</button>
-      : <button className="bg-gray-200 border border-gray-400 text-gray-700 font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed mr-2">Back</button>
+    return step > 0 ? (
+      <button
+        className="bg-gray-200 border border-gray-400 text-gray-700 font-bold py-2 px-4 rounded mr-2"
+        onClick={handleBackStep}
+      >
+        Back
+      </button>
+    ) : (
+      <button className="bg-gray-200 border border-gray-400 text-gray-700 font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed mr-2">
+        Back
+      </button>
+    );
   }
 
   // TODO remove children count == 3 logic
   function renderNextOrSubmitBtn() {
     if (Children.count(children) == 3) {
-      console.log(step)
+      console.log(step);
       if (step === 0) {
         return showNext ?
           <button className="bg-brand-blue border border-brand-blue text-white font-bold py-2 px-4 rounded" onClick={handleNextStep}>Next</button>
@@ -70,10 +84,9 @@ export default function MultiStepForm({children, submitText, validDetails, handl
                   </div>
                   <span className="inline text-xl">{child.props.title}</span>
                 </div>
-              )
-            }
-          })
-        }
+            );
+          }
+        })}
       </div>
       <div className="flex flex-col grow">
         <div className="p-3 h-full-less-bottom-bar">

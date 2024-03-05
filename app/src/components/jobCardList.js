@@ -20,5 +20,5 @@ export default function JobCardList({ jobs, filters, selectedJob, onSelectJob, o
       }
       </div>
     </div>
-  )
+  );
 }

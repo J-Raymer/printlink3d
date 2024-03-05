@@ -6,10 +6,15 @@ import Create from './routes/create.js';
 import Browse from './routes/browse.js';
 import Profile from './routes/profile.js';
 import ProfileDropdown from "./components/profileDropdown.js";
+import Register from "./routes/register.js";
+import Login from "./routes/login.js";
+import { AuthProvider, useAuth } from "./contexts/authContext/index.jsx";
+import { doSignOut } from "./firebase/auth.js";
 
 function Layout() {
   const [isDropdownVisible, setDropdownVisible] = useState(false);
-  const [delayHandler, setDelayHandler] = useState(null)
+  const [delayHandler, setDelayHandler] = useState(null);
+  const auth = useAuth();
 
     const handleMouseEnter = () => {
         //clearTimeout(delayHandler)
@@ -20,7 +25,18 @@ function Layout() {
       //setDelayHandler(setTimeout(() => {
           setDropdownVisible(false)
       //}, 100))
-    }
+    }  
+    /* 
+  auth = {
+    currUser: {
+    displayName: String, 
+    email: String,
+    photoURL: string
+  },
+    loading: bool,
+    userLoggedIn: bool
+  }
+  */
 
   return (
     <>
@@ -33,13 +49,24 @@ function Layout() {
         <div className="flex space-x-4">
           <Link to="/create" className="bg-brand-blue text-white p-2 px-4 rounded"><h2>Order</h2></Link>
           <Link to="/browse" className="bg-brand-purple text-white p-2 px-4 rounded"><h2>View Jobs</h2></Link>
+          {auth && auth.userLoggedIn ? (
+            <button onClick={() => doSignOut()}>
+              <h2>Log Out</h2>
+            </button>
+          ) : (
+            <Link to="/login" className="p-2"><h2>Login</h2></Link>
+          )}
           <div
             className="mt-2"
             onMouseEnter={() => handleMouseEnter()}
             onMouseLeave={() => handleMouseLeave()}
           >
             <button>
-              <h2>Profile Name</h2>
+              {auth && auth.userLoggedIn && auth.currUser.displayName ? (
+                <h2>{auth.currUser.displayName}</h2>
+              ) : (
+                <h2>Profile Name</h2>
+              )}
             </button>
             {isDropdownVisible && (
               <div
@@ -59,14 +86,18 @@ function Layout() {
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Layout />}>
-        <Route index element={<Home />} />
-        <Route path="create" element={<Create />} />
-        <Route path="browse" element={<Browse />} />
-        <Route path="profile" element={<Profile />} />
-      </Route>
-    </Routes>
+    <AuthProvider>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Home />} />
+          <Route path="create" element={<Create />} />
+          <Route path="browse" element={<Browse />} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="register" element={<Register />} />
+          <Route path="login" element={<Login />} />
+        </Route>
+      </Routes>
+    </AuthProvider>
   );
 }
 
