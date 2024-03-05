@@ -1,5 +1,5 @@
 import { Routes, Route, Outlet, useNavigate } from "react-router-dom";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import "./app.css";
 import Home from "./routes/home.js";
 import Create from "./routes/create.js";
@@ -9,6 +9,7 @@ import ProfileDropdown from "./components/profileDropdown.js";
 import Register from "./routes/register.js";
 import Login from "./routes/login.js";
 import { AuthProvider, useAuth } from "./contexts/authContext/index.jsx";
+import { doSignOut } from "./firebase/auth.js";
 
 function Layout() {
   const navigate = useNavigate();
@@ -16,17 +17,17 @@ function Layout() {
   const [delayHandler, setDelayHandler] = useState(null);
   const auth = useAuth();
 
-  // auth = {
-  //   currUser: {
-  //   displayName: String,
-  //   email: String,
-  //   photoURL: string
-  // },
-  //   loading: bool,
-  //   userLoggedIn: bool
-  // }
-
-  console.log(auth);
+  /* 
+  auth = {
+    currUser: {
+    displayName: String, 
+    email: String,
+    photoURL: string
+  },
+    loading: bool,
+    userLoggedIn: bool
+  }
+  */
 
   const handleMouseEnter = () => {
     clearTimeout(delayHandler);
@@ -55,9 +56,16 @@ function Layout() {
           <button onClick={() => navigate("/browse")}>
             <h2>View Jobs</h2>
           </button>
-          <button onClick={() => navigate("/login")}>
-            <h2>Login</h2>
-          </button>
+          {auth && auth.userLoggedIn ? (
+            <button onClick={() => doSignOut()}>
+              <h2>Log Out</h2>
+            </button>
+          ) : (
+            <button onClick={() => navigate("/login")}>
+              <h2>Login</h2>
+            </button>
+          )}
+
           <div
             className="relative"
             onMouseEnter={() => handleMouseEnter()}
