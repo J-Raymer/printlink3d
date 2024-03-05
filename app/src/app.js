@@ -1,4 +1,4 @@
-import { Routes, Route, Outlet, useNavigate } from "react-router-dom";
+import { Routes, Link, Route, Outlet } from "react-router-dom";
 import { useState } from 'react';
 import './app.css';
 import Home from './routes/home.js';
@@ -8,7 +8,6 @@ import Profile from './routes/profile.js';
 import ProfileDropdown from "./components/profileDropdown.js";
 
 function Layout() {
-  const navigate = useNavigate();
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const [delayHandler, setDelayHandler] = useState(null)
 
@@ -26,16 +25,10 @@ function Layout() {
   return (
     <div>
       <nav className="flex justify-between w-full p-1 bg-transparent px-4 py-2 text-xl font-bold">
-        <button onClick={() => navigate('/')}>
-          <h2>PrintLink3D</h2>
-        </button>
+        <Link to="/"><h2>PrintLink3D</h2></Link>
         <div className="flex space-x-4">
-          <button onClick={() => navigate('/create')}>
-            <h2>Order</h2>
-          </button>
-          <button onClick={() => navigate('/browse')}>
-            <h2>View Jobs</h2>
-          </button>
+          <Link to="/create"><h2>Order</h2></Link>
+          <Link to="/browse"><h2>View Jobs</h2></Link>
           <div
             className="relative"
             onMouseEnter={() => handleMouseEnter()}
