@@ -146,54 +146,33 @@ export default function Upload({ printJob, updateFile }) {
     },
   });
 
-  return (
-    <>
-      {printJob.file === null ? (
+    return (
         <>
-          <div className="flex justify-center">
-            <p className="text-4xl font-bold">Upload an STL file</p>
-          </div>
-          <div className="flex flex-col full-without-title grow mt-10">
-            <div
-              {...getRootProps()}
-              className="h-full border-dashed border-2 border-gray-400 p-4 flex text-center justify-center items-center"
-            >
-              <input {...getInputProps()} />
-              <div className="text-3xl">
-                <p>
-                  Drag and drop
-                  <br />
-                  or
-                </p>
-                <span
-                  onClick={open}
-                  className="text-3xl text-blue-500 cursor-pointer underline"
-                >
-                  Browse files
-                </span>
+          {
+             printJob.file === null ?
+              <div className="flex flex-col h-full">
+                <p className="text-4xl font-bold mt-3">Upload an STL file</p>
+                <div className="flex flex-col mt-4 grow">
+                  <div {...getRootProps()} className="h-full border-dashed border-2 border-gray-400 p-4 flex text-center justify-center items-center rounded" style={{backgroundColor: "#f7f7f7"}}>
+                    <input {...getInputProps()} />
+                    <div className="text-3xl">
+                      <p>Drag and drop<br/>or</p>
+                      <span onClick={open} className="text-3xl text-blue-500 cursor-pointer underline">Browse files</span>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
+            :
+              <div className="flex flex-col h-full">
+                <div className="flex w-full items-center mt-3 justify-between">
+                    <p className="text-4xl font-bold">Selected: {printJob.file.name}</p>
+                    <p onClick={() => removeSTL()} className="text-4xl text-blue-500 cursor-pointer underline">Change File</p>
+                </div>
+                <div className="flex flex-col items-center justify-center full-without-title mt-4 grow" id="canvas-rect">
+                  <div className="rounded" ref={containerRef}></div>
+                </div>
+              </div>
+          }
         </>
-      ) : (
-        <>
-          <div className="flex w-full items-center mb-[20px] justify-between">
-            <p className="text-4xl font-bold">Selected: {printJob.file.name}</p>
-            <p
-              onClick={() => removeSTL()}
-              className="text-4xl text-blue-500 cursor-pointer underline"
-            >
-              Change File
-            </p>
-          </div>
-          <div
-            className="flex flex-col items-center justify-center full-without-title"
-            id="canvas-rect"
-          >
-            <div className="" ref={containerRef}></div>
-          </div>
-        </>
-      )}
-    </>
-  );
-}
+    );
+  }

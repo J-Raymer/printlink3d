@@ -14,8 +14,8 @@ export default function JobCard({
   return (
     <div
       onClick={handleClick}
-      className={`max-w-xl mx-auto bg-white shadow-md rounded-lg overflow-hidden md:flex w-full transition-all duration-50 transform hover:scale-105 ${
-        isSelected ? "border-8 border-gradient" : ""
+      className={`border-[1px] border-gray-300 bg-white rounded overflow-hidden flex w-full hover:cursor-pointer hover:bg-gray-200 ${
+        isSelected ? 'fg-brand-blue brand-blue-accent' : ''
       }`}
       style={{ height: isSelected ? "auto" : "fit-content" }}
     >

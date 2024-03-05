@@ -1,10 +1,10 @@
-import { Routes, Route, Outlet, useNavigate } from "react-router-dom";
-import { useState } from "react";
-import "./app.css";
-import Home from "./routes/home.js";
-import Create from "./routes/create.js";
-import Browse from "./routes/browse.js";
-import Profile from "./routes/profile.js";
+import { Routes, Link, Route, Outlet } from "react-router-dom";
+import { useState } from 'react';
+import './app.css';
+import Home from './routes/home.js';
+import Create from './routes/create.js';
+import Browse from './routes/browse.js';
+import Profile from './routes/profile.js';
 import ProfileDropdown from "./components/profileDropdown.js";
 import Register from "./routes/register.js";
 import Login from "./routes/login.js";
@@ -12,12 +12,21 @@ import { AuthProvider, useAuth } from "./contexts/authContext/index.jsx";
 import { doSignOut } from "./firebase/auth.js";
 
 function Layout() {
-  const navigate = useNavigate();
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const [delayHandler, setDelayHandler] = useState(null);
   const auth = useAuth();
 
-  /* 
+    const handleMouseEnter = () => {
+        //clearTimeout(delayHandler)
+        setDropdownVisible(true)
+    }
+
+    const handleMouseLeave = () => {
+      //setDelayHandler(setTimeout(() => {
+          setDropdownVisible(false)
+      //}, 100))
+    }  
+    /* 
   auth = {
     currUser: {
     displayName: String, 
@@ -29,45 +38,26 @@ function Layout() {
   }
   */
 
-  const handleMouseEnter = () => {
-    clearTimeout(delayHandler);
-    setDropdownVisible(true);
-  };
-
-  const handleMouseLeave = () => {
-    setDelayHandler(
-      setTimeout(() => {
-        setDropdownVisible(false);
-      }, 500)
-    );
-  };
-
   return (
-    <div>
-      <nav className="flex justify-between w-full p-1 bg-transparent px-4 py-2 text-xl font-bold">
-        <button onClick={() => navigate("/")}>
-          <h2>PrintLink3D</h2>
-        </button>
+    <>
+      <nav className="flex justify-between items-center w-full px-4 py-3">
+        <Link to="/">
+          <h2 className="text-4xl">
+            <span className="fg-brand-blue">Print</span><span className="fg-brand-purple">Link3D</span>
+          </h2>
+        </Link>
         <div className="flex space-x-4">
-          <button onClick={() => navigate("/create")}>
-            <h2>Order</h2>
-          </button>
-
-          <button onClick={() => navigate("/browse")}>
-            <h2>View Jobs</h2>
-          </button>
+          <Link to="/create" className="bg-brand-blue text-white p-2 px-4 rounded"><h2>Order</h2></Link>
+          <Link to="/browse" className="bg-brand-purple text-white p-2 px-4 rounded"><h2>View Jobs</h2></Link>
           {auth && auth.userLoggedIn ? (
             <button onClick={() => doSignOut()}>
               <h2>Log Out</h2>
             </button>
           ) : (
-            <button onClick={() => navigate("/login")}>
-              <h2>Login</h2>
-            </button>
+            <Link to="/login" className="p-2"><h2>Login</h2></Link>
           )}
-
           <div
-            className="relative"
+            className="mt-2"
             onMouseEnter={() => handleMouseEnter()}
             onMouseLeave={() => handleMouseLeave()}
           >
@@ -90,7 +80,7 @@ function Layout() {
         </div>
       </nav>
       <Outlet />
-    </div>
+    </>
   );
 }
 
