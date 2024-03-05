@@ -15,6 +15,7 @@ export const doCreateUserWithEmailAndPassword = async (email, password) => {
 };
 
 export const doSignInWithEmailAndPassword = (email, password) => {
+  // save user to db?
   return signInWithEmailAndPassword(auth, email, password);
 };
 

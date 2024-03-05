@@ -1,7 +1,3 @@
-export default function MultiStepFormPage({children, title}) {
-  return (
-    <>
-      {children}
-    </>
-  );
-};
+export default function MultiStepFormPage({ children, title }) {
+  return <>{children}</>;
+}
