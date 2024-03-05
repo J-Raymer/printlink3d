@@ -37,6 +37,10 @@ nav h2 {
   border: 1px solid var(--p3d-brand-blue);
 }
 
+.brand-blue-accent:hover {
+  background-color: #2A3DDF33;
+}
+
 .fg-brand-purple {
   color: var(--p3d-brand-purple);
 }

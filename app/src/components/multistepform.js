@@ -49,7 +49,7 @@ export default function MultiStepForm({children, submitText, validDetails, handl
   }
 
   return (
-    <div className="full-screen flex rounded-lg relative divide-x divide-gray-200">
+    <div className="full-screen flex rounded-lg relative divide-x divide-gray-300">
       <div className="md:flex flex-col w-[300px] p-2 mt-2">
         {
           Children.map(children, (child, idx) => {
@@ -85,7 +85,7 @@ export default function MultiStepForm({children, submitText, validDetails, handl
           })
         }
         </div>
-        <div className="pt-2 pb-2 border-t border-gray">
+        <div className="pt-2 pb-2 border-t border-gray-300">
           <div className="float-right mr-3">
           {renderBackBtn()}
           {renderNextOrSubmitBtn()}

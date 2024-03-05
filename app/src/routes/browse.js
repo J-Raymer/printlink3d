@@ -55,10 +55,10 @@ export default function Browse() {
       >
       <MultiStepFormPage title="Select Job">
         <div className="flex h-full">
-          <div className="md:flex flex-col w-[250px] border border-gray-200 rounded p-3">
+          <div className="md:flex flex-col w-[250px] border border-gray-300 rounded p-3">
             <h2 className="text-2xl font-bold">Job Filters</h2>
           </div>
-          <div className="grow p-3 overflow-y-scroll">
+          <div className="grow p-3 pt-0 overflow-y-scroll">
             <JobCardList
               jobs={jobs}
               onSelectJob={onSelectJob}
