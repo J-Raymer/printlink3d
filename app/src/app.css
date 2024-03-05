@@ -67,7 +67,11 @@ nav h2 {
 }
 
 .full-screen {
-  height: calc(100vh - 2.75rem);
+  /* 
+   * 2.5rem -> title height
+   * 1.5rem -> 0.75rem pad on top and bottom
+   */
+  height: calc(100vh - 2.5rem - 1.5rem);
 }
 
 .full-without-title {
