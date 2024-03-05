@@ -75,8 +75,8 @@ export default function MultiStepForm({children, submitText, validDetails, handl
           })
         }
       </div>
-      <div className="flex flex-col flex-grow divide-gray-200">
-        <div className="p-3 h-full">
+      <div className="flex flex-col grow">
+        <div className="p-3 h-full-less-bottom-bar">
         {
           Children.map(children, (child, idx) => {
             if (idx === step) {

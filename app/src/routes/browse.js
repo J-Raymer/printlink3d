@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { firebaseDb } from '../firebase';
 import { collection, onSnapshot } from "firebase/firestore";
 import Selector from "../components/selector";
+import MultiStepForm from "../components/multistepform";
+import MultiStepFormPage from "../components/multistepformpage";
 
 export default function Browse() {
   const [selectedJob, setSelectedJob] = useState(null);
@@ -45,6 +47,42 @@ export default function Browse() {
 
   return (
     <div>
+      <MultiStepForm
+        submitText="Accept Job"
+        showNext={true}
+        validDetails={true}
+        handleSubmit={()=>{}}
+      >
+      <MultiStepFormPage title="Select Job">
+        <div className="flex h-full">
+          <div className="md:flex flex-col w-[250px] border border-gray-200 rounded p-3">
+            <h2 className="text-2xl font-bold">Job Filters</h2>
+          </div>
+          <div className="grow p-3 overflow-y-scroll">
+            <JobCardList
+              jobs={jobs}
+              onSelectJob={onSelectJob}
+              onUnselectJob={onUnselectJob}
+              selectedJob={selectedJob}
+            />
+          </div>
+        </div>
+
+      </MultiStepFormPage>
+      <MultiStepFormPage title="Confirm">
+
+      </MultiStepFormPage>
+
+      </MultiStepForm>
+    </div>
+  );
+}
+
+
+/*
+<FontAwesomeIcon icon="fa-solid fa-user" />
+
+ <div>
       <div className="flex justify-center">
         <p className="text-4xl font-bold mb-10 mt-10">Select a Job</p>
       </div>
@@ -87,5 +125,4 @@ export default function Browse() {
         </div>
       </div>
     </div>
-  );
-}
+*/
