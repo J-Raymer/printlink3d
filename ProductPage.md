@@ -11,13 +11,12 @@ Besides this, the homepage acts as a central hub for the application allowing th
 We decided on a clean minimalistic look for the homepage making it easy for the user to focus on the relevant features.
 If that is the ones with printing needs or a printer.
 
-
 ## Create Order Page
 The Create Order page's purpose is to allow users to create new Orders. The Create Order page is split up into two parts.
 
 ### Upload STL
 The first step to creating a new order is to upload the user's STL file. As seen below, this menu is quite simple as its only purpose is to receive the STL file.
-To ease the upload process, clicking the STL button will open the user's file system, but only display their STL files.
+Upon upload, a 3D render is displayed allowing users to see the model they're about to order.
 
 ### Configure Order
 After uploading the STL file the user gets access to the configuration menu. To simplify this process the configurations are split up into two parts, normal and advanced. 
