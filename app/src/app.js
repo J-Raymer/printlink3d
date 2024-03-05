@@ -1,48 +1,82 @@
 import { Routes, Route, Outlet, useNavigate } from "react-router-dom";
-import { useState } from 'react';
-import './app.css';
-import Home from './routes/home.js';
-import Create from './routes/create.js';
-import Browse from './routes/browse.js';
-import Profile from './routes/profile.js';
+import { useState } from "react";
+import "./app.css";
+import Home from "./routes/home.js";
+import Create from "./routes/create.js";
+import Browse from "./routes/browse.js";
+import Profile from "./routes/profile.js";
 import ProfileDropdown from "./components/profileDropdown.js";
+import Register from "./routes/register.js";
+import Login from "./routes/login.js";
+import { AuthProvider, useAuth } from "./contexts/authContext/index.jsx";
+import { doSignOut } from "./firebase/auth.js";
 
 function Layout() {
   const navigate = useNavigate();
   const [isDropdownVisible, setDropdownVisible] = useState(false);
-  const [delayHandler, setDelayHandler] = useState(null)
+  const [delayHandler, setDelayHandler] = useState(null);
+  const auth = useAuth();
 
-    const handleMouseEnter = () => {
-        clearTimeout(delayHandler)
-        setDropdownVisible(true)
-    }
+  /* 
+  auth = {
+    currUser: {
+    displayName: String, 
+    email: String,
+    photoURL: string
+  },
+    loading: bool,
+    userLoggedIn: bool
+  }
+  */
 
-    const handleMouseLeave = () => {
-        setDelayHandler(setTimeout(() => {
-          setDropdownVisible(false)
-      }, 500))
-    }
+  const handleMouseEnter = () => {
+    clearTimeout(delayHandler);
+    setDropdownVisible(true);
+  };
+
+  const handleMouseLeave = () => {
+    setDelayHandler(
+      setTimeout(() => {
+        setDropdownVisible(false);
+      }, 500)
+    );
+  };
 
   return (
     <div>
       <nav className="flex justify-between w-full p-1 bg-transparent px-4 py-2 text-xl font-bold">
-        <button onClick={() => navigate('/')}>
+        <button onClick={() => navigate("/")}>
           <h2>PrintLink3D</h2>
         </button>
         <div className="flex space-x-4">
-          <button onClick={() => navigate('/create')}>
+          <button onClick={() => navigate("/create")}>
             <h2>Order</h2>
           </button>
-          <button onClick={() => navigate('/browse')}>
+
+          <button onClick={() => navigate("/browse")}>
             <h2>View Jobs</h2>
           </button>
+          {auth && auth.userLoggedIn ? (
+            <button onClick={() => doSignOut()}>
+              <h2>Log Out</h2>
+            </button>
+          ) : (
+            <button onClick={() => navigate("/login")}>
+              <h2>Login</h2>
+            </button>
+          )}
+
           <div
             className="relative"
             onMouseEnter={() => handleMouseEnter()}
             onMouseLeave={() => handleMouseLeave()}
           >
             <button>
-              <h2>Profile Name</h2>
+              {auth && auth.userLoggedIn && auth.currUser.displayName ? (
+                <h2>{auth.currUser.displayName}</h2>
+              ) : (
+                <h2>Profile Name</h2>
+              )}
             </button>
             {isDropdownVisible && (
               <div
@@ -62,14 +96,18 @@ function Layout() {
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Layout />}>
-        <Route index element={<Home />} />
-        <Route path="create" element={<Create />} />
-        <Route path="browse" element={<Browse />} />
-        <Route path="profile" element={<Profile />} />
-      </Route>
-    </Routes>
+    <AuthProvider>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Home />} />
+          <Route path="create" element={<Create />} />
+          <Route path="browse" element={<Browse />} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="register" element={<Register />} />
+          <Route path="login" element={<Login />} />
+        </Route>
+      </Routes>
+    </AuthProvider>
   );
 }
 
