@@ -23,9 +23,13 @@ function Layout() {
     }
 
   return (
-    <div>
-      <nav className="flex justify-between w-full p-1 bg-transparent px-4 py-2 text-xl font-bold">
-        <Link to="/"><h2>PrintLink3D</h2></Link>
+    <>
+      <nav className="flex justify-between items-center w-full px-4 py-3">
+        <Link to="/">
+          <h2 className="text-4xl">
+            <span className="fg-brand-blue">Print</span><span className="fg-brand-purple">Link3D</span>
+          </h2>
+        </Link>
         <div className="flex space-x-4">
           <Link to="/create"><h2>Order</h2></Link>
           <Link to="/browse"><h2>View Jobs</h2></Link>
@@ -49,7 +53,7 @@ function Layout() {
         </div>
       </nav>
       <Outlet />
-    </div>
+    </>
   );
 }
 

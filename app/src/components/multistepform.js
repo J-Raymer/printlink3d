@@ -29,7 +29,7 @@ export default function MultiStepForm({children, submitText, validDetails, handl
       console.log(step)
       if (step === 0) {
         return showNext ?
-          <button className="bg-blue-500 hover:bg-blue-700 border border-blue-500 text-white font-bold py-2 px-4 rounded" onClick={handleNextStep}>Next</button>
+          <button className="bg-brand-blue border border-brand-blue text-white font-bold py-2 px-4 rounded" onClick={handleNextStep}>Next</button>
           : <button className="bg-gray-200 border border-gray-400 text-gray-700 font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed mr-2">Next</button>
       }
       else if (step === 1) {
@@ -38,7 +38,7 @@ export default function MultiStepForm({children, submitText, validDetails, handl
     }
     else if (step < Children.count(children) - 1) {
       return showNext ?
-        <button className="bg-blue-500 hover:bg-blue-700 border border-blue-500 text-white font-bold py-2 px-4 rounded" onClick={handleNextStep}>Next</button>
+        <button className="bg-brand-blue hover:bg-blue-900 border border-brand-blue text-white font-bold py-2 px-4 rounded" onClick={handleNextStep}>Next</button>
         : <button className="bg-gray-200 border border-gray-400 text-gray-700 font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed mr-2">Next</button>
     }
     else {
@@ -49,24 +49,24 @@ export default function MultiStepForm({children, submitText, validDetails, handl
   }
 
   return (
-    <div className="full-screen flex rounded-lg relative p-4 divide-x divide-violet-200">
-      <div className="md:flex flex-col w-56 pr-2">
+    <div className="full-screen flex rounded-lg relative divide-x divide-violet-200">
+      <div className="md:flex flex-col w-[300px] pr-2 p-4">
         {
           Children.map(children, (child, idx) => {
             if (idx === step) {
               return (
-                <div className="block font-bold pl-5 pt-3 pb-3 rounded-lg" style={{ backgroundImage: 'linear-gradient(to bottom, #D799D5, #B5B9F1)' }}>
+                <div className="flex block font-bold pl-5 pt-3 pb-3 rounded-lg brand-blue-accent">
                   <div className="inline-block mr-2">
-                    <span className="flex h-6 w-6 text-md items-center justify-center rounded-full border border-2 border-black">{idx + 1}</span>
+                    <span className="flex w-7 h-7 text-md items-center justify-center rounded-full border border-2 border-brand-blue">{idx + 1}</span>
                   </div>
                   <span className="inline text-xl">{child.props.title}</span>
                 </div>
               )
             } else {
               return (
-                <div className="block font-bold pl-5 pt-3 pb-3">
+                <div className="flex block font-bold pl-5 pt-3 pb-3">
                   <div className="inline-block mr-2">
-                    <span className="flex h-6 w-6 text-md items-center justify-center rounded-full border border-2 border-black">{idx + 1}</span>
+                    <span className="flex h-7 w-7 text-md items-center justify-center rounded-full border border-2 border-black">{idx + 1}</span>
                   </div>
                   <span className="inline text-xl">{child.props.title}</span>
                 </div>
