@@ -40,8 +40,6 @@ export default function Create() {
 
   const onJobSubmit = () => {
     //prompt user to create an account
-    
-    console.log(userContext.currUser.uid);
 
     const db_entry = {
       CustomerUid: userContext.currUser.uid,
@@ -57,8 +55,8 @@ export default function Create() {
       History: {'Submitted':getDate(),
                 'Accepted':null,
                 'Printed':null,
-                'Exchanged':null,}
-      //history
+                'Exchanged':null,},
+      Complete: false
     };
 
     AddJob(firebaseDb, db_entry);

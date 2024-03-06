@@ -1,6 +1,6 @@
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { firebaseDb } from "../firebase/firebase"
-import { addDoc, doc, getDoc } from "firebase/firestore"
+import { addDoc, doc, getDoc, updateDoc } from "firebase/firestore"
 import { useState, useEffect } from "react"
 import JobCard from "../components/jobCard"
 import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
@@ -81,11 +81,9 @@ function ChatRoom({jobId}) {
 
 }
 
+function OrderStatus({history, jobId, isPrinter}) {
+    const [editState, setEditState] = useState(false);
 
-
-
-//history is array of {state: string, date: datetime}
-function OrderStatus({history}) {
     function CompleteItem ({state, date}) {
         const [showInfo, setShowInfo] = useState(false);
         
@@ -115,13 +113,53 @@ function OrderStatus({history}) {
         )
     }
     
+    const getDate = () => {
+        const date = new Date();
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+        const year = date.getFullYear();
+    
+        return `${day}/${month}/${year}`;
+      }
+    
+    const ModifyStatus = (state) => {
+        var updatedHistory = history
+        updatedHistory[state] = getDate();
+    
+        const docRef = doc(firebaseDb, `Jobs/${jobId}`);
+        updateDoc(docRef, {History: updatedHistory})
+        .then(() => setEditState(false));
+
+        if (state == "Exchanged") {
+            updateDoc(docRef, {Complete: true});
+        }
+    };
+    
+    function ModifiableItem ({state}) {
+        return (
+            <div className="flex flex-col p-2 w-48 ">
+                <div className="flex justify-center">
+                    <button onClick={() => {ModifyStatus(state)}}>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="grey" class="w-6 h-6">
+                            <circle cx="12" cy="12" r="9" stroke-width="1.5"/>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div className="flex justify-center">
+                    {state}
+                </div>
+            </div>
+        )
+    }
+
     function IncompleteItem ({state}) {
         return (
             <div className="flex flex-col p-2 w-48 ">
                 <div className="flex justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="grey" class="w-6 h-6">
-                        <circle cx="12" cy="12" r="9" stroke-width="1.5"/>
-                    </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="grey" class="w-6 h-6">
+                            <circle cx="12" cy="12" r="9" stroke-width="1.5"/>
+                        </svg>
                 </div>
                 
                 <div className="flex justify-center">
@@ -143,42 +181,49 @@ function OrderStatus({history}) {
         return {state:state, date:history[state]};
     })
 
-    console.log(orderStatus)
-
     return (
-        <div className="flex justify-center">
-            {orderStatus.map((step) =>                
-                ((step.date !== null) ?
-                (<CompleteItem state={step.state} date={step.date}/>):
-                (<IncompleteItem state={step.state} />)))}
+        <div className="flex flex-col">
+            {(isPrinter) ? (<div className="flex justify-end mr-3">
+                <button className="text-blue-500 text-sm hover:underline focus:outline-none" onClick={() => {setEditState(!editState)}}> 
+                    {(editState) ? ("Cancel") : ("Edit")}
+                </button>
+            </div>): <></>}
+            <div className="flex justify-center">
+                {orderStatus.map((step) =>                
+                    ((step.date !== null) ?
+                    (<CompleteItem state={step.state} date={step.date}/>):
+                    ((editState)? <ModifiableItem state={step.state}/> : <IncompleteItem state={step.state} />)))}
+            </div>
         </div>
+        
     )
 }
 
 
-export default function OrderPage() {
-    const orderId = useParams().orderId;
+export default function OrderPage({isPrinter=false}) {
+    const Id = useParams().Id;
     const [jobData, setJobData] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
 
-    console.log(orderId)
-
-    const fakeHistory = ["1-1-24", "2-1-24", "4-1-24", null, null];
+    const fakeHistory = {'Submitted':"01/03/2024",
+                            'Accepted':"03/03/2024",
+                            'Printed':"07/03/2024",
+                            'Exchanged':null,};
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const snapshot = await getDoc(doc(firebaseDb, `/Jobs/${orderId}`));
+                const snapshot = await getDoc(doc(firebaseDb, `/Jobs/${Id}`));
                 const data = snapshot.data();
                 setJobData({
                     infill: data.Infill,
                     material: data.Material,
                     distance: data.Radius,
                     fileName: data.File,
-                    history: data.History
+                    history: (data.History)? data.History : fakeHistory
                 });
-                console.log(data); // Check if data is retrieved correctly
-                console.log(jobData)
-                console.log("here")
+                setLoading(false);
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
@@ -188,32 +233,46 @@ export default function OrderPage() {
     
         return () => {
         };
-    }, [orderId]);
+    }, [Id]);
 
+    if (loading) {
+        return (
+            <div>loading...</div>
+        )
+    }
     return (
-        <div className="flex justify-center gap-2">
-            <div className="w-2/5">
-                <div className="border border-2 mt-2 p-2 rounded-md">
-                    <div className="text-lg font-semibold">
-                        Details
-                    </div>
-                    <JobCard job={jobData} />
-                </div>
-                <div className="border border-2 mt-2 p-2 rounded-md">
-                    <div className="text-lg font-semibold">
-                        Status
-                    </div>
-                    <OrderStatus history={jobData.history}/>
-                </div>
+        <div>
+            <div className="pl-10 pt-2 flex gap-2">
+                {(isPrinter) ? 
+                (<button className="text-blue-500 hover:underline focus:outline-none" onClick={() => navigate("/Jobs")}> Your Jobs </button>) :
+                (<button className="text-blue-500 hover:underline focus:outline-none" onClick={() => navigate("/Orders")}> Your Orders </button>)}
+                <div> > {Id.substring(0, 8)}...</div>
             </div>
-            <div className="w-1/3">
-                <div className="border border-2 mt-2 p-2 rounded-md">
-                    <div className="text-lg font-semibold">
-                        Chat
+            <div className="flex justify-center gap-2">
+                <div className="w-2/5">
+                    <div className="border border-2 mt-2 p-2 rounded-md">
+                        <div className="text-lg font-semibold">
+                            Details
+                        </div>
+                        <JobCard job={jobData} onSelectJob={()=>{}}/>
                     </div>
-                    <ChatRoom jobId={orderId} />
+                    <div className="border border-2 mt-2 p-2 rounded-md">
+                        <div className="text-lg font-semibold">
+                            Status
+                        </div>
+                        <OrderStatus history={jobData.history} jobId={Id} isPrinter={isPrinter}/>
+                    </div>
+                </div>
+                <div className="w-1/3">
+                    <div className="border border-2 mt-2 p-2 rounded-md">
+                        <div className="text-lg font-semibold">
+                            Chat
+                        </div>
+                        <ChatRoom jobId={Id} />
+                    </div>
                 </div>
             </div>
         </div>
+        
     )
 }

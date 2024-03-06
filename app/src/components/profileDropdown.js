@@ -17,6 +17,11 @@ function ProfileDropdown() {
       route: "/orders",
     },
     {
+      icon: ordersIcon,
+      text: "Jobs",
+      route: "/jobs",
+    },
+    {
       icon: settingsIcon,
       text: "Settings",
       route: "/settings",
