@@ -1,6 +1,52 @@
+@import url('https://fonts.googleapis.com/css2?family=family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+
+:root {
+  --p3d-brand-blue: #2A3DDF;
+  --p3d-brand-purple: #A60BDC; 
+}
+
+body {
+  font-family: "Open Sans", sans-serif;
+}
+
 nav {
-  background-image: linear-gradient(90deg, #3b83f6 0%, #BE38B0 100%);/*rgb(59, 130, 246); */
-  color: #fff;
+  color: #000;
+  background-color: #F7F7F7;
+  box-shadow: 0px 1px 4px #ddd;
+}
+
+nav h2 {
+  font-weight: 800;
+}
+
+.fg-brand-blue {
+  color: var(--p3d-brand-blue);
+}
+
+.bg-brand-blue {
+  background-color: var(--p3d-brand-blue);
+}
+
+.border-brand-blue {
+  border-color: var(--p3d-brand-blue);
+}
+
+.brand-blue-accent {
+  background-color: #2A3DDF33;
+  color: var(--p3d-brand-blue);
+  border: 1px solid var(--p3d-brand-blue);
+}
+
+.brand-blue-accent:hover {
+  background-color: #2A3DDF33;
+}
+
+.fg-brand-purple {
+  color: var(--p3d-brand-purple);
+}
+
+.bg-brand-purple {
+  background-color: var(--p3d-brand-purple);
 }
 
 .cta-button {
@@ -25,7 +71,19 @@ nav {
 }
 
 .full-screen {
-  height: calc(100vh - 2.75rem);
+  /* 
+   * 2.5rem -> title height
+   * 1.5rem -> 0.75rem pad on top and bottom
+   */
+  height: calc(100vh - 2.5rem - 1.5rem);
+}
+
+.h-full-less-bottom-bar {
+  height: calc(100% - 1rem - 1rem - 24px - 4px);
+}
+
+.full-without-title {
+  height: calc(100% - 5rem - 1rem - 1.25rem - 1rem);
 }
 
 @media screen(sm) {

@@ -1,6 +1,6 @@
 import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getBlob } from "firebase/storage";
-import { firebaseDb } from "./firebase";
+import { firebaseDb } from "./firebase/firebase";
 
 // TODO add data types for each example
 /*
@@ -41,7 +41,7 @@ export async function AddPrinter(db, DocData) {
 export async function GetAllJobs(db) {
   const jobCollectionRef = collection(db, "Jobs");
   const querySnapshot = await getDocs(jobCollectionRef);
-  
+
   const jobs = [];
 
   querySnapshot.forEach((doc) => {
