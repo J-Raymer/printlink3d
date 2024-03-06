@@ -1,10 +1,10 @@
 import { Routes, Link, Route, Outlet } from "react-router-dom";
-import { useState } from 'react';
-import './app.css';
-import Home from './routes/home.js';
-import Create from './routes/create.js';
-import Browse from './routes/browse.js';
-import Profile from './routes/profile.js';
+import { useState } from "react";
+import "./app.css";
+import Home from "./routes/home.js";
+import Create from "./routes/create.js";
+import Browse from "./routes/browse.js";
+import Profile from "./routes/profile.js";
 import ProfileDropdown from "./components/profileDropdown.js";
 import Register from "./routes/register.js";
 import Login from "./routes/login.js";
@@ -16,17 +16,17 @@ function Layout() {
   const [delayHandler, setDelayHandler] = useState(null);
   const auth = useAuth();
 
-    const handleMouseEnter = () => {
-        //clearTimeout(delayHandler)
-        setDropdownVisible(true)
-    }
+  const handleMouseEnter = () => {
+    //clearTimeout(delayHandler)
+    setDropdownVisible(true);
+  };
 
-    const handleMouseLeave = () => {
-      //setDelayHandler(setTimeout(() => {
-          setDropdownVisible(false)
-      //}, 100))
-    }  
-    /* 
+  const handleMouseLeave = () => {
+    //setDelayHandler(setTimeout(() => {
+    setDropdownVisible(false);
+    //}, 100))
+  };
+  /* 
   auth = {
     currUser: {
     displayName: String, 
@@ -43,18 +43,31 @@ function Layout() {
       <nav className="flex justify-between items-center w-full px-4 py-3">
         <Link to="/">
           <h2 className="text-4xl">
-            <span className="fg-brand-blue">Print</span><span className="fg-brand-purple">Link3D</span>
+            <span className="fg-brand-blue">Print</span>
+            <span className="fg-brand-purple">Link3D</span>
           </h2>
         </Link>
         <div className="flex space-x-4">
-          <Link to="/create" className="bg-brand-blue text-white p-2 px-4 rounded"><h2>Order</h2></Link>
-          <Link to="/browse" className="bg-brand-purple text-white p-2 px-4 rounded"><h2>View Jobs</h2></Link>
+          <Link
+            to="/create"
+            className="bg-brand-blue text-white p-2 px-4 rounded"
+          >
+            <h2>Order</h2>
+          </Link>
+          <Link
+            to="/browse"
+            className="bg-brand-purple text-white p-2 px-4 rounded"
+          >
+            <h2>View Jobs</h2>
+          </Link>
           {auth && auth.userLoggedIn ? (
             <button onClick={() => doSignOut()}>
               <h2>Log Out</h2>
             </button>
           ) : (
-            <Link to="/login" className="p-2"><h2>Login</h2></Link>
+            <Link to="/login" className="p-2">
+              <h2>Login</h2>
+            </Link>
           )}
           <div
             className="mt-2"
