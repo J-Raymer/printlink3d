@@ -1,18 +1,20 @@
 import JobCardList from "../components/jobCardList";
 import React, { useState, useEffect } from "react";
 import { firebaseDb } from "../firebase/firebase";
-import { collection, onSnapshot } from "firebase/firestore";
+import { collection, doc, onSnapshot, updateDoc } from "firebase/firestore";
 import Selector from "../components/selector";
 import MultiStepForm from "../components/multistepform";
 import MultiStepFormPage from "../components/multistepformpage";
+import { useAuth } from "../contexts/authContext";
 
 export default function Browse() {
   const [selectedJob, setSelectedJob] = useState(null);
   const [jobs, setJobs] = useState([]);
   const [filters, setFilters] = useState({
-    "materials": ["PLA", "ABS", "PETG"],
+    "materials": ["Plastic", "PLA", "ABS", "PETG"],
     "bid_order": 0,
   });
+  const userContext = useAuth();
 
   useEffect(() => {
     const unsubscribe = onSnapshot(
@@ -20,14 +22,16 @@ export default function Browse() {
       (snapshot) => {
         const fetchedJobs = [];
         snapshot.docs.forEach((doc) => {
+
           const data = doc.data();
+          console.log(data);
           fetchedJobs.push({
+            doc: doc.id,
             infill: data.Fill_Percentage,
             material: data.Material,
             distance: data.Radius,
-            fileName: data.STL,
-            name: data.Name,
-            email: data.Email,
+            fileName: data.File,
+            quantity: data.Quantity
           });
 
           setJobs(fetchedJobs);
@@ -66,13 +70,19 @@ export default function Browse() {
   const changeColor = (x) => { };
   const changeBid = (x) => { };
 
+  const onSubmit = () => {
+    const docRef = doc(firebaseDb, `Jobs/${selectedJob.doc}`);
+    updateDoc(docRef, {PrinterUid: userContext.currUser.uid})
+    .then(() => console.log("updated db"))
+  };
+
   return (
     <div>
       <MultiStepForm
         submitText="Accept Job"
         showNext={true}
         validDetails={true}
-        handleSubmit={()=>{}}
+        handleSubmit={onSubmit}
       >
       <MultiStepFormPage title="Select Job">
         <div className="flex h-full">

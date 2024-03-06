@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import MultiStepForm from "../components/multistepform";
 import MultiStepFormPage from "../components/multistepformpage";
@@ -6,9 +6,11 @@ import Configure from "./configure";
 import Upload from "./upload";
 import { AddJob } from "../backend";
 import { firebaseDb } from "../firebase/firebase";
+import { useAuth } from "../contexts/authContext/index"
 
 export default function Create() {
   const navigate = useNavigate();
+  const userContext = useAuth();
 
   const emptyPrintJob = {
     file: null,
@@ -28,7 +30,13 @@ export default function Create() {
   };
 
   const onJobSubmit = () => {
+    //prompt user to create an account
+    
+    console.log(userContext.currUser.uid);
+
     const db_entry = {
+      CustomerUid: userContext.currUser.uid,
+      PrinterUid: null,
       File: printJob.file.name,
       Quantity: printJob.quantity,
       Material: printJob.material,
@@ -37,6 +45,7 @@ export default function Create() {
       Comment: printJob.comment,
       Infill: printJob.infill,
       LayerHeight: printJob.layerHeight,
+      //history
     };
 
     AddJob(firebaseDb, db_entry);

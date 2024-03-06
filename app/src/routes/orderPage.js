@@ -1,27 +1,33 @@
 import { useParams } from "react-router-dom"
-import { firebaseDb } from "../firebase"
+import { firebaseDb } from "../firebase/firebase"
 import { addDoc, doc, getDoc } from "firebase/firestore"
 import { useState, useEffect } from "react"
 import JobCard from "../components/jobCard"
 import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
+import { useAuth } from "../contexts/authContext"
 
 
 function ChatRoom({jobId}) {
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
+    const userContext = useAuth();
 
     const handleSendMessage = async () => {
         const message = {
           text: newMessage,
-          timestamp: Date.now()
-          //need sent by
+          timestamp: Date.now(),
+          author: userContext.currUser.uid,
         };
-        console.log(message)
-
-        const docRef = await addDoc(collection(firebaseDb, `Chats/${jobId}/messages/`), message)
-
         setNewMessage('');
+
+        const docRef = await addDoc(collection(firebaseDb, `Chats/${jobId}/messages/`), message)        
       };
+
+    const checkSubmitMessage = (e) => {
+        if (e.key === 'Enter') {
+            handleSendMessage();
+        }
+    }
 
     useEffect(() => {
         const chatRef = collection(firebaseDb, `Chats/${jobId}/messages`);
@@ -43,23 +49,32 @@ function ChatRoom({jobId}) {
           };
     }, [jobId]);
 
+    
+
     return (
-        <div>
+        <div className="p-2 border-solid border-2">
         <h2>Chat with {}</h2>
-        <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
-        {messages.map(message => (
-          <div>
-            <p>{message.text}</p>
-          </div>
-        ))}
-      </div>
+        <div className="rounded-md bg-gray-50 h-48 w-64 overflow-y-scroll flex flex-col-reverse mb-2">
+            <div className="flex flex-col justify-end p-4">
+                {messages.map(message => 
+                (
+                    <div className={message.author === userContext.currUser.uid ? "flex justify-end" : "flex justify-start"}   >
+                        <p className={message.author === userContext.currUser.uid ? "p-2 bg-blue-100 rounded-md mb-1" : "p-2 bg-gray-100 rounded-md mb-1"}>{message.text}</p>
+                    </div>
+                ))}
+            </div>
+        </div>
+        <div className="flex p-2 border border-2 w-64">
         <input 
             type="text" 
             value={newMessage} 
             onChange={e => setNewMessage(e.target.value)} 
             placeholder="Type your message..."
+            onKeyDown={checkSubmitMessage}
+
         />
         <button onClick={handleSendMessage}>Send</button>
+        </div>
         </div>
     )
 
@@ -134,36 +149,40 @@ function OrderStatus({history}) {
 
 export default function OrderPage() {
     const orderId = useParams().orderId;
-    const [dataRecieved, setDataRecieved] = useState(false);
     const [jobData, setJobData] = useState([]);
 
     console.log(orderId)
 
     const fakeHistory = ["1-1-24", "2-1-24", "4-1-24", null, null];
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const snapshot = await getDoc(doc(firebaseDb, `/Jobs/${orderId}`));
+                const data = snapshot.data();
+                setJobData({
+                    infill: data.Fill_Percentage,
+                    material: data.Material,
+                    distance: data.Radius,
+                    fileName: data.STL,
+                    name: data.Name,
+                    email: data.Email,
+                });
+                console.log(data); // Check if data is retrieved correctly
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        };
     
-    if (!dataRecieved) {
-        getDoc(doc(firebaseDb, `/Jobs/${orderId}`)).then((snapshot) => {
-            console.log(snapshot.data())
-            const data = snapshot.data();
-            setJobData({
-                infill: data.Fill_Percentage,
-                material: data.Material,
-                distance: data.Radius,
-                fileName: data.STL,
-                name: data.Name,
-                email: data.Email,
-            })
-            setDataRecieved(true);
-        }
-
-    )}
-
+        fetchData();
+    
+        return () => {
+        };
+    }, [orderId]);
 
     return (
-        <div flex-rows>
-            {(dataRecieved)?
-            (
-                <>
+        <div className="grid grid-cols-2 gap-4">
+            <div>
                 <div>
                     Order Details
                     <JobCard job={jobData} />
@@ -172,14 +191,11 @@ export default function OrderPage() {
                     Order Status
                     <OrderStatus history={fakeHistory}/>
                 </div>
-                <div>
-                    <ChatRoom jobId={orderId} />
-                </div>
-                </>
-            ):
-            (<></>)
-            }
-            
+            </div>
+            <div>
+                Chat
+                <ChatRoom jobId={orderId} />
+            </div>
         </div>
     )
 }
