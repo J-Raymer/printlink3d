@@ -5,6 +5,8 @@ import Home from './routes/home.js';
 import Create from './routes/create.js';
 import Browse from './routes/browse.js';
 import Profile from './routes/profile.js';
+import Orders from "./routes/orders.js";
+import OrderPage from "./routes/orderPage.js";
 import ProfileDropdown from "./components/profileDropdown.js";
 
 function Layout() {
@@ -68,6 +70,8 @@ function App() {
         <Route path="create" element={<Create />} />
         <Route path="browse" element={<Browse />} />
         <Route path="profile" element={<Profile />} />
+        <Route path="orders" element={<Orders />} />
+        <Route path="orders/:orderId" element={<OrderPage />} />
       </Route>
     </Routes>
   );
