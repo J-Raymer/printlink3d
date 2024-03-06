@@ -52,9 +52,8 @@ function ChatRoom({jobId}) {
     
 
     return (
-        <div className="p-2 border-solid border-2">
-        <h2>Chat with {}</h2>
-        <div className="rounded-md bg-gray-50 h-48 w-64 overflow-y-scroll flex flex-col-reverse mb-2">
+        <div className="p-2">
+        <div className="rounded-md bg-gray-50 h-48 overflow-y-scroll flex flex-col-reverse mb-2">
             <div className="flex flex-col justify-end p-4">
                 {messages.map(message => 
                 (
@@ -64,16 +63,17 @@ function ChatRoom({jobId}) {
                 ))}
             </div>
         </div>
-        <div className="flex p-2 border border-2 w-64">
-        <input 
-            type="text" 
-            value={newMessage} 
-            onChange={e => setNewMessage(e.target.value)} 
-            placeholder="Type your message..."
-            onKeyDown={checkSubmitMessage}
+        <div className="flex p-2 border border-2">
+            <input 
+                type="text" 
+                value={newMessage} 
+                onChange={e => setNewMessage(e.target.value)} 
+                placeholder="Type your message..."
+                onKeyDown={checkSubmitMessage}
+                className="w-full"
 
-        />
-        <button onClick={handleSendMessage}>Send</button>
+            />
+            <button className="w-24" onClick={handleSendMessage}>Send</button>
         </div>
         </div>
     )
@@ -87,34 +87,44 @@ function ChatRoom({jobId}) {
 //history is array of {state: string, date: datetime}
 function OrderStatus({history}) {
     function CompleteItem ({state, date}) {
+        const [showInfo, setShowInfo] = useState(false);
+        
         return (
-            <div className="flex p-2 ">
-                <div className="p-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+            <>
+            <div className="flex flex-col p-2 w-48"
+                 onMouseEnter={() => setShowInfo(true)}
+                 onMouseLeave={() => setShowInfo(false)}>
+                <div className="flex justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="green" viewBox="0 0 24 24" strokeWidth={1.5}  className="w-6 h-6">
+                        <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clip-rule="evenodd" />
                     </svg>
                 </div>
-                
-                <div className="p-2">
+                <div className="flex justify-center">
                     {state}
                 </div>
-                <div className="p-2">
-                    Completed: {date}
-                </div>
+                {showInfo && (
+                    <div className="absolute bg-gray-200 text-gray-800 rounded-md shadow-lg z-10 ml-24">
+                    <div className="p-2">
+                        <p className="text-sm">Completed {date}</p>
+                    </div>
+                    </div>
+                )}
             </div>
+            
+            </>
         )
     }
     
     function IncompleteItem ({state}) {
         return (
-            <div className="flex p-2 ">
-                <div className="p-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+            <div className="flex flex-col p-2 w-48 ">
+                <div className="flex justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="grey" class="w-6 h-6">
+                        <circle cx="12" cy="12" r="9" stroke-width="1.5"/>
                     </svg>
                 </div>
                 
-                <div className="p-2">
+                <div className="flex justify-center">
                     {state}
                 </div>
             </div>
@@ -125,19 +135,18 @@ function OrderStatus({history}) {
     const states = [
         'Submitted',
         'Accepted',
-        'Printing',
-        'Ready for exchange',
-        'Complete'
+        'Printed',
+        'Exchanged',
     ]
 
-    const orderStatus = states.map((state, idx) => {
-        return {state:state, date:history[idx]};
+    const orderStatus = states.map((state) => {
+        return {state:state, date:history[state]};
     })
 
     console.log(orderStatus)
 
     return (
-        <div>
+        <div className="flex justify-center">
             {orderStatus.map((step) =>                
                 ((step.date !== null) ?
                 (<CompleteItem state={step.state} date={step.date}/>):
@@ -161,14 +170,15 @@ export default function OrderPage() {
                 const snapshot = await getDoc(doc(firebaseDb, `/Jobs/${orderId}`));
                 const data = snapshot.data();
                 setJobData({
-                    infill: data.Fill_Percentage,
+                    infill: data.Infill,
                     material: data.Material,
                     distance: data.Radius,
-                    fileName: data.STL,
-                    name: data.Name,
-                    email: data.Email,
+                    fileName: data.File,
+                    history: data.History
                 });
                 console.log(data); // Check if data is retrieved correctly
+                console.log(jobData)
+                console.log("here")
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
@@ -181,20 +191,28 @@ export default function OrderPage() {
     }, [orderId]);
 
     return (
-        <div className="grid grid-cols-2 gap-4">
-            <div>
-                <div>
-                    Order Details
+        <div className="flex justify-center gap-2">
+            <div className="w-2/5">
+                <div className="border border-2 mt-2 p-2 rounded-md">
+                    <div className="text-lg font-semibold">
+                        Details
+                    </div>
                     <JobCard job={jobData} />
                 </div>
-                <div>
-                    Order Status
-                    <OrderStatus history={fakeHistory}/>
+                <div className="border border-2 mt-2 p-2 rounded-md">
+                    <div className="text-lg font-semibold">
+                        Status
+                    </div>
+                    <OrderStatus history={jobData.history}/>
                 </div>
             </div>
-            <div>
-                Chat
-                <ChatRoom jobId={orderId} />
+            <div className="w-1/3">
+                <div className="border border-2 mt-2 p-2 rounded-md">
+                    <div className="text-lg font-semibold">
+                        Chat
+                    </div>
+                    <ChatRoom jobId={orderId} />
+                </div>
             </div>
         </div>
     )

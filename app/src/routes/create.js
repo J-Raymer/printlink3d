@@ -29,6 +29,15 @@ export default function Create() {
     setPrintJob((prevState) => ({ ...prevState, [property]: value }));
   };
 
+  const getDate = () => {
+    const date = new Date();
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const year = date.getFullYear();
+
+    return `${day}/${month}/${year}`;
+  }
+
   const onJobSubmit = () => {
     //prompt user to create an account
     
@@ -45,6 +54,10 @@ export default function Create() {
       Comment: printJob.comment,
       Infill: printJob.infill,
       LayerHeight: printJob.layerHeight,
+      History: {'Submitted':getDate(),
+                'Accepted':null,
+                'Printed':null,
+                'Exchanged':null,}
       //history
     };
 

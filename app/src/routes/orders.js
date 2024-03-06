@@ -21,14 +21,14 @@ export default function Orders() {
           snapshot.docs.forEach((doc) => {
             //console.log(doc.id)
             const data = doc.data();
+            console.log(data);
             fetchedJobs.push({
               id: doc.id,
-              infill: data.Fill_Percentage,
+              quantity: data.Quantity,
+              infill: data.Infill,
               material: data.Material,
               distance: data.Radius,
-              fileName: data.STL,
-              name: data.Name,
-              email: data.Email,
+              fileName: data.File
           });
     
             setCustomerJobs(fetchedJobs);
@@ -42,12 +42,10 @@ export default function Orders() {
             const data = doc.data();
             fetchedJobs.push({
               id: doc.id,
-              infill: data.Fill_Percentage,
+              infill: data.Infill,
               material: data.Material,
               distance: data.Radius,
-              fileName: data.STL,
-              name: data.Name,
-              email: data.Email,
+              fileName: data.File
           });
     
             setPrinterJobs(fetchedJobs);

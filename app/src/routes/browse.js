@@ -1,7 +1,7 @@
 import JobCardList from "../components/jobCardList";
 import React, { useState, useEffect } from "react";
 import { firebaseDb } from "../firebase/firebase";
-import { collection, doc, onSnapshot, updateDoc } from "firebase/firestore";
+import { collection, doc, onSnapshot, updateDoc, query, where } from "firebase/firestore";
 import Selector from "../components/selector";
 import MultiStepForm from "../components/multistepform";
 import MultiStepFormPage from "../components/multistepformpage";
@@ -17,12 +17,12 @@ export default function Browse() {
   const userContext = useAuth();
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(
-      collection(firebaseDb, "Jobs"),
-      (snapshot) => {
+    const jobRef = collection(firebaseDb, 'Jobs');
+    const availableJobQuery = query(jobRef, where("PrinterUid", "==", null));
+
+    const unsubscribe = onSnapshot(availableJobQuery, (snapshot) => {
         const fetchedJobs = [];
         snapshot.docs.forEach((doc) => {
-
           const data = doc.data();
           console.log(data);
           fetchedJobs.push({
@@ -31,7 +31,8 @@ export default function Browse() {
             material: data.Material,
             distance: data.Radius,
             fileName: data.File,
-            quantity: data.Quantity
+            quantity: data.Quantity,
+            history: data.History
           });
 
           setJobs(fetchedJobs);
@@ -69,10 +70,23 @@ export default function Browse() {
   const changeMaterial = (x) => { };
   const changeColor = (x) => { };
   const changeBid = (x) => { };
+  
+  const getDate = () => {
+    const date = new Date();
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const year = date.getFullYear();
+
+    return `${day}/${month}/${year}`;
+  }
 
   const onSubmit = () => {
+    var updatedHistory = selectedJob.history
+    updatedHistory["Accepted"] = getDate();
+    console.log(updatedHistory);
+
     const docRef = doc(firebaseDb, `Jobs/${selectedJob.doc}`);
-    updateDoc(docRef, {PrinterUid: userContext.currUser.uid})
+    updateDoc(docRef, {PrinterUid: userContext.currUser.uid, History: updatedHistory})
     .then(() => console.log("updated db"))
   };
 
