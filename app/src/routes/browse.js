@@ -2,16 +2,15 @@ import JobCardList from "../components/jobCardList";
 import React, { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { firebaseDb } from "../firebase/firebase";
-import { collection, onSnapshot } from "firebase/firestore";
+import { collection, doc, onSnapshot, updateDoc, query, where } from "firebase/firestore";
 import Selector from "../components/selector";
 import MultiStepForm from "../components/multistepform";
 import MultiStepFormPage from "../components/multistepformpage";
-import { useAuth } from "../contexts/authContext/index";
+import { useAuth } from "../contexts/authContext";
+import { useNavigate } from "react-router-dom";
 import boat from "../images/boat.jpg";
 
 export default function Browse() {
-  const { userLoggedIn } = useAuth();
-
   const [selectedJob, setSelectedJob] = useState(null);
   const [jobs, setJobs] = useState([]);
   const [filters, setFilters] = useState({
@@ -19,16 +18,20 @@ export default function Browse() {
     "colours": ["Red", "Green", "Blue", "Purple", "Orange", "Yellow", "Brown", "Gray", "White", "Black"],
     "bid_order": 0,
   });
+  const userContext = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(
-      collection(firebaseDb, "Jobs"),
-      (snapshot) => {
+    const jobRef = collection(firebaseDb, 'Jobs');
+    const availableJobQuery = query(jobRef, where("PrinterUid", "==", null));
+
+    const unsubscribe = onSnapshot(availableJobQuery, (snapshot) => {
         const fetchedJobs = [];
         snapshot.docs.forEach((doc) => {
           const data = doc.data();
           console.log(data)
           fetchedJobs.push({
+            doc: doc.id,
             infill: data.Infill,
             material: data.Material,
             distance: data.Radius,
@@ -75,16 +78,34 @@ export default function Browse() {
   const changeMaterial = (x) => { };
   const changeColor = (x) => { };
   const changeBid = (x) => { };
+  
+  const getDate = () => {
+    const date = new Date();
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const year = date.getFullYear();
+
+    return `${day}/${month}/${year}`;
+  }
+
+  const onSubmit = () => {
+    var updatedHistory = selectedJob.history
+    updatedHistory["Accepted"] = getDate();
+
+    const docRef = doc(firebaseDb, `Jobs/${selectedJob.doc}`);
+    updateDoc(docRef, {PrinterUid: userContext.currUser.uid, History: updatedHistory})
+    .then(() => {navigate(`/Jobs/${selectedJob.doc}`)});
+  };
 
   return (
     <div>
-      {!userLoggedIn && <Navigate to={"/login"} replace={true} />}
+      {!userContext.userLoggedIn && <Navigate to={"/login"} replace={true} />}
 
       <MultiStepForm
         submitText="Accept Job"
         showNext={selectedJob !== null}
         validDetails={true}
-        handleSubmit={() => { }}
+        handleSubmit={onSubmit}
       >
         <MultiStepFormPage title="Select Job">
           <div className="flex h-full">
