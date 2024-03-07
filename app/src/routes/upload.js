@@ -25,16 +25,20 @@ export default function Upload({ printJob, updateFile }) {
   // Create lighting
   // Grey ambient
   // Grey spotlight with large intensity to cover even large objects
-  const light = new THREE.AmbientLight(0xf0f0f0, 0.2);
-  const spotlight = new THREE.SpotLight(0xf0f0f0);
-  spotlight.position.set(40, 40, 40);
-  spotlight.intensity = 3000;
+  const light = new THREE.AmbientLight(0xffffff, 0.1);
+  const spotlight = new THREE.SpotLight(0xffffff);
+  spotlight.position.set(3, 3, 3);
+  spotlight.intensity = 35;
   scene.add(light);
   scene.add(spotlight);
+  //var helper = new THREE.SpotLightHelper(spotlight);
+  //scene.add(helper)
 
   // Create standard perspective camera
   const camera = new THREE.PerspectiveCamera(75, 1.0, 0.1, 1000);
-  camera.position.z = -10;
+  camera.position.z = 1.2;
+  camera.position.y = 0.5;
+  camera.position.x = 0.5;
 
   // Create render and set background to a very light grey
   const renderer = new THREE.WebGLRenderer();
@@ -47,7 +51,7 @@ export default function Upload({ printJob, updateFile }) {
   // Now the STL loading logic
   const loader = new STLLoader();
   const material = new THREE.MeshPhysicalMaterial({
-    color: 0x888888,
+    color: 0xdcedf5,
   });
 
   /* Create ThreeJS container
@@ -119,6 +123,12 @@ export default function Upload({ printJob, updateFile }) {
     loader.load(
       URL.createObjectURL(file),
       function (geometry) {
+        var boundingBox = new THREE.Box3().setFromObject(new THREE.Mesh(geometry));
+
+        var size = new THREE.Vector3();
+        boundingBox.getSize(size);
+        var scaleFactor = 1 / Math.max(size.x, size.y, size.z);
+        geometry.scale(scaleFactor, scaleFactor, scaleFactor);
         scene.add(new THREE.Mesh(geometry, material));
         setScene(scene);
       },
