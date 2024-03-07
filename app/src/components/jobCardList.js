@@ -8,7 +8,9 @@ export default function JobCardList({ jobs, filters, selectedJob, onSelectJob, o
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
       {
         jobs.map((job, i) => {
-        if (filters["materials"].includes(job.material)) {
+          console.log(job)
+        if ((filters["materials"].includes(job.material) || job.material == "Plastic") &&
+            (filters["colours"].includes(job.colour) || job.colour == "No Preference")){
           return ( <JobCard
             key={"jobcard-"+i}
             job={job}
