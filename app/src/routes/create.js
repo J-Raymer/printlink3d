@@ -59,8 +59,8 @@ export default function Create() {
       Complete: false
     };
 
-    AddJob(firebaseDb, db_entry);
-    navigate("/");
+    AddJob(firebaseDb, db_entry)
+    .then((jobRef) => {navigate(`/Orders/${jobRef.id}`)});
   };
 
   return (

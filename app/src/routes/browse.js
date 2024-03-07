@@ -6,6 +6,7 @@ import Selector from "../components/selector";
 import MultiStepForm from "../components/multistepform";
 import MultiStepFormPage from "../components/multistepformpage";
 import { useAuth } from "../contexts/authContext";
+import { useNavigate } from "react-router-dom";
 
 export default function Browse() {
   const [selectedJob, setSelectedJob] = useState(null);
@@ -16,6 +17,7 @@ export default function Browse() {
     "bid_order": 0,
   });
   const userContext = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const jobRef = collection(firebaseDb, 'Jobs');
@@ -85,11 +87,10 @@ export default function Browse() {
   const onSubmit = () => {
     var updatedHistory = selectedJob.history
     updatedHistory["Accepted"] = getDate();
-    console.log(updatedHistory);
 
     const docRef = doc(firebaseDb, `Jobs/${selectedJob.doc}`);
     updateDoc(docRef, {PrinterUid: userContext.currUser.uid, History: updatedHistory})
-    .then(() => console.log("updated db"))
+    .then(() => {navigate(`/Jobs/${selectedJob.doc}`)});
   };
 
   return (
