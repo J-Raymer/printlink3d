@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useContext, useState } from "react";
+import { useNavigate, Navigate } from "react-router-dom";
 import MultiStepForm from "../components/multistepform";
 import MultiStepFormPage from "../components/multistepformpage";
 import Configure from "./configure";
@@ -7,9 +7,11 @@ import Upload from "./upload";
 import { AddJob } from "../backend";
 import { firebaseDb, firebaseStorage } from "../firebase/firebase";
 import { ref, uploadBytes } from "firebase/storage"
+import { useAuth } from "../contexts/authContext/index"
 
 export default function Create() {
   const navigate = useNavigate();
+  const userContext = useAuth();
 
   const emptyPrintJob = {
     snap: null,
@@ -34,10 +36,23 @@ export default function Create() {
     const r = await fetch(snap);
     const b = await r.blob();
     uploadBytes(storageRef, b);
-  }
+  };
+
+  const getDate = () => {
+    const date = new Date();
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const year = date.getFullYear();
+
+    return `${day}/${month}/${year}`;
+  };
 
   const onJobSubmit = () => {
+    //prompt user to create an account
+
     const db_entry = {
+      CustomerUid: userContext.currUser.uid,
+      PrinterUid: null,
       File: printJob.file.name,
       Quantity: printJob.quantity,
       Material: printJob.material,
@@ -46,15 +61,24 @@ export default function Create() {
       Comment: printJob.comment,
       Infill: printJob.infill,
       LayerHeight: printJob.layerHeight,
+      History: {'Submitted':getDate(),
+                'Accepted':null,
+                'Printed':null,
+                'Exchanged':null,},
+      Complete: false
     };
     //upload snapshot
     AddJob(firebaseDb, db_entry)
-    .then((jobRef) => uploadSnap(printJob.snap, jobRef.id));
-    navigate("/");
-  };
+    .then((jobRef) => {
+      uploadSnap(printJob.snap, jobRef.id).then(() => {
+        navigate(`/Orders/${jobRef.id}`)
+      })});
+    };
 
   return (
     <div>
+      {!userContext.userLoggedIn && <Navigate to={"/login"} replace={true} />}
+
       <MultiStepForm
         submitText="Submit Job"
         showNext={printJob.file !== null}

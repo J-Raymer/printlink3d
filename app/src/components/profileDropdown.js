@@ -2,6 +2,9 @@ import { useNavigate } from "react-router-dom";
 import profileIcon from "../images/profile_icon.png";
 import settingsIcon from "../images/settings_icon.png";
 import ordersIcon from "../images/orders_icon.png";
+import cubeIcon from "../images/cube_icon_black.png";
+import { doSignOut } from "../firebase/auth.js";
+import logoutIcon from "../images/logout_icon.png";
 
 function ProfileDropdown() {
   const navigate = useNavigate();
@@ -9,18 +12,28 @@ function ProfileDropdown() {
     {
       icon: profileIcon,
       text: "Profile",
-      route: "/profile",
+      onClick: () => navigate("/profile"),
     },
     {
       icon: ordersIcon,
       text: "Orders",
-      route: "/orders",
+      onClick: () => navigate("/orders"),
+    },
+    {
+      icon: cubeIcon,
+      text: "Jobs",
+      onClick: () => navigate("/jobs"),
     },
     {
       icon: settingsIcon,
       text: "Settings",
-      route: "/settings",
+      onClick: () => navigate("/settings"),
     },
+    {
+      icon: logoutIcon,
+      text: "Log out",
+      onClick: () => doSignOut(),
+    }
   ];
 
   const renderItems = () => {
@@ -31,7 +44,7 @@ function ProfileDropdown() {
       >
         <img src={item.icon} className="w-10 h-10" alt={`${item.text} icon`} />
         <button
-          onClick={() => navigate(item.route)}
+          onClick={item.onClick}
           className="block px-4 py-2 text-lg text-gray-700"
         >
           {item.text}
@@ -40,7 +53,9 @@ function ProfileDropdown() {
     ));
   };
 
-  return <>{renderItems()}</>;
+  return <>
+    {renderItems()}
+  </>;
 }
 
 export default ProfileDropdown;

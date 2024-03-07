@@ -39,14 +39,13 @@ export default function JobCard({
           <span className="font-semibold">Infill: </span>
           <span className="font-normal">{job.infill}</span>
         </p>
-        {/* TODO dynamically add Bid and Quantity */}
         <p className="mt-2">
-          <span className="font-semibold">Bid: </span>
-          <span className="font-normal">$10</span>
+          <span className="font-semibold">Color: </span>
+          <span className="font-normal">{job.color}</span>
         </p>
         <p className="mt-2">
           <span className="font-semibold">Quantity: </span>
-          <span className="font-normal">10</span>
+          <span className="font-normal">{job.quantity}</span>
         </p>
       </div>
     </div>
