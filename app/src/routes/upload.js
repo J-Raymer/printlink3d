@@ -6,6 +6,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
 export default function Upload({ printJob, updateFile }) {
   const [uploaded, setUploaded] = useState(printJob.file !== null);
+  const [snap, setSnap] = useState(null);
 
   const onCancel = () => {
     updateFile(null);
@@ -130,6 +131,12 @@ export default function Upload({ printJob, updateFile }) {
     );
   }
 
+  function takeSnapshot() {
+    renderer.render(sceneState, camera)
+    var imageDataURL = renderer.domElement.toDataURL("image/png");
+    setSnap(imageDataURL);
+  }
+
   /*
    * Setup DropZone
    */
@@ -171,6 +178,10 @@ export default function Upload({ printJob, updateFile }) {
                 <div className="flex flex-col items-center justify-center full-without-title mt-4 grow" id="canvas-rect">
                   <div className="rounded" ref={containerRef}></div>
                 </div>
+                <button className="p-2 border border-2 bg-blue-100" onClick={() => {takeSnapshot()}}>
+                  Take snapshot
+                </button>
+                <img src={snap}/>
               </div>
           }
         </>
