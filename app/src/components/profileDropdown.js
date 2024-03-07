@@ -2,7 +2,9 @@ import { useNavigate } from "react-router-dom";
 import profileIcon from "../images/profile_icon.png";
 import settingsIcon from "../images/settings_icon.png";
 import ordersIcon from "../images/orders_icon.png";
+import cubeIcon from "../images/cube_icon_black.png";
 import { doSignOut } from "../firebase/auth.js";
+import logoutIcon from "../images/logout_icon.png";
 
 function ProfileDropdown() {
   const navigate = useNavigate();
@@ -18,7 +20,7 @@ function ProfileDropdown() {
       route: "/orders",
     },
     {
-      icon: ordersIcon,
+      icon: cubeIcon,
       text: "Jobs",
       route: "/jobs",
     },
@@ -48,9 +50,15 @@ function ProfileDropdown() {
 
   return <>
     {renderItems()}
-    <button onClick={() => doSignOut()}>
-      <h2>Log Out</h2>
-    </button>
+    <div className="p-3 flex items-center hover:bg-gray-200 rounded-lg">
+      <img src={logoutIcon} className="w-10 h-10" alt={'log out icon'} />
+      <button
+        onClick={() => doSignOut()}
+        className="block px-4 py-2 text-lg text-gray-700"
+      >
+        Log out
+      </button>
+    </div>
   </>;
 }
 
