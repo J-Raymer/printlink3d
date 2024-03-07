@@ -10,7 +10,7 @@ export default function JobCardList({ jobs, filters, selectedJob, onSelectJob, o
         jobs.map((job, i) => {
           console.log(job)
         if ((filters["materials"].includes(job.material) || job.material == "Plastic") &&
-            (filters["colours"].includes(job.colour) || job.colour == "No Preference")){
+            (filters["colours"].includes(job.color) || job.color == "No Preference")){
           return ( <JobCard
             key={"jobcard-"+i}
             job={job}
