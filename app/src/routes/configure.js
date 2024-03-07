@@ -4,6 +4,7 @@ import TextForm from "../components/textForm";
 import { useEffect, useState } from "react";
 import { collection, onSnapshot } from "firebase/firestore";
 import { firebaseDb } from "../firebase/firebase";
+import JobCard from "../components/jobCard";
 
 function StyledLine({ title, inputComponent, helpButtonComponent }) {
   return (
@@ -148,6 +149,9 @@ export default function Configure({ printJob, changePrintJob }) {
 
   return (
     <div>
+      <div>
+        <JobCard job={printJob} onSelectJob={()=>{}} img={printJob.snap}/>
+      </div>
       <div className="p-5">
         <div className="my-4">
           <h2 className="text-3xl font-semibold text-gray-800">

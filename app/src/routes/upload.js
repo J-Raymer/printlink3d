@@ -4,9 +4,8 @@ import { useDropzone } from "react-dropzone";
 import { STLLoader } from "three/examples/jsm/loaders/STLLoader";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
-export default function Upload({ printJob, updateFile }) {
+export default function Upload({ printJob, updateFile, updateSnap }) {
   const [uploaded, setUploaded] = useState(printJob.file !== null);
-  const [snap, setSnap] = useState(null);
 
   const onCancel = () => {
     updateFile(null);
@@ -77,6 +76,7 @@ export default function Upload({ printJob, updateFile }) {
 
       containerRef.current.appendChild(renderer.domElement);
       draw();
+      takeSnapshot();
       return () => {
         window.removeEventListener("resize", onWindowResize, false);
         if (
@@ -142,9 +142,14 @@ export default function Upload({ printJob, updateFile }) {
   }
 
   function takeSnapshot() {
+    var croppedDimenstions = 200;
+    renderer.setSize(croppedDimenstions, croppedDimenstions);
+    camera.aspect = 1;
+    camera.updateProjectionMatrix();
     renderer.render(sceneState, camera)
     var imageDataURL = renderer.domElement.toDataURL("image/png");
-    setSnap(imageDataURL);
+    updateSnap(imageDataURL);
+    resize3DViewer();
   }
 
   /*
@@ -191,7 +196,7 @@ export default function Upload({ printJob, updateFile }) {
                 <button className="p-2 border border-2 bg-blue-100" onClick={() => {takeSnapshot()}}>
                   Take snapshot
                 </button>
-                <img src={snap}/>
+                
               </div>
           }
         </>
