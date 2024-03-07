@@ -9,7 +9,6 @@ import ProfileDropdown from "./components/profileDropdown.js";
 import Register from "./routes/register.js";
 import Login from "./routes/login.js";
 import { AuthProvider, useAuth } from "./contexts/authContext/index.jsx";
-import { doSignOut } from "./firebase/auth.js";
 
 function Layout() {
   const [isDropdownVisible, setDropdownVisible] = useState(false);
@@ -49,34 +48,32 @@ function Layout() {
         <div className="flex space-x-4">
           <Link to="/create" className="bg-brand-blue text-white p-2 px-4 rounded"><h2>Order</h2></Link>
           <Link to="/browse" className="bg-brand-purple text-white p-2 px-4 rounded"><h2>View Jobs</h2></Link>
-          {auth && auth.userLoggedIn ? (
-            <button onClick={() => doSignOut()}>
-              <h2>Log Out</h2>
-            </button>
+          { auth && auth.userLoggedIn ? (
+            <div
+              className="mt-2"
+              onMouseEnter={() => handleMouseEnter()}
+              onMouseLeave={() => handleMouseLeave()}
+            >
+              <button>
+                {auth && auth.userLoggedIn && auth.currUser.displayName ? (
+                  <h2>{auth.currUser.displayName}</h2>
+                ) : (
+                  <h2>Profile Name</h2>
+                )}
+              </button>
+              {isDropdownVisible && (
+                <div
+                  className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5"
+                  style={{ zIndex: 1 }}
+                >
+                  <ProfileDropdown />
+                </div>
+              )}
+            </div>
           ) : (
             <Link to="/login" className="p-2"><h2>Login</h2></Link>
           )}
-          <div
-            className="mt-2"
-            onMouseEnter={() => handleMouseEnter()}
-            onMouseLeave={() => handleMouseLeave()}
-          >
-            <button>
-              {auth && auth.userLoggedIn && auth.currUser.displayName ? (
-                <h2>{auth.currUser.displayName}</h2>
-              ) : (
-                <h2>Profile Name</h2>
-              )}
-            </button>
-            {isDropdownVisible && (
-              <div
-                className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5"
-                style={{ zIndex: 1 }}
-              >
-                <ProfileDropdown />
-              </div>
-            )}
-          </div>
+
         </div>
       </nav>
       <Outlet />

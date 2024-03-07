@@ -1,13 +1,17 @@
 import JobCardList from "../components/jobCardList";
 import React, { useState, useEffect } from "react";
+import { Navigate } from "react-router-dom";
 import { firebaseDb } from "../firebase/firebase";
 import { collection, onSnapshot } from "firebase/firestore";
 import Selector from "../components/selector";
 import MultiStepForm from "../components/multistepform";
 import MultiStepFormPage from "../components/multistepformpage";
+import { useAuth } from "../contexts/authContext/index";
 import boat from "../images/boat.jpg";
 
 export default function Browse() {
+  const { userLoggedIn } = useAuth();
+
   const [selectedJob, setSelectedJob] = useState(null);
   const [jobs, setJobs] = useState([]);
   const [filters, setFilters] = useState({
@@ -74,6 +78,8 @@ export default function Browse() {
 
   return (
     <div>
+      {!userLoggedIn && <Navigate to={"/login"} replace={true} />}
+
       <MultiStepForm
         submitText="Accept Job"
         showNext={selectedJob !== null}
