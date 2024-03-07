@@ -174,13 +174,16 @@ export default function Configure({ printJob, changePrintJob }) {
                 label="color"
                 options={[
                   "No Preference",
-                  "Black",
-                  "Grey",
-                  "White",
                   "Red",
-                  "Yellow",
-                  "Green",
                   "Blue",
+                  "Green",
+                  "Purple",
+                  "Orange",
+                  "Yellow",
+                  "Brown",
+                  "Gray",
+                  "Black",
+                  "White",
                 ]}
                 initValue={printJob.color}
                 onChange={changeColor}
