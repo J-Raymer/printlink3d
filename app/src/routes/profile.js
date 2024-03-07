@@ -2,6 +2,7 @@ import default_pfp from "../images/default_pfp.jpg";
 import pencil_icon from "../images/pencil.png";
 import TextForm from "../components/textForm";
 import { useState, useRef } from "react";
+import MapSearch from "../components/mapSearch";
 
 export default function Profile() {
   const [firstName, setFirstName] = useState("");
@@ -69,6 +70,7 @@ export default function Profile() {
           placeholder="Email"
           onChange={(x) => setEmail(x.target.value)}
         />
+        <MapSearch />
       </div>
     </div>
   );
