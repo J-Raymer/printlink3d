@@ -41,6 +41,8 @@ export default function Browse() {
             color: data.Color,
             layerHeight: data.LayerHeight,
             quantity: data.Quantity,
+            comment: data.Comment,
+            completionDate: data.CompletionDate,
           });
           console.log(fetchedJobs)
         });
@@ -179,6 +181,10 @@ export default function Browse() {
                 <p><strong>Layer Height:</strong> {selectedJob.layerHeight}</p>
                 <br />
                 <p><strong>Quantity:</strong> {selectedJob.quantity}</p>
+                <br />
+                <p><strong>Completion Date:</strong> {selectedJob.completionDate !== "" ? selectedJob.completionDate : "None"}</p>
+                <br />
+                <p><strong>Comment:</strong> {selectedJob.comment !== "" ? selectedJob.comment : "None"}</p>
               </div>
             </div>
           )}
