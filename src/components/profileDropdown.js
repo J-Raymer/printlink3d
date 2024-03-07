@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import profileIcon from "../images/profile_icon.png";
 import settingsIcon from "../images/settings_icon.png";
 import ordersIcon from "../images/orders_icon.png";
+import { doSignOut } from "../firebase/auth.js";
 
 function ProfileDropdown() {
   const navigate = useNavigate();
@@ -15,6 +16,11 @@ function ProfileDropdown() {
       icon: ordersIcon,
       text: "Orders",
       route: "/orders",
+    },
+    {
+      icon: ordersIcon,
+      text: "Jobs",
+      route: "/jobs",
     },
     {
       icon: settingsIcon,
@@ -40,7 +46,12 @@ function ProfileDropdown() {
     ));
   };
 
-  return <>{renderItems()}</>;
+  return <>
+    {renderItems()}
+    <button onClick={() => doSignOut()}>
+      <h2>Log Out</h2>
+    </button>
+  </>;
 }
 
 export default ProfileDropdown;
