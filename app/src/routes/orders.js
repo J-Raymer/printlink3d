@@ -11,6 +11,7 @@ export default function Orders() {
     const navigate = useNavigate();
     const userContext = useAuth();
 
+    // TODO - Put this in backend.js possibly
     useEffect(() => {
         const jobRef = collection(firebaseDb, 'Jobs');
         const jobQueryCustomer = query(jobRef, where("CustomerUid", "==", userContext.currUser.uid));
@@ -30,7 +31,9 @@ export default function Orders() {
                 infill: data.Infill,
                 material: data.Material,
                 distance: data.Radius,
-                fileName: data.File
+                fileName: data.File,
+                quantity: data.Quantity,
+                color: data.Color,
             }): 
             fetchedActive.push({
                 id: doc.id,
@@ -38,7 +41,9 @@ export default function Orders() {
                 infill: data.Infill,
                 material: data.Material,
                 distance: data.Radius,
-                fileName: data.File
+                fileName: data.File,
+                quantity: data.Quantity,
+                color: data.Color,
               })
     
             setActiveOrders(fetchedActive);
