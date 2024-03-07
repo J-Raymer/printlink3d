@@ -43,8 +43,6 @@ When a printer has found a job they like they can select it to read all the spec
 
 ![Job Filter](https://github.com/J-Raymer/printlink3d/assets/156377663/805dd7ff-ae65-4bb5-98d1-7a75db3defa0)
 
-![Screenshot](Job Filter.png)
-
 ### Job Details
 This page shows all the details inputted by the customer when they created the job, including their comments. If the Printer likes the specification they can click
 the accept job button. This will add the job to the Printer's job page, notify the customer that their job was selected and open a chat dialogue window allowing the two to communicate.  
