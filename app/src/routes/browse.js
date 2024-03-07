@@ -89,7 +89,7 @@ export default function Browse() {
   }
 
   const onSubmit = () => {
-    var updatedHistory = selectedJob.history
+    var updatedHistory = selectedJob.history;
     updatedHistory["Accepted"] = getDate();
 
     const docRef = doc(firebaseDb, `Jobs/${selectedJob.doc}`);
