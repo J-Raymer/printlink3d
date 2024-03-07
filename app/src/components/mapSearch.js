@@ -13,8 +13,9 @@ export default function MapSearch() {
 
     return (
         <div className="mt-3 max-w-40">
+            <h1>Select your location</h1>
             <GooglePlacesAutocomplete //package for the google places API autocomplete search bar
-            apiKey="API-KEY-HERE"
+            apiKey="AIzaSyAQWqR2lbrxCL1WxOvGs2me-j7N0mBalp4"
             selectProps={{
                 search_value,        
                 onChange: (value) => { //when the search value changes (by enter or selection of autcomplete results)
@@ -30,7 +31,7 @@ export default function MapSearch() {
             }}
             />
             <div className="aspect-square max-w-40">
-                <APIProvider apiKey={"API-KEY-HERE"}>
+                <APIProvider apiKey={"AIzaSyAQWqR2lbrxCL1WxOvGs2me-j7N0mBalp4"}>
                 <Map mapId={'filter-map'}
                     center={map} //set the center of the map to the lat and lng state, moves the map with map state change
                     defaultZoom={13} 
@@ -68,7 +69,8 @@ export default function MapSearch() {
                 </Map>
                 </APIProvider>
             </div>
-            <div className='max-w-40'>
+            <div className='mt-2 max-w-40'>
+                <h1>Radius of travel (km)</h1>
                 <TextForm //draws the radius input box and updates the radius state
                     type="Distance"
                     min="1"
