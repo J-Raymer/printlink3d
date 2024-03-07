@@ -15,7 +15,7 @@ export default function MapSearch() {
         <div className="mb-2 mt-5 max-w-40">
             <h1>Select your location</h1>
             <GooglePlacesAutocomplete //package for the google places API autocomplete search bar
-            apiKey="GOOGLE_API_KEY_HERE"
+            apiKey="AIzaSyCe8pXdsTx4MXjIr0JSF10N08Y3oMxoFk8"
             selectProps={{
                 search_value,        
                 onChange: (value) => { //when the search value changes (by enter or selection of autcomplete results)
@@ -31,7 +31,7 @@ export default function MapSearch() {
             }}
             />
             <div className="aspect-square max-w-40">
-                <APIProvider apiKey={"GOOGLE_API_KEY_HERE"}>
+                <APIProvider apiKey={"AIzaSyCe8pXdsTx4MXjIr0JSF10N08Y3oMxoFk8"}>
                 <Map mapId={'filter-map'}
                     center={map} //set the center of the map to the lat and lng state, moves the map with map state change
                     defaultZoom={13} 
