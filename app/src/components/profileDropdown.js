@@ -12,23 +12,28 @@ function ProfileDropdown() {
     {
       icon: profileIcon,
       text: "Profile",
-      route: "/profile",
+      onClick: () => navigate("/profile"),
     },
     {
       icon: ordersIcon,
       text: "Orders",
-      route: "/orders",
+      onClick: () => navigate("/orders"),
     },
     {
       icon: cubeIcon,
       text: "Jobs",
-      route: "/jobs",
+      onClick: () => navigate("/jobs"),
     },
     {
       icon: settingsIcon,
       text: "Settings",
-      route: "/settings",
+      onClick: () => navigate("/settings"),
     },
+    {
+      icon: logoutIcon,
+      text: "Log out",
+      onClick: () => doSignOut(),
+    }
   ];
 
   const renderItems = () => {
@@ -39,7 +44,7 @@ function ProfileDropdown() {
       >
         <img src={item.icon} className="w-10 h-10" alt={`${item.text} icon`} />
         <button
-          onClick={() => navigate(item.route)}
+          onClick={item.onClick}
           className="block px-4 py-2 text-lg text-gray-700"
         >
           {item.text}
@@ -50,15 +55,6 @@ function ProfileDropdown() {
 
   return <>
     {renderItems()}
-    <div className="p-3 flex items-center hover:bg-gray-200 rounded-lg">
-      <img src={logoutIcon} className="w-10 h-10" alt={'log out icon'} />
-      <button
-        onClick={() => doSignOut()}
-        className="block px-4 py-2 text-lg text-gray-700"
-      >
-        Log out
-      </button>
-    </div>
   </>;
 }
 
