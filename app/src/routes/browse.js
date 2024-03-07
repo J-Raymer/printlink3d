@@ -15,7 +15,7 @@ export default function Browse() {
   const [jobs, setJobs] = useState([]);
   const [filters, setFilters] = useState({
     "materials": ["PLA", "ABS", "PETG"],
-    "colours": ["Red", "Green", "Blue", "Purple", "Orange", "Yellow", "Brown", "Gray", "White", "Black"],
+    "colors": ["Red", "Green", "Blue", "Purple", "Orange", "Yellow", "Brown", "Gray", "White", "Black"],
     "bid_order": 0,
   });
   const userContext = useAuth();
@@ -121,27 +121,27 @@ export default function Browse() {
                 <label htmlFor="material3"> PETG</label><br />
               </div>
               <div className="mt-3">
-                <h3>Colours:</h3>
-                <input type="checkbox" id="colour1" name="colour1" defaultChecked={isFilterSelected("colours", "Red")} onChange={() => handleCheck("colours", "Red")}/>
-                <label htmlFor="colour1"> Red</label><br />
-                <input type="checkbox" id="colour2" name="colour2" defaultChecked={isFilterSelected("colours", "Green")} onChange={() => handleCheck("colours", "Green")}/>
-                <label htmlFor="colour2"> Green</label><br />
-                <input type="checkbox" id="colour3" name="colour3" defaultChecked={isFilterSelected("colours", "Blue")} onChange={() => handleCheck("colours", "Blue")}/>
-                <label htmlFor="colour3"> Blue</label><br />
-                <input type="checkbox" id="colour4" name="colour4" defaultChecked={isFilterSelected("colours", "Purple")} onChange={() => handleCheck("colours", "Purple")}/>
-                <label htmlFor="colour4"> Purple</label><br />
-                <input type="checkbox" id="colour5" name="colour5" defaultChecked={isFilterSelected("colours", "Orange")} onChange={() => handleCheck("colours", "Orange")}/>
-                <label htmlFor="colour5"> Orange</label><br />
-                <input type="checkbox" id="colour6" name="colour6" defaultChecked={isFilterSelected("colours", "Yellow")} onChange={() => handleCheck("colours", "Yellow")}/>
-                <label htmlFor="colour6"> Yellow</label><br />
-                <input type="checkbox" id="colour7" name="colour7" defaultChecked={isFilterSelected("colours", "Brown")} onChange={() => handleCheck("colours", "Brown")}/>
-                <label htmlFor="colour7"> Brown</label><br />
-                <input type="checkbox" id="colour8" name="colour8" defaultChecked={isFilterSelected("colours", "Gray")} onChange={() => handleCheck("colours", "Gray")}/>
-                <label htmlFor="colour8"> Gray</label><br />
-                <input type="checkbox" id="colour9" name="colour9" defaultChecked={isFilterSelected("colours", "Black")} onChange={() => handleCheck("colours", "Black")}/>
-                <label htmlFor="colour9"> Black</label><br />
-                <input type="checkbox" id="colour10" name="colour10" defaultChecked={isFilterSelected("colours", "White")} onChange={() => handleCheck("colours", "White")}/>
-                <label htmlFor="colour10"> White</label><br />
+                <h3>Colors:</h3>
+                <input type="checkbox" id="color1" name="color1" defaultChecked={isFilterSelected("colors", "Red")} onChange={() => handleCheck("colors", "Red")}/>
+                <label htmlFor="color1"> Red</label><br />
+                <input type="checkbox" id="color2" name="color2" defaultChecked={isFilterSelected("colors", "Green")} onChange={() => handleCheck("colors", "Green")}/>
+                <label htmlFor="color2"> Green</label><br />
+                <input type="checkbox" id="color3" name="color3" defaultChecked={isFilterSelected("colors", "Blue")} onChange={() => handleCheck("colors", "Blue")}/>
+                <label htmlFor="color3"> Blue</label><br />
+                <input type="checkbox" id="color4" name="color4" defaultChecked={isFilterSelected("colors", "Purple")} onChange={() => handleCheck("colors", "Purple")}/>
+                <label htmlFor="color4"> Purple</label><br />
+                <input type="checkbox" id="color5" name="color5" defaultChecked={isFilterSelected("colors", "Orange")} onChange={() => handleCheck("colors", "Orange")}/>
+                <label htmlFor="color5"> Orange</label><br />
+                <input type="checkbox" id="color6" name="color6" defaultChecked={isFilterSelected("colors", "Yellow")} onChange={() => handleCheck("colors", "Yellow")}/>
+                <label htmlFor="color6"> Yellow</label><br />
+                <input type="checkbox" id="color7" name="color7" defaultChecked={isFilterSelected("colors", "Brown")} onChange={() => handleCheck("colors", "Brown")}/>
+                <label htmlFor="color7"> Brown</label><br />
+                <input type="checkbox" id="color8" name="color8" defaultChecked={isFilterSelected("colors", "Gray")} onChange={() => handleCheck("colors", "Gray")}/>
+                <label htmlFor="color8"> Gray</label><br />
+                <input type="checkbox" id="color9" name="color9" defaultChecked={isFilterSelected("colors", "Black")} onChange={() => handleCheck("colors", "Black")}/>
+                <label htmlFor="color9"> Black</label><br />
+                <input type="checkbox" id="color10" name="color10" defaultChecked={isFilterSelected("colors", "White")} onChange={() => handleCheck("colors", "White")}/>
+                <label htmlFor="color10"> White</label><br />
               </div>
               <div className="mt-3">
                 <h3>Sort Bid:</h3>
