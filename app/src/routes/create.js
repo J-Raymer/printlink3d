@@ -1,14 +1,16 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 import MultiStepForm from "../components/multistepform";
 import MultiStepFormPage from "../components/multistepformpage";
 import Configure from "./configure";
 import Upload from "./upload";
 import { AddJob } from "../backend";
 import { firebaseDb } from "../firebase/firebase";
+import { useAuth } from "../contexts/authContext/index";
 
 export default function Create() {
   const navigate = useNavigate();
+  const { userLoggedIn } = useAuth();
 
   const emptyPrintJob = {
     file: null,
@@ -45,6 +47,8 @@ export default function Create() {
 
   return (
     <div>
+      {!userLoggedIn && <Navigate to={"/login"} replace={true} />}
+
       <MultiStepForm
         submitText="Submit Job"
         showNext={printJob.file !== null}
