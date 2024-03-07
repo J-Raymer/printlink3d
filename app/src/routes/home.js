@@ -1,6 +1,7 @@
 import HomePageStep from "../components/homePageStep";
 import printing_home_photo from "../images/3D_printing_home_photo_cropped.jpg";
 import printer_photo from "../images/3D_printer.jpg";
+import { Link } from "react-router-dom";
 import "./home.css";
 
 export default function Home() {
@@ -49,9 +50,9 @@ export default function Home() {
           <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl text-white p-10 overflow-hidden">
             3D Printing Made Local
           </h1>
-          <button className="bg-custom-purple hover:bg-custom-purple-hover border-black text-white font-bold py-3 px-4 rounded-lg text-2xl sm:text-1xl md:text-2xl lg:text-3xl mb-10">
+          <Link to="/create" className="bg-custom-purple hover:bg-custom-purple-hover border-black text-white font-bold py-3 px-4 rounded-lg text-2xl sm:text-1xl md:text-2xl lg:text-3xl mb-10">
             Create An Order
-          </button>
+          </Link>
         </div>
       </div>
       <div className="text-center mt-5">
@@ -76,9 +77,9 @@ export default function Home() {
               printing enthusiasts. Interested?
             </p>
             <div className="flex justify-center">
-              <button className="mt-10 bg-custom-purple hover:bg-custom-purple-hover border-black text-white font-bold py-3 px-4 rounded-lg text-2xl sm:text-1xl md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl">
+              <Link to="/browse" className="mt-10 bg-custom-purple hover:bg-custom-purple-hover border-black text-white font-bold py-3 px-4 rounded-lg text-2xl sm:text-1xl md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl">
                 Get Started
-              </button>
+              </Link>
             </div>
           </div>
           <div className="order-1 sm:order-2">

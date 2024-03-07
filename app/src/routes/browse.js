@@ -1,5 +1,6 @@
 import JobCardList from "../components/jobCardList";
 import React, { useState, useEffect } from "react";
+import { Navigate } from "react-router-dom";
 import { firebaseDb } from "../firebase/firebase";
 import { collection, doc, onSnapshot, updateDoc, query, where } from "firebase/firestore";
 import Selector from "../components/selector";
@@ -98,6 +99,8 @@ export default function Browse() {
 
   return (
     <div>
+      {!userContext.userLoggedIn && <Navigate to={"/login"} replace={true} />}
+
       <MultiStepForm
         submitText="Accept Job"
         showNext={selectedJob !== null}

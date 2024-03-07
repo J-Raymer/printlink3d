@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 import MultiStepForm from "../components/multistepform";
 import MultiStepFormPage from "../components/multistepformpage";
 import Configure from "./configure";
@@ -65,6 +65,8 @@ export default function Create() {
 
   return (
     <div>
+      {!userContext.userLoggedIn && <Navigate to={"/login"} replace={true} />}
+
       <MultiStepForm
         submitText="Submit Job"
         showNext={printJob.file !== null}
