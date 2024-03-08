@@ -38,6 +38,7 @@ export default function Browse() {
             color: data.Color,
             layerHeight: data.LayerHeight,
             quantity: data.Quantity,
+            history: data.History,
           });
           console.log(fetchedJobs)
         });
