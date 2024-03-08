@@ -43,6 +43,7 @@ export default function Browse() {
             quantity: data.Quantity,
             comment: data.Comment,
             completionDate: data.CompletionDate,
+            history: data.History,
           });
           console.log(fetchedJobs)
         });
