@@ -5,35 +5,32 @@ import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/authContext";
 
-export default function Orders() {
-    const [activeOrders, setActiveOrders] = useState([]);
-    const [completeOrders, setCompleteOrders] = useState([]);
+export default function Jobs() {
+    const [activeJobs, setActiveJobs] = useState([]);
+    const [completeJobs, setCompleteJobs] = useState([]);
     const navigate = useNavigate();
     const userContext = useAuth();
 
-    // TODO - Put this in backend.js possibly
     useEffect(() => {
         const jobRef = collection(firebaseDb, 'Jobs');
-        const jobQueryCustomer = query(jobRef, where("CustomerUid", "==", userContext.currUser.uid));
+        const jobQueryPrinter = query(jobRef, where("PrinterUid", "==", userContext.currUser.uid));
 
-        const unsubscribe = onSnapshot(jobQueryCustomer, (snapshot) => {
+        const unsubscribe = onSnapshot(jobQueryPrinter, (snapshot) => {
           const fetchedActive = [];
           const fetchedComplete = [];
 
           snapshot.docs.forEach((doc) => {
             const data = doc.data();
-            const completeOrder = (data.Complete !== undefined) ? data.Complete : true;
+            const completeJob = (data.Complete !== undefined) ? data.Complete : true;
 
-            (completeOrder) ? 
+            (completeJob) ? 
             fetchedComplete.push({
                 id: doc.id,
                 quantity: data.Quantity,
                 infill: data.Infill,
                 material: data.Material,
                 distance: data.Radius,
-                fileName: data.File,
-                quantity: data.Quantity,
-                color: data.Color,
+                fileName: data.File
             }): 
             fetchedActive.push({
                 id: doc.id,
@@ -41,13 +38,11 @@ export default function Orders() {
                 infill: data.Infill,
                 material: data.Material,
                 distance: data.Radius,
-                fileName: data.File,
-                quantity: data.Quantity,
-                color: data.Color,
-              })
+                fileName: data.File
+            })
     
-            setActiveOrders(fetchedActive);
-            setCompleteOrders(fetchedComplete);
+            setActiveJobs(fetchedActive);
+            setCompleteJobs(fetchedComplete);
           });
         })
 
@@ -60,16 +55,16 @@ export default function Orders() {
     return (
         <div >
             <div className="text-xl font-extrabold p-6">
-                Active Orders
+                Active Jobs
             </div>
             <div className="grid grid-cols-1 gap-4">
-                {activeOrders.map((job) => (<JobCard job={job} onSelectJob={(job) => navigate(`/orders/${job.id}`)}/>))}
+                {activeJobs.map((job) => (<JobCard job={job} onSelectJob={(job) => navigate(`/jobs/${job.id}`)}/>))}
             </div>
             <div className="text-xl font-extrabold p-6">
-                Complete Orders
+                Complete Jobs
             </div>
             <div className="grid grid-cols-1 gap-4">
-                {completeOrders.map((job) => (<JobCard job={job} onSelectJob={(job) => navigate(`/orders/${job.id}`)}/>))}
+                {completeJobs.map((job) => (<JobCard job={job} onSelectJob={(job) => navigate(`/jobs/${job.id}`)}/>))}
             </div>
         </div>
     )

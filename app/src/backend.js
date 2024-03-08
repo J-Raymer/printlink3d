@@ -18,6 +18,7 @@ DocData for AddJob format:
 */
 export async function AddJob(db, DocData) {
   const docRef = await addDoc(collection(db, "Jobs"), DocData);
+  return docRef;
 }
 
 /*
