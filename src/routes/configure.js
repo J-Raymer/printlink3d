@@ -13,9 +13,9 @@ function StyledLine({ title, inputComponent, helpButtonComponent }) {
           <div className="mx-2">
             <div className="text-lg font-semibold">{title} </div>
           </div>
-          <div className="">{helpButtonComponent}</div>
+          {helpButtonComponent}
         </div>
-        <div className="">{inputComponent}</div>
+        {inputComponent}
       </div>
     </div>
   );
@@ -23,7 +23,7 @@ function StyledLine({ title, inputComponent, helpButtonComponent }) {
 
 function TextArea({ value, onChange }) {
   return (
-    <div className="">
+    <div>
       <textarea
         class="px-2 py-1 bg-gray-50 border border-gray-300 text-gray-900 rounded-md focus:ring-blue-500 focus:border-blue-500 block"
         value={value}
