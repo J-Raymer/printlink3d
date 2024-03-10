@@ -1,40 +1,15 @@
 import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getBlob } from "firebase/storage";
-import { firebaseDb } from "./firebase/firebase";
 
-// TODO add data types for each example
-/*
-DocData for AddJob format:
-  Customer_ID:
-  Fill_Percentage:
-  ID:
-  Material:
-  Printer_ID:
-  Radius:
-  STL:
-  Status:
-  Name:
-  Email:
-*/
 export async function AddJob(db, DocData) {
   const docRef = await addDoc(collection(db, "Jobs"), DocData);
   return docRef;
 }
 
-/*
-DocData for AddCustomer format:
-  Email:
-  ID:
-*/
 export async function AddCustomer(db, DocData) {
   const docRef = await addDoc(collection(db, "Customers"), DocData);
 }
 
-/*
-DocData for AddPrinter format:
-  Email:
-  ID:
-*/
 export async function AddPrinter(db, DocData) {
   const docRef = await addDoc(collection(db, "Printers"), DocData);
 }
@@ -48,7 +23,6 @@ export async function GetAllJobs(db) {
   querySnapshot.forEach((doc) => {
     const data = doc.data();
     jobs.push({
-      // TODO should rename Fill_Percentage to infill in database?
       infill: data.Fill_Percentage,
       material: data.Material,
       distance: data.Radius,
@@ -82,11 +56,17 @@ export async function GetPrinters(field, comp, value, db) {
   return querySnapshot;
 }
 
-// TODO rename to GetMaterials
-export async function GetMaterial(db) {
+export async function GetMaterials(db) {
   const docRef = collection(db, "Material");
   const querySnapshot = await getDocs(docRef);
   return querySnapshot;
+}
+
+export async function GetColors(db) {
+  const docRef = collection(db, "Colors");
+  const querySnapshot = await getDocs(docRef);
+  const colors = querySnapshot.docs.map(doc => doc.data().Color);
+  return colors;
 }
 
 export function addFile(file, path) {
