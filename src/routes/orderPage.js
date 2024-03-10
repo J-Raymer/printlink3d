@@ -211,6 +211,7 @@ export default function OrderPage({isPrinter=false}) {
                             'Printed':"07/03/2024",
                             'Exchanged':null,};
 
+    // TODO place in backend.js possibly
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -221,7 +222,9 @@ export default function OrderPage({isPrinter=false}) {
                     material: data.Material,
                     distance: data.Radius,
                     fileName: data.File,
-                    history: (data.History)? data.History : fakeHistory
+                    history: (data.History)? data.History : fakeHistory,
+                    quantity: data.Quantity,
+                    color: data.Color,
                 });
                 setLoading(false);
             } catch (error) {
