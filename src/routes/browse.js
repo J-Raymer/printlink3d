@@ -17,7 +17,7 @@ export default function Browse() {
   const [selectedJob, setSelectedJob] = useState(null);
   const [jobs, setJobs] = useState([]);
   const [filters, setFilters] = useState({
-    "materials": ["PLA", "ABS", "PETG"],
+    "materials": availableMaterials,
     "colors": availableColors,
     "bid_order": 0,
   });
