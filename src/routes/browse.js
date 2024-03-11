@@ -9,7 +9,7 @@ import MultiStepFormPage from "../components/multistepformpage";
 import { useAuth } from "../contexts/authContext";
 import { useNavigate } from "react-router-dom";
 import boat from "../images/boat.jpg";
-import { GetColors, GetMaterials } from "../backend";
+import { getColors, getMaterials } from "../backend";
 
 export default function Browse() {
   const [availableColors, setAvailableColors] = useState([]);
@@ -24,7 +24,7 @@ export default function Browse() {
   
   useEffect(() => {
     async function fetchColors() {
-      const colors = await GetColors(firebaseDb);
+      const colors = await getColors(firebaseDb);
       setAvailableColors(colors);
       setFilters(filters => ({ ...filters, colors: colors }));
     }
@@ -32,10 +32,10 @@ export default function Browse() {
   }, []);
 
   useEffect(() => {
-    async function getMaterials() {
-      setAvailableMaterials(await GetMaterials(firebaseDb));
+    async function fetchMaterials() {
+      setAvailableMaterials(await getMaterials(firebaseDb));
     }
-    getMaterials();
+    fetchMaterials();
   }, []);
 
   useEffect(() => {

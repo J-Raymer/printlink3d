@@ -1,20 +1,20 @@
 import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getBlob } from "firebase/storage";
 
-export async function AddJob(db, DocData) {
+export async function addJob(db, DocData) {
   const docRef = await addDoc(collection(db, "Jobs"), DocData);
   return docRef;
 }
 
-export async function AddCustomer(db, DocData) {
+export async function addCustomer(db, DocData) {
   const docRef = await addDoc(collection(db, "Customers"), DocData);
 }
 
-export async function AddPrinter(db, DocData) {
+export async function addPrinter(db, DocData) {
   const docRef = await addDoc(collection(db, "Printers"), DocData);
 }
 
-export async function GetAllJobs(db) {
+export async function getAllJobs(db) {
   const jobCollectionRef = collection(db, "Jobs");
   const querySnapshot = await getDocs(jobCollectionRef);
 
@@ -35,35 +35,35 @@ export async function GetAllJobs(db) {
   return jobs;
 }
 
-export async function GetJob(field, comp, value, db) {
+export async function getJob(field, comp, value, db) {
   const job = collection(db, "Jobs");
   const q = query(job, where(field, comp, value));
   const querySnapshot = await getDocs(q);
   return querySnapshot;
 }
 
-export async function GetCustomer(field, comp, value, db) {
+export async function getCustomer(field, comp, value, db) {
   const job = collection(db, "Customers");
   const q = query(job, where(field, comp, value));
   const querySnapshot = await getDocs(q);
   return querySnapshot;
 }
 
-export async function GetPrinters(field, comp, value, db) {
+export async function getPrinters(field, comp, value, db) {
   const job = collection(db, "Printers");
   const q = query(job, where(field, comp, value));
   const querySnapshot = await getDocs(q);
   return querySnapshot;
 }
 
-export async function GetMaterials(db) {
+export async function getMaterials(db) {
   const docRef = collection(db, "Materials");
   const querySnapshot = await getDocs(docRef);
   const materials = querySnapshot.docs.map(doc => doc.data());
   return materials;
 }
 
-export async function GetColors(db) {
+export async function getColors(db) {
   const docRef = collection(db, "Colors");
   const querySnapshot = await getDocs(docRef);
   const colors = querySnapshot.docs.map(doc => doc.data().Color);

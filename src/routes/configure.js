@@ -4,7 +4,7 @@ import TextForm from "../components/textForm";
 import { useEffect, useState } from "react";
 import { collection, onSnapshot } from "firebase/firestore";
 import { firebaseDb } from "../firebase/firebase";
-import { GetMaterials } from "../backend";
+import { getMaterials } from "../backend";
 
 function StyledLine({ title, inputComponent, helpButtonComponent }) {
   return (
@@ -113,10 +113,10 @@ export default function Configure({ printJob, changePrintJob }) {
   const [materials, setMaterials] = useState([]);
 
   useEffect(() => {
-    async function getMaterials() {
-      setMaterials(await GetMaterials(firebaseDb));
+    async function fetchMaterials() {
+      setMaterials(await getMaterials(firebaseDb));
     }
-    getMaterials();
+    fetchMaterials();
   }, []);
 
   const changeQuantity = (e) => {
