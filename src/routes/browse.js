@@ -9,10 +9,11 @@ import MultiStepFormPage from "../components/multistepformpage";
 import { useAuth } from "../contexts/authContext";
 import { useNavigate } from "react-router-dom";
 import boat from "../images/boat.jpg";
-import { GetColors } from "../backend";
+import { GetColors, GetMaterials } from "../backend";
 
 export default function Browse() {
   const [availableColors, setAvailableColors] = useState([]);
+  const [availableMaterials, setAvailableMaterials] = useState([]);
   const [selectedJob, setSelectedJob] = useState(null);
   const [jobs, setJobs] = useState([]);
   const [filters, setFilters] = useState({
@@ -28,6 +29,13 @@ export default function Browse() {
       setFilters(filters => ({ ...filters, colors: colors }));
     }
     fetchColors();
+  }, []);
+
+  useEffect(() => {
+    async function getMaterials() {
+      setAvailableMaterials(await GetMaterials(firebaseDb));
+    }
+    getMaterials();
   }, []);
 
   useEffect(() => {
@@ -87,11 +95,6 @@ export default function Browse() {
   const isFilterSelected = (category, label) => {
     return filters[category].includes(label);
   }
-
-  const changeMaterial = (x) => { };
-  const changeColor = (x) => { };
-  const changeBid = (x) => { };
-
   const getDate = () => {
     const date = new Date();
     const day = String(date.getDate()).padStart(2, '0');
@@ -158,7 +161,7 @@ export default function Browse() {
               </div>
               <div className="mt-3">
                 <h3>Sort Bid:</h3>
-                <Selector label="Bid" options={["Lowest to highest", "Highest to lowest"]} padding={1} onChange={changeBid} />
+                <Selector label="Bid" options={["Lowest to highest", "Highest to lowest"]} padding={1} />
               </div>
             </div>
             <div className="grow p-3 pt-0 overflow-y-scroll">

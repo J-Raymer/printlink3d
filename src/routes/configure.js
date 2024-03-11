@@ -4,6 +4,7 @@ import TextForm from "../components/textForm";
 import { useEffect, useState } from "react";
 import { collection, onSnapshot } from "firebase/firestore";
 import { firebaseDb } from "../firebase/firebase";
+import { GetMaterials } from "../backend";
 
 function StyledLine({ title, inputComponent, helpButtonComponent }) {
   return (
@@ -111,6 +112,13 @@ export default function Configure({ printJob, changePrintJob }) {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [materials, setMaterials] = useState([]);
 
+  useEffect(() => {
+    async function getMaterials() {
+      setMaterials(await GetMaterials(firebaseDb));
+    }
+    getMaterials();
+  }, []);
+
   const changeQuantity = (e) => {
     const newQuantity = e.target.value;
     changePrintJob(newQuantity, "quantity");
@@ -127,24 +135,6 @@ export default function Configure({ printJob, changePrintJob }) {
   };
   const changeInfill = (x) => changePrintJob(x, "infill");
   const changeLayerHeight = (x) => changePrintJob(x, "layerHeight");
-
-  useEffect(() => {
-    const unsubscribe = onSnapshot(
-      collection(firebaseDb, "Material"),
-      (snapshot) => {
-        const fetchedMaterials = [];
-        snapshot.docs.forEach((doc) => {
-          const data = doc.data();
-          fetchedMaterials.push(data);
-          setMaterials(fetchedMaterials);
-        });
-      }
-    );
-
-    return () => {
-      unsubscribe(); // Cleanup function to unsubscribe from real-time updates when the component unmounts
-    };
-  }, []);
 
   return (
     <div>

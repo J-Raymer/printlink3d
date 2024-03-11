@@ -57,9 +57,10 @@ export async function GetPrinters(field, comp, value, db) {
 }
 
 export async function GetMaterials(db) {
-  const docRef = collection(db, "Material");
+  const docRef = collection(db, "Materials");
   const querySnapshot = await getDocs(docRef);
-  return querySnapshot;
+  const materials = querySnapshot.docs.map(doc => doc.data());
+  return materials;
 }
 
 export async function GetColors(db) {
