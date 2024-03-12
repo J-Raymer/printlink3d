@@ -5,13 +5,6 @@ import { STLLoader } from "three/examples/jsm/loaders/STLLoader";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
 export default function Upload({ printJob, updateFile }) {
-  const [uploaded, setUploaded] = useState(printJob.file !== null);
-
-  const onCancel = () => {
-    updateFile(null);
-    setUploaded(false);
-  };
-
   /*
    * Setup ThreeJS Scene
    */
@@ -133,7 +126,7 @@ export default function Upload({ printJob, updateFile }) {
   /*
    * Setup DropZone
    */
-  const { acceptedFiles, getRootProps, getInputProps, open } = useDropzone({
+  const { getRootProps, getInputProps, open } = useDropzone({
     accept: {
       "model/stl": [".stl"],
     },

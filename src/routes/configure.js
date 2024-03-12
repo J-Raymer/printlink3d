@@ -2,7 +2,6 @@ import Selector from "../components/selector";
 import HelpButton from "../components/helpButton";
 import TextForm from "../components/textForm";
 import { useEffect, useState } from "react";
-import { collection, onSnapshot } from "firebase/firestore";
 import { firebaseDb } from "../firebase/firebase";
 import { getMaterials } from "../backend";
 
