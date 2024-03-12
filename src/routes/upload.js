@@ -139,10 +139,19 @@ export default function Upload({ printJob, updateFile }) {
     },
     noClick: true,
     noKeyboard: true,
-    maxFiles: 1,
+    multiple: false,
     onDrop: (acceptedFiles) => {
-      updateFile(acceptedFiles[0]);
-      addFileToScene(acceptedFiles[0]);
+      console.log(acceptedFiles)
+      const file = acceptedFiles[0];
+      const extension = file.name.split('.').pop();
+
+      if (extension !== 'stl') {
+        console.error('Invalid file type');
+        return;
+      }
+
+      updateFile(file);
+      addFileToScene(file);
     },
   });
 
