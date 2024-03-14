@@ -1,4 +1,3 @@
-import "./jobCard.css";
 import boat from "../images/boat.jpg";
 
 export default function JobCard({
