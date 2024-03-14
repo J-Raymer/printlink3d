@@ -6,7 +6,8 @@ import Configure from "./configure";
 import Upload from "./upload";
 import { AddJob } from "../backend";
 import { firebaseDb } from "../firebase/firebase";
-import { useAuth } from "../contexts/authContext/index"
+import { useAuth } from "../contexts/authContext/index";
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
 export default function Create() {
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ export default function Create() {
 
   const [printJob, setPrintJob] = useState(emptyPrintJob);
 
-  const updatePrintJob = (value, property) => {
+  const updatePrintJob = (property, value) => {
     setPrintJob((prevState) => ({ ...prevState, [property]: value }));
   };
 
@@ -39,28 +40,51 @@ export default function Create() {
   }
 
   const onJobSubmit = () => {
-    //prompt user to create an account
+    const storage = getStorage();
+    const storageRef = ref(storage, 'print-files/' + printJob.file.name);
 
-    const db_entry = {
-      CustomerUid: userContext.currUser.uid,
-      PrinterUid: null,
-      File: printJob.file.name,
-      Quantity: printJob.quantity,
-      Material: printJob.material,
-      Color: printJob.color,
-      CompletionDate: printJob.completionDate,
-      Comment: printJob.comment,
-      Infill: printJob.infill,
-      LayerHeight: printJob.layerHeight,
-      History: {'Submitted':getDate(),
-                'Accepted':null,
-                'Printed':null,
-                'Exchanged':null,},
-      Complete: false
-    };
+    const uploadTask = uploadBytesResumable(storageRef, printJob.file);
 
-    AddJob(firebaseDb, db_entry)
-    .then((jobRef) => {navigate(`/Orders/${jobRef.id}`)});
+    uploadTask.on('state_changed',
+      (snapshot) => {
+        // Observe state change events such as progress, pause, and resume
+        // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+        var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log('Upload is ' + progress + '% done');
+      },
+      (error) => {
+        console.log(error);
+      },
+      () => {
+        // Handle successful uploads on complete
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          console.log('File available at', downloadURL);
+
+          const db_entry = {
+            CustomerUid: userContext.currUser.uid,
+            PrinterUid: null,
+            File: downloadURL,
+            Quantity: printJob.quantity,
+            Material: printJob.material,
+            Color: printJob.color,
+            CompletionDate: printJob.completionDate,
+            Comment: printJob.comment,
+            Infill: printJob.infill,
+            LayerHeight: printJob.layerHeight,
+            History: {
+              'Submitted': getDate(),
+              'Accepted': null,
+              'Printed': null,
+              'Exchanged': null,
+            },
+            Complete: false
+          };
+
+          AddJob(firebaseDb, db_entry)
+            .then((jobRef) => { navigate(`/Orders/${jobRef.id}`) });
+        });
+      }
+    );
   };
 
   return (
@@ -76,7 +100,7 @@ export default function Create() {
         <MultiStepFormPage title="Upload">
           <Upload
             printJob={printJob}
-            updateFile={(newFile) => updatePrintJob(newFile, "file")}
+            updateFile={(newFile) => updatePrintJob("file", newFile)}
           />
         </MultiStepFormPage>
         <MultiStepFormPage title="Configure">
