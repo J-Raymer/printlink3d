@@ -51,6 +51,7 @@ export default function Create() {
         // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
         var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         console.log('Upload is ' + progress + '% done');
+        // TODO add progress bar or spinner
       },
       (error) => {
         console.log(error);
@@ -64,6 +65,7 @@ export default function Create() {
             CustomerUid: userContext.currUser.uid,
             PrinterUid: null,
             File: downloadURL,
+            FileName: printJob.file.name,
             Quantity: printJob.quantity,
             Material: printJob.material,
             Color: printJob.color,
