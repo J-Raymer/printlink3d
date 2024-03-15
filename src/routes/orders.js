@@ -31,7 +31,7 @@ export default function Orders() {
                 infill: data.Infill,
                 material: data.Material,
                 distance: data.Radius,
-                fileName: data.File,
+                fileName: data.FileName,
                 quantity: data.Quantity,
                 color: data.Color,
             }): 
@@ -41,7 +41,7 @@ export default function Orders() {
                 infill: data.Infill,
                 material: data.Material,
                 distance: data.Radius,
-                fileName: data.File,
+                fileName: data.FileName,
                 quantity: data.Quantity,
                 color: data.Color,
               })

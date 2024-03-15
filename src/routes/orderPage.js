@@ -221,7 +221,7 @@ export default function OrderPage({isPrinter=false}) {
                     infill: data.Infill,
                     material: data.Material,
                     distance: data.Radius,
-                    fileName: data.File,
+                    fileName: data.FileName,
                     history: (data.History)? data.History : fakeHistory,
                     quantity: data.Quantity,
                     color: data.Color,
