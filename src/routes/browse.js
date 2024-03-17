@@ -43,32 +43,33 @@ export default function Browse() {
     const availableJobQuery = query(jobRef, where("PrinterUid", "==", null));
 
     const unsubscribe = onSnapshot(availableJobQuery, (snapshot) => {
-      const fetchedJobs = [];
-      snapshot.docs.forEach((doc) => {
-        const data = doc.data();
-        fetchedJobs.push({
-          doc: doc.id,
-          infill: data.Infill,
-          material: data.Material,
-          distance: data.Radius,
-          fileName: data.File,
-          name: data.Name,
-          email: data.Email,
-          color: data.Color,
-          layerHeight: data.LayerHeight,
-          quantity: data.Quantity,
-          comment: data.Comment,
-          completionDate: data.CompletionDate,
-          history: data.History,
+        const fetchedJobs = [];
+        snapshot.docs.forEach((doc) => {
+          const data = doc.data();
+          console.log(data)
+          fetchedJobs.push({
+            doc: doc.id,
+            infill: data.Infill,
+            material: data.Material,
+            distance: data.Radius,
+            fileName: data.FileName,
+            file: data.File,
+            name: data.Name,
+            email: data.Email,
+            color: data.Color,
+            layerHeight: data.LayerHeight,
+            quantity: data.Quantity,
+            comment: data.Comment,
+            completionDate: data.CompletionDate,
+            history: data.History,
+          });
+          console.log(fetchedJobs)
         });
+        setJobs(fetchedJobs);
       });
-      setJobs(fetchedJobs);
-    }
-    );
-
-    return () => {
-      unsubscribe(); // Cleanup function to unsubscribe from real-time updates when the component unmounts
-    };
+      return () => {
+        unsubscribe(); // Cleanup function to unsubscribe from real-time updates when the component unmounts
+      };
   }, []);
 
   const userContext = useAuth();
