@@ -2,7 +2,6 @@ import HomePageStep from "../components/homePageStep";
 import printing_home_photo from "../images/3D_printing_home_photo_cropped.jpg";
 import printer_photo from "../images/3D_printer.jpg";
 import { Link } from "react-router-dom";
-import "./home.css";
 
 export default function Home() {
   const steps = [
