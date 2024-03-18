@@ -5,6 +5,7 @@ export default function JobCard({
   isSelected,
   onSelectJob,
   onUnselectJob,
+  showDownloadBtn = false,
 }) {
   const handleClick = () => {
     !isSelected ? onSelectJob(job) : onUnselectJob();
@@ -12,20 +13,19 @@ export default function JobCard({
 
   return (
     <div
-      onClick={handleClick}
-      className={`border-[1px] border-gray-300 bg-white rounded overflow-hidden flex w-full hover:cursor-pointer hover:bg-gray-200 ${
-        isSelected ? 'fg-brand-blue brand-blue-accent' : ''
+    onClick={handleClick}
+    className={`border-[1px] border-gray-300 bg-white rounded overflow-hidden grid grid-cols-3 w-full hover:cursor-pointer hover:bg-gray-200 ${isSelected ? 'fg-brand-blue brand-blue-accent' : ''
       }`}
-      style={{ height: isSelected ? "auto" : "fit-content" }}
-    >
-      <div className="md:flex-shrink-0">
-        <img
-          className="h-48 w-full object-cover md:w-48"
-          src={boat}
-          alt={job.fileName}
-        />
-      </div>
-      <div className="pl-5 pt-5 text-gray-600">
+    style={{ height: isSelected ? "auto" : "fit-content" }}
+  >
+    <div className="col-span-1">
+      <img
+        className="h-full w-full object-cover"
+        src={boat}
+        alt={job.fileName}
+      />
+    </div>
+      <div className="col-span-2 pl-5 pt-5 text-gray-600 w-full">
         <div className="uppercase tracking-wide text-sm text-indigo-500 font-semibold">
           {job.fileName}
         </div>
@@ -45,6 +45,11 @@ export default function JobCard({
           <span className="font-semibold">Quantity: </span>
           <span className="font-normal">{job.quantity}</span>
         </p>
+        {showDownloadBtn && (
+          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 w-[95%] mt-2 mb-2">
+            Download file
+          </button>
+        )}
       </div>
     </div>
   );

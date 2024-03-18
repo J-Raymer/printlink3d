@@ -257,7 +257,7 @@ export default function OrderPage({isPrinter=false}) {
                         <div className="text-lg font-semibold">
                             Details
                         </div>
-                        <JobCard job={jobData} onSelectJob={()=>{}}/>
+                        <JobCard job={jobData} onSelectJob={()=>{}} showDownloadBtn={true}/>
                     </div>
                     <div className="border border-2 mt-2 p-2 rounded-md">
                         <div className="text-lg font-semibold">
