@@ -74,6 +74,31 @@ To start the local dev server execute in the /app directory:
 ```
 npm start
 ```
+## Deploy
+To deploy changes to live site (Github Pages: [https://j-raymer/printlink3d](https://j-raymer.github.io/printlink3d)):
+
+- merge main into gh-pages branch locally. The local branch should be the same as main not the same as the remote gh-pages branch.
+- Make sure the package.json has the following entries:
+  ```
+  "homepage": "https://jraymer.github.io/printlink3d",
+  ...
+  "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
+  ...
+  ```
+- Build and deploy by running the following command 
+```
+npm run deploy
+```
+- If any issues with deploy check to make sure the gh-pages dependancy is installed:
+  ```
+  npm i
+  ```
+  or if gh-pages not included in package.json
+  ```
+  npm i gh-pages
+  ```
 
 ## License
 This project is licensed under the Apache version 2.0
