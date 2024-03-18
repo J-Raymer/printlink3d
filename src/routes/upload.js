@@ -142,12 +142,12 @@ export default function Upload({ printJob, updateFile, updateSnap }) {
   }
 
   function takeSnapshot() {
-    var croppedDimenstions = 200;
+    const croppedDimenstions = 200;
     renderer.setSize(croppedDimenstions, croppedDimenstions);
     camera.aspect = 1;
     camera.updateProjectionMatrix();
     renderer.render(sceneState, camera)
-    var imageDataURL = renderer.domElement.toDataURL("image/png");
+    const imageDataURL = renderer.domElement.toDataURL("image/png");
     updateSnap(imageDataURL);
     resize3DViewer();
   }
@@ -193,10 +193,6 @@ export default function Upload({ printJob, updateFile, updateSnap }) {
                 <div className="flex flex-col items-center justify-center full-without-title mt-4 grow" id="canvas-rect">
                   <div className="rounded" ref={containerRef}></div>
                 </div>
-                <button className="p-2 border border-2 bg-blue-100" onClick={() => {takeSnapshot()}}>
-                  Take snapshot
-                </button>
-                
               </div>
           }
         </>

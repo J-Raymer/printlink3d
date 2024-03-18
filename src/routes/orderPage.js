@@ -1,11 +1,11 @@
 import { useNavigate, useParams } from "react-router-dom"
-import { firebaseDb, firebaseStorage } from "../firebase/firebase"
+import { firebaseDb } from "../firebase/firebase"
 import { addDoc, doc, getDoc, updateDoc } from "firebase/firestore"
 import { useState, useEffect } from "react"
 import JobCard from "../components/jobCard"
 import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import { useAuth } from "../contexts/authContext"
-import { getDownloadURL, ref } from "firebase/storage"
+import { getThumbnail } from "../backend"
 
 
 function ChatRoom({jobId}) {
@@ -204,8 +204,7 @@ function OrderStatus({history, jobId, isPrinter}) {
 export default function OrderPage({isPrinter=false}) {
     const Id = useParams().Id;
     const [jobData, setJobData] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [image, setImage] = useState(null);
+    const [dataLoading, setDataLoading] = useState(true);
     const navigate = useNavigate();
 
     const fakeHistory = {'Submitted':"01/03/2024",
@@ -218,29 +217,18 @@ export default function OrderPage({isPrinter=false}) {
         const fetchData = async () => {
             try {
                 const snapshot = await getDoc(doc(firebaseDb, `/Jobs/${Id}`));
-                getDownloadURL(ref(firebaseStorage, `images/${Id}.png`))
-                    .then((url) =>
-                    {
-                         // This can be downloaded directly:
-                        const xhr = new XMLHttpRequest();
-                        xhr.responseType = 'blob';
-                        xhr.onload = (event) => {
-                            const blob = xhr.response;
-                            const reader = new FileReader();
-                            reader.readAsDataURL(blob);
-                            reader.onloadend = function() {
-                                //setJobData({...jobData, snap: reader.result})
-                                console.log(reader.result)
-                                setImage(reader.result)
-                            }
-                        };
-                        xhr.open('GET', url);
-                        xhr.send();
-                    })
-                    .catch((error) => console.log("error"))
+                let thumbnail = null;
+          
+                try {
+                thumbnail = await getThumbnail(doc.id);
+                } catch (error) {
+                console.error("Error fetching thumbnail: ", error)
+                thumbnail = null;
+                }
 
                 const data = snapshot.data();
                 setJobData({
+                    snap: thumbnail,
                     infill: data.Infill,
                     material: data.Material,
                     distance: data.Radius,
@@ -249,8 +237,8 @@ export default function OrderPage({isPrinter=false}) {
                     quantity: data.Quantity,
                     color: data.Color,
                 });
-                console.log(jobData)
-                setLoading(false);
+
+                setDataLoading(false);
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
@@ -262,11 +250,7 @@ export default function OrderPage({isPrinter=false}) {
         };
     }, [Id]);
 
-    if (loading) {
-        return (
-            <div>loading...</div>
-        )
-    }
+
     return (
         <div>
             <div className="pl-10 pt-2 flex gap-2">
@@ -275,30 +259,39 @@ export default function OrderPage({isPrinter=false}) {
                 (<button className="text-blue-500 hover:underline focus:outline-none" onClick={() => navigate("/Orders")}> Your Orders </button>)}
                 <div> > {Id.substring(0, 8)}...</div>
             </div>
-            <div className="flex justify-center gap-2">
-                <div className="w-2/5">
-                    <div className="border border-2 mt-2 p-2 rounded-md">
-                        <div className="text-lg font-semibold">
-                            Details
+            <div>
+                {(dataLoading) ?
+                    (<></>):
+                    (
+                        <div className="flex justify-center gap-2">
+                            <div className="w-2/5">
+                                <div className="border border-2 mt-2 p-2 rounded-md">
+                                    <div className="text-lg font-semibold">
+                                        Details
+                                    </div>
+                                    <JobCard job={jobData} onSelectJob={()=>{}} img={jobData.snap}/>
+                                </div>
+                                <div className="border border-2 mt-2 p-2 rounded-md">
+                                    <div className="text-lg font-semibold">
+                                        Status
+                                    </div>
+                                    <OrderStatus history={jobData.history} jobId={Id} isPrinter={isPrinter}/>
+                                </div>
+                            </div>
+                            <div className="w-1/3">
+                                <div className="border border-2 mt-2 p-2 rounded-md">
+                                    <div className="text-lg font-semibold">
+                                        Chat
+                                    </div>
+                                    <ChatRoom jobId={Id} />
+                                </div>
+                            </div>
                         </div>
-                        <JobCard job={jobData} onSelectJob={()=>{}} img={image}/>
-                    </div>
-                    <div className="border border-2 mt-2 p-2 rounded-md">
-                        <div className="text-lg font-semibold">
-                            Status
-                        </div>
-                        <OrderStatus history={jobData.history} jobId={Id} isPrinter={isPrinter}/>
-                    </div>
-                </div>
-                <div className="w-1/3">
-                    <div className="border border-2 mt-2 p-2 rounded-md">
-                        <div className="text-lg font-semibold">
-                            Chat
-                        </div>
-                        <ChatRoom jobId={Id} />
-                    </div>
-                </div>
-            </div>
+                    )
+                }
+            </div> 
+            
+            
         </div>
         
     )

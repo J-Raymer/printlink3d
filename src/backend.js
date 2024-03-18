@@ -1,6 +1,6 @@
 import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
-import { getStorage, ref, uploadBytes, getBlob } from "firebase/storage";
-import { firebaseDb } from "./firebase/firebase";
+import { getStorage, ref, uploadBytes, getBlob, getDownloadURL } from "firebase/storage";
+import { firebaseDb, firebaseStorage } from "./firebase/firebase";
 
 // TODO add data types for each example
 /*
@@ -99,4 +99,29 @@ export function getFile(path) {
   const storage = getStorage();
   const reference = ref(storage, path);
   return getBlob(reference, 5000000);
+}
+
+export async function getThumbnail(jobId) {
+  return new Promise((resolve, reject) => {
+    getDownloadURL(ref(firebaseStorage, `images/${jobId}.png`))
+    .then((url) => {
+        const xhr = new XMLHttpRequest();
+        xhr.responseType = 'blob';
+        xhr.onload = (e) => {
+            const blob = xhr.response;
+            const reader = new FileReader();
+            reader.readAsDataURL(blob);
+
+            reader.onloadend = function() {
+                resolve(reader.result);
+            }
+        };
+        xhr.open('GET', url);
+        xhr.send();
+    })
+    .catch((error) => {
+      console.error("Error fetching thumbnail: ", error);
+      reject(error);
+    })
+  }) 
 }

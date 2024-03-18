@@ -33,9 +33,9 @@ export default function Create() {
 
   const uploadSnap = async (snap, id) => {
     var storageRef = ref(firebaseStorage, `images/${id}.png`)
-    const r = await fetch(snap);
-    const b = await r.blob();
-    uploadBytes(storageRef, b);
+    const snapResource = await fetch(snap);
+    const snapBlob = await snapResource.blob();
+    uploadBytes(storageRef, snapBlob);
   };
 
   const getDate = () => {
@@ -67,12 +67,21 @@ export default function Create() {
                 'Exchanged':null,},
       Complete: false
     };
-    //upload snapshot
+    
     AddJob(firebaseDb, db_entry)
-    .then((jobRef) => {
-      uploadSnap(printJob.snap, jobRef.id).then(() => {
-        navigate(`/Orders/${jobRef.id}`)
-      })});
+      .then((jobRef) => {
+        uploadSnap(printJob.snap, jobRef.id)
+        .then(() => {
+          navigate(`/Orders/${jobRef.id}`);
+        })
+        .catch(error => {
+          console.error("Error uploading snapshot:", error);
+        })
+      })
+      .catch(error => {
+        console.error("Error uploading job:", error);
+        //perhaps display error popup to user
+      })
     };
 
   return (

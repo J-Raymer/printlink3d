@@ -1,6 +1,7 @@
 import { ref } from '@firebase/storage';
 import JobCard from './jobCard'
 import React, {useState, useEffect, useRef} from 'react';
+import boat from "../images/boat.jpg";
 
 export default function JobCardList({ jobs, filters, selectedJob, onSelectJob, onUnselectJob }) {
   return (
@@ -17,6 +18,7 @@ export default function JobCardList({ jobs, filters, selectedJob, onSelectJob, o
             isSelected={selectedJob===job}
             onSelectJob={onSelectJob}
             onUnselectJob={onUnselectJob}
+            img={(job.snap)? job.snap: boat}
           />);
         }})
       }

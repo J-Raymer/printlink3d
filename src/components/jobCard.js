@@ -5,7 +5,7 @@ export default function JobCard({
   isSelected,
   onSelectJob,
   onUnselectJob,
-  img = boat
+  img
 }) {
   const handleClick = () => {
     !isSelected ? onSelectJob(job) : onUnselectJob();
@@ -22,7 +22,7 @@ export default function JobCard({
       <div className="md:flex-shrink-0">
         <img
           className="h-48 w-full object-cover md:w-48"
-          src={img}
+          src={(img)? img: boat}
           alt={job.fileName}
         />
       </div>
