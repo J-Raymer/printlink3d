@@ -6,13 +6,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import errorIcon from "../images/error_icon.png"
 
 export default function Upload({ printJob, updateFile }) {
-  const [uploaded, setUploaded] = useState(printJob.file !== null);
   const [error, setError] = useState(false);
-
-  const onCancel = () => {
-    updateFile(null);
-    setUploaded(false);
-  };
 
   /*
    * Setup ThreeJS Scene
@@ -135,7 +129,7 @@ export default function Upload({ printJob, updateFile }) {
   /*
    * Setup DropZone
    */
-  const { acceptedFiles, getRootProps, getInputProps, open } = useDropzone({
+  const { getRootProps, getInputProps, open } = useDropzone({
     accept: {
       "model/stl": [".stl"],
     },

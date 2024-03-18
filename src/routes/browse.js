@@ -9,17 +9,34 @@ import MultiStepFormPage from "../components/multistepformpage";
 import { useAuth } from "../contexts/authContext";
 import { useNavigate } from "react-router-dom";
 import boat from "../images/boat.jpg";
+import { getColors, getMaterials } from "../backend";
 
 export default function Browse() {
+  const [availableColors, setAvailableColors] = useState([]);
+  const [availableMaterials, setAvailableMaterials] = useState([]);
   const [selectedJob, setSelectedJob] = useState(null);
   const [jobs, setJobs] = useState([]);
   const [filters, setFilters] = useState({
-    "materials": ["PLA", "ABS", "PETG"],
-    "colors": ["Red", "Green", "Blue", "Purple", "Orange", "Yellow", "Brown", "Gray", "White", "Black"],
+    "materials": availableMaterials,
+    "colors": availableColors,
     "bid_order": 0,
   });
-  const userContext = useAuth();
-  const navigate = useNavigate();
+  
+  useEffect(() => {
+    async function fetchColors() {
+      const colors = await getColors(firebaseDb);
+      setAvailableColors(colors);
+      setFilters(filters => ({ ...filters, colors: colors }));
+    }
+    fetchColors();
+  }, []);
+
+  useEffect(() => {
+    async function fetchMaterials() {
+      setAvailableMaterials(await getMaterials(firebaseDb));
+    }
+    fetchMaterials();
+  }, []);
 
   useEffect(() => {
     const jobRef = collection(firebaseDb, 'Jobs');
@@ -49,13 +66,14 @@ export default function Browse() {
           console.log(fetchedJobs)
         });
         setJobs(fetchedJobs);
-      }
-    );
-
-    return () => {
-      unsubscribe(); // Cleanup function to unsubscribe from real-time updates when the component unmounts
-    };
+      });
+      return () => {
+        unsubscribe(); // Cleanup function to unsubscribe from real-time updates when the component unmounts
+      };
   }, []);
+
+  const userContext = useAuth();
+  const navigate = useNavigate();
 
   const onSelectJob = (job) => {
     setSelectedJob(job);
@@ -66,7 +84,7 @@ export default function Browse() {
   };
 
   const handleCheck = (category, label) => {
-    let t = filters[category];
+    let t = [...filters[category]];
     if (t.includes(label)) {
       t.splice(t.indexOf(label), 1);
     } else {
@@ -78,11 +96,6 @@ export default function Browse() {
   const isFilterSelected = (category, label) => {
     return filters[category].includes(label);
   }
-
-  const changeMaterial = (x) => { };
-  const changeColor = (x) => { };
-  const changeBid = (x) => { };
-  
   const getDate = () => {
     const date = new Date();
     const day = String(date.getDate()).padStart(2, '0');
@@ -97,9 +110,28 @@ export default function Browse() {
     updatedHistory["Accepted"] = getDate();
 
     const docRef = doc(firebaseDb, `Jobs/${selectedJob.doc}`);
-    updateDoc(docRef, {PrinterUid: userContext.currUser.uid, History: updatedHistory})
-    .then(() => {navigate(`/Jobs/${selectedJob.doc}`)});
+    updateDoc(docRef, { PrinterUid: userContext.currUser.uid, History: updatedHistory })
+      .then(() => { navigate(`/Jobs/${selectedJob.doc}`) });
   };
+
+  const renderColorSelector = () => {
+    return (
+      <div>
+        {availableColors.map((color, index) => (
+          <React.Fragment key={color}>
+            <input
+              type="checkbox"
+              id={`color${index}`}
+              name={`color${index}`}
+              defaultChecked={isFilterSelected("colors", color)}
+              onChange={() => handleCheck("colors", color)}
+            />
+            <label htmlFor={`color${index}`}> {color}</label><br />
+          </React.Fragment>
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -126,30 +158,11 @@ export default function Browse() {
               </div>
               <div className="mt-3">
                 <h3>Colors:</h3>
-                <input type="checkbox" id="color1" name="color1" defaultChecked={isFilterSelected("colors", "Red")} onChange={() => handleCheck("colors", "Red")}/>
-                <label htmlFor="color1"> Red</label><br />
-                <input type="checkbox" id="color2" name="color2" defaultChecked={isFilterSelected("colors", "Green")} onChange={() => handleCheck("colors", "Green")}/>
-                <label htmlFor="color2"> Green</label><br />
-                <input type="checkbox" id="color3" name="color3" defaultChecked={isFilterSelected("colors", "Blue")} onChange={() => handleCheck("colors", "Blue")}/>
-                <label htmlFor="color3"> Blue</label><br />
-                <input type="checkbox" id="color4" name="color4" defaultChecked={isFilterSelected("colors", "Purple")} onChange={() => handleCheck("colors", "Purple")}/>
-                <label htmlFor="color4"> Purple</label><br />
-                <input type="checkbox" id="color5" name="color5" defaultChecked={isFilterSelected("colors", "Orange")} onChange={() => handleCheck("colors", "Orange")}/>
-                <label htmlFor="color5"> Orange</label><br />
-                <input type="checkbox" id="color6" name="color6" defaultChecked={isFilterSelected("colors", "Yellow")} onChange={() => handleCheck("colors", "Yellow")}/>
-                <label htmlFor="color6"> Yellow</label><br />
-                <input type="checkbox" id="color7" name="color7" defaultChecked={isFilterSelected("colors", "Brown")} onChange={() => handleCheck("colors", "Brown")}/>
-                <label htmlFor="color7"> Brown</label><br />
-                <input type="checkbox" id="color8" name="color8" defaultChecked={isFilterSelected("colors", "Gray")} onChange={() => handleCheck("colors", "Gray")}/>
-                <label htmlFor="color8"> Gray</label><br />
-                <input type="checkbox" id="color9" name="color9" defaultChecked={isFilterSelected("colors", "Black")} onChange={() => handleCheck("colors", "Black")}/>
-                <label htmlFor="color9"> Black</label><br />
-                <input type="checkbox" id="color10" name="color10" defaultChecked={isFilterSelected("colors", "White")} onChange={() => handleCheck("colors", "White")}/>
-                <label htmlFor="color10"> White</label><br />
+                {renderColorSelector()}
               </div>
               <div className="mt-3">
                 <h3>Sort Bid:</h3>
-                <Selector label="Bid" options={["Lowest to highest", "Highest to lowest"]} padding={1} onChange={changeBid} />
+                <Selector label="Bid" options={["Lowest to highest", "Highest to lowest"]} padding={1} />
               </div>
             </div>
             <div className="grow p-3 pt-0 overflow-y-scroll">
@@ -196,78 +209,3 @@ export default function Browse() {
     </div>
   );
 }
-
-
-/*
-<FontAwesomeIcon icon="fa-solid fa-user" />
-
- <div>
-      <div className="flex justify-center">
-        <p className="text-4xl font-bold mb-10 mt-10">Select a Job</p>
-      </div>
-      <div className="flex">
-        <div className="w-1/4 border-2 ml-10 mr-10 border-black overflow-auto">
-          <div className="m-5">
-            <p className="font-bold">Material:</p>
-            <div className="ml-10">
-              <input
-                type="checkbox"
-                id="material1"
-                name="material1"
-                value="PLA"
-              />
-              <label htmlFor="material1"> PLA</label>
-              <br />
-              <input
-                type="checkbox"
-                id="material2"
-                name="material2"
-                value="ABS"
-              />
-              <label htmlFor="material2"> ABS</label>
-              <br />
-              <input
-                type="checkbox"
-                id="material3"
-                name="material3"
-                value="PETG"
-              />
-              <label htmlFor="material3"> PETG</label>
-              <br />
-            </div>
-            <p className="font-bold">Color:</p>
-            <div className="ml-10">
-              <input type="checkbox" id="red" name="red" value="Red" />
-              <label htmlFor="red"> Red</label>
-              <br />
-              <input type="checkbox" id="green" name="green" value="Green" />
-              <label htmlFor="green"> Green</label>
-              <br />
-              <input type="checkbox" id="blue" name="blue" value="Blue" />
-              <label htmlFor="blue"> Blue</label>
-              <br />
-            </div>
-            <div className="flex mt-2">
-              <p className="font-bold mr-3">Bid:</p>
-              <div>
-                <Selector
-                  label="Bid"
-                  options={["Lowest to highest", "Highest to lowest"]}
-                  padding={1}
-                  onChange={changeBid}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="w-3/4">
-          <JobCardList
-            jobs={jobs}
-            onSelectJob={onSelectJob}
-            onUnselectJob={onUnselectJob}
-            selectedJob={selectedJob}
-          />
-        </div>
-      </div>
-    </div>
-*/

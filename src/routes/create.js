@@ -1,10 +1,10 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import MultiStepForm from "../components/multistepform";
 import MultiStepFormPage from "../components/multistepformpage";
 import Configure from "./configure";
 import Upload from "./upload";
-import { AddJob } from "../backend";
+import { addJob } from "../backend";
 import { firebaseDb } from "../firebase/firebase";
 import { useAuth } from "../contexts/authContext/index";
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
@@ -82,7 +82,7 @@ export default function Create() {
             Complete: false
           };
 
-          AddJob(firebaseDb, db_entry)
+          addJob(firebaseDb, db_entry)
             .then((jobRef) => { navigate(`/Orders/${jobRef.id}`) });
         });
       }
