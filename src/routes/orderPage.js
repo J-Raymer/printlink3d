@@ -5,7 +5,7 @@ import { useState, useEffect } from "react"
 import JobCardOrderPage from "../components/jobCardOrderPage"
 import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import { useAuth } from "../contexts/authContext"
-import { getThumbnail } from "../backend"
+import { getThumbnail, getFile } from "../backend"
 
 
 function ChatRoom({ jobId }) {
@@ -200,7 +200,6 @@ function OrderStatus({ history, jobId, isPrinter }) {
   )
 }
 
-
 export default function OrderPage({ isPrinter = false }) {
   const Id = useParams().Id;
   const [jobData, setJobData] = useState([]);
@@ -220,12 +219,15 @@ export default function OrderPage({ isPrinter = false }) {
       try {
         const snapshot = await getDoc(doc(firebaseDb, `/Jobs/${Id}`));
         let thumbnail = null;
+        let file = null;
 
         try {
           thumbnail = await getThumbnail(Id);
+          file = await getFile(Id);
         } catch (error) {
           console.error("Error fetching thumbnail: ", error)
           thumbnail = null;
+          file = null;
         }
 
         const data = snapshot.data();
@@ -234,7 +236,7 @@ export default function OrderPage({ isPrinter = false }) {
           infill: data.Infill,
           material: data.Material,
           distance: data.Radius,
-          file: data.File,
+          file: file,
           fileName: data.FileName,
           history: (data.History) ? data.History : fakeHistory,
           quantity: data.Quantity,
@@ -272,7 +274,7 @@ export default function OrderPage({ isPrinter = false }) {
                   <div className="text-lg font-semibold">
                     Details
                   </div>
-                  <JobCardOrderPage job={jobData} onSelectJob={() => { }} img={jobData.thumbnail} />
+                  <JobCardOrderPage job={jobData} onSelectJob={() => { }} img={jobData.thumbnail} file={jobData.file}/>
                 </div>
                 <div className="border border-2 mt-2 p-2 rounded-md">
                   <div className="text-lg font-semibold">

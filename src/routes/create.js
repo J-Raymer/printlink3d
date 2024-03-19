@@ -40,7 +40,7 @@ export default function Create() {
   };
 
   const uploadStl = async (stlFile, id) => {
-    var storageRef = ref(firebaseStorage, `print-files/${id}`);
+    var storageRef = ref(firebaseStorage, `print-files/${id}.stl`);
     uploadBytes(storageRef, stlFile);
   }
 

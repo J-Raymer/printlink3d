@@ -71,25 +71,13 @@ export async function getColors(db) {
   return colors;
 }
 
-export function addFile(file, path) {
-  const storage = getStorage();
-  const reference = ref(storage, path);
-  uploadBytes(reference, file);
-}
-
-export function getFile(path) {
-  const storage = getStorage();
-  const reference = ref(storage, path);
-  return getBlob(reference, 5000000);
-}
-
 export async function getThumbnail(jobId) {
   return new Promise((resolve, reject) => {
     getDownloadURL(ref(firebaseStorage, `images/${jobId}.png`))
     .then((url) => {
         const xhr = new XMLHttpRequest();
         xhr.responseType = 'blob';
-        xhr.onload = (e) => {
+        xhr.onload = () => {
             const blob = xhr.response;
             const reader = new FileReader();
             reader.readAsDataURL(blob);
@@ -106,4 +94,15 @@ export async function getThumbnail(jobId) {
       reject(error);
     })
   }) 
+}
+
+export async function getFile(jobId) {
+  try {
+    const fileRef = ref(firebaseStorage, `print-files/${jobId}.stl`);
+    const downloadURL = await getDownloadURL(fileRef);
+    return downloadURL;
+  } catch (error) {
+    console.error('Error getting download URL:', error);
+    throw error;
+  }
 }
