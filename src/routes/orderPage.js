@@ -5,6 +5,7 @@ import { useState, useEffect } from "react"
 import JobCard from "../components/jobCard"
 import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import { useAuth } from "../contexts/authContext"
+import { getThumbnail } from "../backend"
 
 
 function ChatRoom({jobId}) {
@@ -203,7 +204,7 @@ function OrderStatus({history, jobId, isPrinter}) {
 export default function OrderPage({isPrinter=false}) {
     const Id = useParams().Id;
     const [jobData, setJobData] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [dataLoading, setDataLoading] = useState(true);
     const navigate = useNavigate();
 
     const fakeHistory = {'Submitted':"01/03/2024",
@@ -216,8 +217,18 @@ export default function OrderPage({isPrinter=false}) {
         const fetchData = async () => {
             try {
                 const snapshot = await getDoc(doc(firebaseDb, `/Jobs/${Id}`));
+                let thumbnail = null;
+          
+                try {
+                    thumbnail = await getThumbnail(Id);
+                } catch (error) {
+                    console.error("Error fetching thumbnail: ", error)
+                    thumbnail = null;
+                }
+
                 const data = snapshot.data();
                 setJobData({
+                    thumbnail: thumbnail,
                     infill: data.Infill,
                     material: data.Material,
                     distance: data.Radius,
@@ -226,7 +237,8 @@ export default function OrderPage({isPrinter=false}) {
                     quantity: data.Quantity,
                     color: data.Color,
                 });
-                setLoading(false);
+
+                setDataLoading(false);
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
@@ -238,11 +250,7 @@ export default function OrderPage({isPrinter=false}) {
         };
     }, [Id]);
 
-    if (loading) {
-        return (
-            <div>loading...</div>
-        )
-    }
+
     return (
         <div>
             <div className="pl-10 pt-2 flex gap-2">
@@ -251,30 +259,39 @@ export default function OrderPage({isPrinter=false}) {
                 (<button className="text-blue-500 hover:underline focus:outline-none" onClick={() => navigate("/Orders")}> Your Orders </button>)}
                 <div> > {Id.substring(0, 8)}...</div>
             </div>
-            <div className="flex justify-center gap-2">
-                <div className="w-2/5">
-                    <div className="border border-2 mt-2 p-2 rounded-md">
-                        <div className="text-lg font-semibold">
-                            Details
+            <div>
+                {(dataLoading) ?
+                    (<></>):
+                    (
+                        <div className="flex justify-center gap-2">
+                            <div className="w-2/5">
+                                <div className="border border-2 mt-2 p-2 rounded-md">
+                                    <div className="text-lg font-semibold">
+                                        Details
+                                    </div>
+                                    <JobCard job={jobData} onSelectJob={()=>{}} img={jobData.thumbnail}/>
+                                </div>
+                                <div className="border border-2 mt-2 p-2 rounded-md">
+                                    <div className="text-lg font-semibold">
+                                        Status
+                                    </div>
+                                    <OrderStatus history={jobData.history} jobId={Id} isPrinter={isPrinter}/>
+                                </div>
+                            </div>
+                            <div className="w-1/3">
+                                <div className="border border-2 mt-2 p-2 rounded-md">
+                                    <div className="text-lg font-semibold">
+                                        Chat
+                                    </div>
+                                    <ChatRoom jobId={Id} />
+                                </div>
+                            </div>
                         </div>
-                        <JobCard job={jobData} onSelectJob={()=>{}}/>
-                    </div>
-                    <div className="border border-2 mt-2 p-2 rounded-md">
-                        <div className="text-lg font-semibold">
-                            Status
-                        </div>
-                        <OrderStatus history={jobData.history} jobId={Id} isPrinter={isPrinter}/>
-                    </div>
-                </div>
-                <div className="w-1/3">
-                    <div className="border border-2 mt-2 p-2 rounded-md">
-                        <div className="text-lg font-semibold">
-                            Chat
-                        </div>
-                        <ChatRoom jobId={Id} />
-                    </div>
-                </div>
-            </div>
+                    )
+                }
+            </div> 
+            
+            
         </div>
         
     )

@@ -5,7 +5,7 @@ import { STLLoader } from "three/examples/jsm/loaders/STLLoader";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import errorIcon from "../images/error_icon.png"
 
-export default function Upload({ printJob, updateFile }) {
+export default function Upload({ printJob, updateFile, updateThumbnail }) {
   const [error, setError] = useState(false);
 
   /*
@@ -20,16 +20,20 @@ export default function Upload({ printJob, updateFile }) {
   // Create lighting
   // Grey ambient
   // Grey spotlight with large intensity to cover even large objects
-  const light = new THREE.AmbientLight(0xf0f0f0, 0.2);
-  const spotlight = new THREE.SpotLight(0xf0f0f0);
-  spotlight.position.set(40, 40, 40);
-  spotlight.intensity = 3000;
+  const light = new THREE.AmbientLight(0xffffff, 0.1);
+  const spotlight = new THREE.SpotLight(0xffffff);
+  spotlight.position.set(3, 3, 3);
+  spotlight.intensity = 35;
   scene.add(light);
   scene.add(spotlight);
+  //var helper = new THREE.SpotLightHelper(spotlight);
+  //scene.add(helper)
 
   // Create standard perspective camera
   const camera = new THREE.PerspectiveCamera(75, 1.0, 0.1, 1000);
-  camera.position.z = -10;
+  camera.position.z = 1.2;
+  camera.position.y = 0.5;
+  camera.position.x = 0.5;
 
   // Create render and set background to a very light grey
   const renderer = new THREE.WebGLRenderer();
@@ -42,7 +46,7 @@ export default function Upload({ printJob, updateFile }) {
   // Now the STL loading logic
   const loader = new STLLoader();
   const material = new THREE.MeshPhysicalMaterial({
-    color: 0x888888,
+    color: 0xdcedf5,
   });
 
   /* Create ThreeJS container
@@ -68,6 +72,7 @@ export default function Upload({ printJob, updateFile }) {
 
       containerRef.current.appendChild(renderer.domElement);
       draw();
+      captureThumbnail();
       return () => {
         window.removeEventListener("resize", onWindowResize, false);
         if (
@@ -114,6 +119,12 @@ export default function Upload({ printJob, updateFile }) {
     loader.load(
       URL.createObjectURL(file),
       function (geometry) {
+        var boundingBox = new THREE.Box3().setFromObject(new THREE.Mesh(geometry));
+
+        var size = new THREE.Vector3();
+        boundingBox.getSize(size);
+        var scaleFactor = 1 / Math.max(size.x, size.y, size.z);
+        geometry.scale(scaleFactor, scaleFactor, scaleFactor);
         scene.add(new THREE.Mesh(geometry, material));
         setScene(scene);
       },
@@ -124,6 +135,17 @@ export default function Upload({ printJob, updateFile }) {
         console.log(error);
       }
     );
+  }
+
+  function captureThumbnail() {
+    const croppedDimenstions = 200;
+    renderer.setSize(croppedDimenstions, croppedDimenstions);
+    camera.aspect = 1;
+    camera.updateProjectionMatrix();
+    renderer.render(sceneState, camera)
+    const imageDataURL = renderer.domElement.toDataURL("image/png");
+    updateThumbnail(imageDataURL);
+    resize3DViewer();
   }
 
   /*
@@ -143,7 +165,7 @@ export default function Upload({ printJob, updateFile }) {
       }
 
       const file = acceptedFiles[0];
-      const extension = file.name.split('.').pop();
+      const extension = file.name.split('.').pop().toLocaleLowerCase();
 
       if (extension !== 'stl') {
         setError(true)
