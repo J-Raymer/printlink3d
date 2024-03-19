@@ -6,6 +6,7 @@ export default function JobCard({
   onSelectJob,
   onUnselectJob,
   showDownloadBtn = false,
+  file,
 }) {
   const handleClick = () => {
     !isSelected ? onSelectJob(job) : onUnselectJob();
@@ -46,9 +47,13 @@ export default function JobCard({
           <span className="font-normal">{job.quantity}</span>
         </p>
         {showDownloadBtn && (
-          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 w-[95%] mt-2 mb-2">
-            Download file
-          </button>
+          <a
+          href={file}
+          download
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 w-[95%] mt-2 mb-2 inline-block text-center"
+        >
+          Download file
+        </a>
         )}
       </div>
     </div>

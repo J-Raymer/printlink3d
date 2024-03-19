@@ -221,6 +221,7 @@ export default function OrderPage({isPrinter=false}) {
                     infill: data.Infill,
                     material: data.Material,
                     distance: data.Radius,
+                    file: data.File,
                     fileName: data.FileName,
                     history: (data.History)? data.History : fakeHistory,
                     quantity: data.Quantity,
@@ -257,7 +258,7 @@ export default function OrderPage({isPrinter=false}) {
                         <div className="text-lg font-semibold">
                             Details
                         </div>
-                        <JobCard job={jobData} onSelectJob={()=>{}} showDownloadBtn={true}/>
+                        <JobCard job={jobData} onSelectJob={()=>{}} showDownloadBtn={true} file={jobData.file}/>
                     </div>
                     <div className="border border-2 mt-2 p-2 rounded-md">
                         <div className="text-lg font-semibold">
