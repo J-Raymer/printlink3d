@@ -58,7 +58,7 @@ export default function Browse() {
           }
 
           fetchedJobs.push({
-            snap: thumbnail,
+            thumbnail: thumbnail,
             doc: doc.id,
             infill: data.Infill,
             material: data.Material,
@@ -196,7 +196,7 @@ export default function Browse() {
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <img
                 className="h-96 w-full object-cover md:w-96"
-                src={(selectedJob.snap)? selectedJob.snap: boat}
+                src={(selectedJob.thumbnail)? selectedJob.thumbnail: boat}
                 alt={selectedJob.fileName}
               />
               <div className="ml-5">

@@ -36,33 +36,21 @@ export default function Orders({isPrinter=false}) {
               console.error("Error fetching thumbnail: ", error)
               thumbnail = null;
             }
-            const completeOrder = (data.Complete !== undefined) ? data.Complete : true;
-    
-            if (completeOrder) {
-              fetchedComplete.push({
-                snap: thumbnail,
-                id: doc.id,
-                quantity: data.Quantity,
-                infill: data.Infill,
-                material: data.Material,
-                distance: data.Radius,
-                fileName: data.FileName,
-                quantity: data.Quantity,
-                color: data.Color,
-              });
-            } else {
-              fetchedActive.push({
-                snap: thumbnail,
-                id: doc.id,
-                quantity: data.Quantity,
-                infill: data.Infill,
-                material: data.Material,
-                distance: data.Radius,
-                fileName: data.FileName,
-                quantity: data.Quantity,
-                color: data.Color,
-              });
-            }
+
+            const completeOrder = (data.Complete !== undefined) ? data.Complete : true;       
+            const order = {
+              thumbnail: thumbnail,
+              id: doc.id,
+              quantity: data.Quantity,
+              infill: data.Infill,
+              material: data.Material,
+              distance: data.Radius,
+              fileName: data.FileName,
+              quantity: data.Quantity,
+              color: data.Color,
+            };
+            
+            (completeOrder) ? fetchedComplete.push(order) : fetchedActive.push(order);
           }));
     
           setActiveOrders(fetchedActive);
@@ -88,13 +76,13 @@ export default function Orders({isPrinter=false}) {
                       {(isPrinter) ? (<>Active Jobs</>) : (<>Active Orders</>)}
                     </div>
                     <div className="grid grid-cols-1 gap-4">
-                      {activeOrders.map((job) => (<JobCard job={job} onSelectJob={(job) => navigate(`/${(isPrinter)? "jobs": "orders"}/${job.id}`)} img={job.snap}/>))}
+                      {activeOrders.map((job) => (<JobCard job={job} onSelectJob={(job) => navigate(`/${(isPrinter)? "jobs": "orders"}/${job.id}`)} img={job.thumbnail}/>))}
                     </div>
                     <div className="text-xl font-extrabold p-6">
                       {(isPrinter) ? (<>Complete Jobs</>) : (<>Complete Orders</>)}
                     </div>
                     <div className="grid grid-cols-1 gap-4">
-                      {completeOrders.map((job) => (<JobCard job={job} onSelectJob={(job) => navigate(`/${(isPrinter)? "jobs": "orders"}/${job.id}`)} img={job.snap}/>))}
+                      {completeOrders.map((job) => (<JobCard job={job} onSelectJob={(job) => navigate(`/${(isPrinter)? "jobs": "orders"}/${job.id}`)} img={job.thumbnail}/>))}
                     </div>
                 </div>
               )

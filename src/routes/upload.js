@@ -5,7 +5,7 @@ import { STLLoader } from "three/examples/jsm/loaders/STLLoader";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import errorIcon from "../images/error_icon.png"
 
-export default function Upload({ printJob, updateFile, updateSnap }) {
+export default function Upload({ printJob, updateFile, updateThumbnail }) {
   const [error, setError] = useState(false);
 
   /*
@@ -72,7 +72,7 @@ export default function Upload({ printJob, updateFile, updateSnap }) {
 
       containerRef.current.appendChild(renderer.domElement);
       draw();
-      takeSnapshot();
+      captureThumbnail();
       return () => {
         window.removeEventListener("resize", onWindowResize, false);
         if (
@@ -137,15 +137,14 @@ export default function Upload({ printJob, updateFile, updateSnap }) {
     );
   }
 
-  function takeSnapshot() {
+  function captureThumbnail() {
     const croppedDimenstions = 200;
     renderer.setSize(croppedDimenstions, croppedDimenstions);
     camera.aspect = 1;
     camera.updateProjectionMatrix();
     renderer.render(sceneState, camera)
     const imageDataURL = renderer.domElement.toDataURL("image/png");
-    console.log(imageDataURL);
-    updateSnap(imageDataURL);
+    updateThumbnail(imageDataURL);
     resize3DViewer();
   }
 

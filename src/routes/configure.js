@@ -139,7 +139,7 @@ export default function Configure({ printJob, changePrintJob }) {
   return (
     <div>
       <div>
-        <JobCard job={printJob} onSelectJob={()=>{}} img={printJob.snap}/>
+        <JobCard job={printJob} onSelectJob={()=>{}} img={printJob.thumbnail}/>
       </div>
       <div className="p-5">
         <div className="my-4">

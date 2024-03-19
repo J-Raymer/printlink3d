@@ -15,7 +15,7 @@ export default function JobCardList({ jobs, filters, selectedJob, onSelectJob, o
             isSelected={selectedJob===job}
             onSelectJob={onSelectJob}
             onUnselectJob={onUnselectJob}
-            img={(job.snap)? job.snap: boat}
+            img={(job.thumbnail)? job.thumbnail: boat}
           />);
         }})
       }

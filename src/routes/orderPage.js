@@ -228,7 +228,7 @@ export default function OrderPage({isPrinter=false}) {
 
                 const data = snapshot.data();
                 setJobData({
-                    snap: thumbnail,
+                    thumbnail: thumbnail,
                     infill: data.Infill,
                     material: data.Material,
                     distance: data.Radius,
@@ -269,7 +269,7 @@ export default function OrderPage({isPrinter=false}) {
                                     <div className="text-lg font-semibold">
                                         Details
                                     </div>
-                                    <JobCard job={jobData} onSelectJob={()=>{}} img={jobData.snap}/>
+                                    <JobCard job={jobData} onSelectJob={()=>{}} img={jobData.thumbnail}/>
                                 </div>
                                 <div className="border border-2 mt-2 p-2 rounded-md">
                                     <div className="text-lg font-semibold">

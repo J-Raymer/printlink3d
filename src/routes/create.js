@@ -15,7 +15,7 @@ export default function Create() {
   const userContext = useAuth();
 
   const emptyPrintJob = {
-    snap: null,
+    thumbnail: null,
     file: null,
     quantity: 1,
     material: "Plastic",
@@ -32,11 +32,11 @@ export default function Create() {
     setPrintJob((prevState) => ({ ...prevState, [property]: value }));
   };
 
-  const uploadSnap = async (snap, id) => {
+  const uploadThumbnail = async (thumbnail, id) => {
     var storageRef = ref(firebaseStorage, `images/${id}.png`)
-    const snapResource = await fetch(snap);
-    const snapBlob = await snapResource.blob();
-    uploadBytes(storageRef, snapBlob);
+    const thumbnailResource = await fetch(thumbnail);
+    const thumbnailBlob = await thumbnailResource.blob();
+    uploadBytes(storageRef, thumbnailBlob);
   };
 
   const uploadStl = async (stlFile, id) => {
@@ -80,7 +80,7 @@ export default function Create() {
         const Id = jobRef.id;
 
         //upload thumbnail. Needs to be done before navigating to order page
-        uploadSnap(printJob.snap, Id)
+        uploadThumbnail(printJob.thumbnail, Id)
         .then(() => {
           // upload stl file. On completion, make listing available on jobs page
           uploadStl(printJob.file, Id)
@@ -95,7 +95,7 @@ export default function Create() {
           navigate(`/Orders/${Id}`);
         })
         .catch(error => {
-          console.error("Error uploading snap: ", error);
+          console.error("Error uploading thumbnail: ", error);
         })
       })
       .catch(error => {
@@ -117,7 +117,7 @@ export default function Create() {
           <Upload
             printJob={printJob}
             updateFile={(newFile) => updatePrintJob("file", newFile)}
-            updateSnap={(newSnap) => updatePrintJob("snap", newSnap)}
+            updateThumbnail={(newThumbnail) => updatePrintJob("thumbnail", newThumbnail)}
           />
         </MultiStepFormPage>
         <MultiStepFormPage title="Configure">
