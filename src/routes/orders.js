@@ -1,76 +1,93 @@
 import JobCard from "../components/jobCard";
 import React, { useState, useEffect } from 'react';
 import { firebaseDb } from '../firebase/firebase';
-import { collection, onSnapshot, query, where } from "firebase/firestore";
+import { collection, getDocs, onSnapshot, query, where } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/authContext";
+import { getThumbnail } from "../backend";
 
-export default function Orders() {
+export default function Orders({isPrinter=false}) {
     const [activeOrders, setActiveOrders] = useState([]);
     const [completeOrders, setCompleteOrders] = useState([]);
     const navigate = useNavigate();
     const userContext = useAuth();
-
-    // TODO - Put this in backend.js possibly
+    const [dataLoading, setDataLoading] = useState(true);
+    
     useEffect(() => {
-        const jobRef = collection(firebaseDb, 'Jobs');
-        const jobQueryCustomer = query(jobRef, where("CustomerUid", "==", userContext.currUser.uid));
+      setDataLoading(true);
 
-        const unsubscribe = onSnapshot(jobQueryCustomer, (snapshot) => {
+      const jobRef = collection(firebaseDb, 'Jobs');
+      const jobQuery = (isPrinter) ? 
+                                  query(jobRef, where("PrinterUid", "==", userContext.currUser.uid)) :
+                                  query(jobRef, where("CustomerUid", "==", userContext.currUser.uid));
+      
+      const unsubscribe = onSnapshot(jobQuery, async (snapshot) => {
+        try {
           const fetchedActive = [];
           const fetchedComplete = [];
-
-          snapshot.docs.forEach((doc) => {
+    
+          await Promise.all(snapshot.docs.map(async (doc) => {
             const data = doc.data();
-            const completeOrder = (data.Complete !== undefined) ? data.Complete : true;
+            let thumbnail = null;
+          
+            try {
+              thumbnail = await getThumbnail(doc.id);
+            } catch (error) {
+              console.error("Error fetching thumbnail: ", error)
+              thumbnail = null;
+            }
 
-            (completeOrder) ? 
-            fetchedComplete.push({
-                id: doc.id,
-                quantity: data.Quantity,
-                infill: data.Infill,
-                material: data.Material,
-                distance: data.Radius,
-                fileName: data.FileName,
-                quantity: data.Quantity,
-                color: data.Color,
-            }): 
-            fetchedActive.push({
-                id: doc.id,
-                quantity: data.Quantity,
-                infill: data.Infill,
-                material: data.Material,
-                distance: data.Radius,
-                fileName: data.FileName,
-                quantity: data.Quantity,
-                color: data.Color,
-              })
+            const completeOrder = (data.Complete !== undefined) ? data.Complete : true;       
+            const order = {
+              thumbnail: thumbnail,
+              id: doc.id,
+              quantity: data.Quantity,
+              infill: data.Infill,
+              material: data.Material,
+              distance: data.Radius,
+              fileName: data.FileName,
+              quantity: data.Quantity,
+              color: data.Color,
+            };
+            
+            (completeOrder) ? fetchedComplete.push(order) : fetchedActive.push(order);
+          }));
     
-            setActiveOrders(fetchedActive);
-            setCompleteOrders(fetchedComplete);
-          });
-        })
+          setActiveOrders(fetchedActive);
+          setCompleteOrders(fetchedComplete);
+          setDataLoading(false);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      })
 
-    
-        return () => {
-          unsubscribe();
-        };
-      }, []);
+      return () => {
+        unsubscribe();
+      };
+    }, [isPrinter]);
 
     return (
         <div >
-            <div className="text-xl font-extrabold p-6">
-                Active Orders
-            </div>
-            <div className="grid grid-cols-1 gap-4">
-                {activeOrders.map((job) => (<JobCard job={job} onSelectJob={(job) => navigate(`/orders/${job.id}`)}/>))}
-            </div>
-            <div className="text-xl font-extrabold p-6">
-                Complete Orders
-            </div>
-            <div className="grid grid-cols-1 gap-4">
-                {completeOrders.map((job) => (<JobCard job={job} onSelectJob={(job) => navigate(`/orders/${job.id}`)}/>))}
-            </div>
+            {(dataLoading)?
+              (<></>) :
+              (
+                <div>
+                    <div className="text-xl font-extrabold p-6">
+                      {(isPrinter) ? (<>Active Jobs</>) : (<>Active Orders</>)}
+                    </div>
+                    <div className="grid grid-cols-1 gap-4">
+                      {activeOrders.map((job) => (<JobCard job={job} onSelectJob={(job) => navigate(`/${(isPrinter)? "jobs": "orders"}/${job.id}`)} img={job.thumbnail}/>))}
+                    </div>
+                    <div className="text-xl font-extrabold p-6">
+                      {(isPrinter) ? (<>Complete Jobs</>) : (<>Complete Orders</>)}
+                    </div>
+                    <div className="grid grid-cols-1 gap-4">
+                      {completeOrders.map((job) => (<JobCard job={job} onSelectJob={(job) => navigate(`/${(isPrinter)? "jobs": "orders"}/${job.id}`)} img={job.thumbnail}/>))}
+                    </div>
+                </div>
+              )
+            }
+            
         </div>
     )
 }

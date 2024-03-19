@@ -6,7 +6,6 @@ import Create from './routes/create.js';
 import Browse from './routes/browse.js';
 import Profile from './routes/profile.js';
 import Orders from "./routes/orders.js";
-import Jobs from "./routes/jobs.js"
 import OrderPage from "./routes/orderPage.js";
 import ProfileDropdown from "./components/profileDropdown.js";
 import Register from "./routes/register.js";
@@ -97,7 +96,7 @@ function App() {
           <Route path="login" element={<Login />} />
           <Route path="orders" element={<Orders />} />
           <Route path="orders/:Id" element={<OrderPage />} />
-          <Route path="jobs" element={<Jobs />} />
+          <Route path="jobs" element={<Orders isPrinter={true}/>} />
           <Route path="jobs/:Id" element={<OrderPage isPrinter={true}/>} />
         </Route>
       </Routes>

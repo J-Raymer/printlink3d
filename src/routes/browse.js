@@ -9,7 +9,7 @@ import MultiStepFormPage from "../components/multistepformpage";
 import { useAuth } from "../contexts/authContext";
 import { useNavigate } from "react-router-dom";
 import boat from "../images/boat.jpg";
-import { getColors, getMaterials } from "../backend";
+import { getThumbnail, getColors, getMaterials } from "../backend";
 
 export default function Browse() {
   const [availableColors, setAvailableColors] = useState([]);
@@ -40,14 +40,25 @@ export default function Browse() {
 
   useEffect(() => {
     const jobRef = collection(firebaseDb, 'Jobs');
-    const availableJobQuery = query(jobRef, where("PrinterUid", "==", null));
-
-    const unsubscribe = onSnapshot(availableJobQuery, (snapshot) => {
+    const jobQuery = query(jobRef, where("PrinterUid", "==", null), where("UploadedFile", "==", true));
+    
+    const unsubscribe = onSnapshot(jobQuery, async (snapshot) => {
+      try {
         const fetchedJobs = [];
-        snapshot.docs.forEach((doc) => {
+  
+        await Promise.all(snapshot.docs.map(async (doc) => {
           const data = doc.data();
-          console.log(data)
+          let thumbnail = null;
+          
+          try {
+            thumbnail = await getThumbnail(doc.id);
+          } catch (error) {
+            console.error("Error fetching thumbnail: ", error)
+            thumbnail = null;
+          }
+
           fetchedJobs.push({
+            thumbnail: thumbnail,
             doc: doc.id,
             infill: data.Infill,
             material: data.Material,
@@ -63,13 +74,17 @@ export default function Browse() {
             completionDate: data.CompletionDate,
             history: data.History,
           });
-          console.log(fetchedJobs)
-        });
+        }));
+        
         setJobs(fetchedJobs);
-      });
-      return () => {
-        unsubscribe(); // Cleanup function to unsubscribe from real-time updates when the component unmounts
-      };
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    })
+
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   const userContext = useAuth();
@@ -181,7 +196,7 @@ export default function Browse() {
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <img
                 className="h-96 w-full object-cover md:w-96"
-                src={boat}
+                src={(selectedJob.thumbnail)? selectedJob.thumbnail: boat}
                 alt={selectedJob.fileName}
               />
               <div className="ml-5">

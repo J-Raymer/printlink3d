@@ -5,15 +5,17 @@ import MultiStepFormPage from "../components/multistepformpage";
 import Configure from "./configure";
 import Upload from "./upload";
 import { addJob } from "../backend";
-import { firebaseDb } from "../firebase/firebase";
-import { useAuth } from "../contexts/authContext/index";
-import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { firebaseDb, firebaseStorage } from "../firebase/firebase";
+import { ref, uploadBytes, getStorage, uploadBytesResumable, getDownloadURL } from "firebase/storage"
+import { doc, updateDoc } from "firebase/firestore"
+import { useAuth } from "../contexts/authContext/index"
 
 export default function Create() {
   const navigate = useNavigate();
   const userContext = useAuth();
 
   const emptyPrintJob = {
+    thumbnail: null,
     file: null,
     quantity: 1,
     material: "Plastic",
@@ -30,6 +32,18 @@ export default function Create() {
     setPrintJob((prevState) => ({ ...prevState, [property]: value }));
   };
 
+  const uploadThumbnail = async (thumbnail, id) => {
+    var storageRef = ref(firebaseStorage, `images/${id}.png`)
+    const thumbnailResource = await fetch(thumbnail);
+    const thumbnailBlob = await thumbnailResource.blob();
+    uploadBytes(storageRef, thumbnailBlob);
+  };
+
+  const uploadStl = async (stlFile, id) => {
+    var storageRef = ref(firebaseStorage, `print-files/${id}`);
+    uploadBytes(storageRef, stlFile);
+  }
+
   const getDate = () => {
     const date = new Date();
     const day = String(date.getDate()).padStart(2, '0');
@@ -37,56 +51,56 @@ export default function Create() {
     const year = date.getFullYear();
 
     return `${day}/${month}/${year}`;
-  }
+  };
 
   const onJobSubmit = () => {
-    const storage = getStorage();
-    const storageRef = ref(storage, 'print-files/' + printJob.file.name);
-
-    const uploadTask = uploadBytesResumable(storageRef, printJob.file);
-
-    uploadTask.on('state_changed',
-      (snapshot) => {
-        // Observe state change events such as progress, pause, and resume
-        // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-        var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        console.log('Upload is ' + progress + '% done');
-        // TODO add progress bar or spinner
+    const db_entry = {
+      CustomerUid: userContext.currUser.uid,
+      PrinterUid: null,
+      FileName: printJob.file.name,
+      Quantity: printJob.quantity,
+      Material: printJob.material,
+      Color: printJob.color,
+      CompletionDate: printJob.completionDate,
+      Comment: printJob.comment,
+      Infill: printJob.infill,
+      LayerHeight: printJob.layerHeight,
+      History: {
+        'Submitted': getDate(),
+        'Accepted': null,
+        'Printed': null,
+        'Exchanged': null,
       },
-      (error) => {
-        console.log(error);
-      },
-      () => {
-        // Handle successful uploads on complete
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          console.log('File available at', downloadURL);
+      UploadedFile: false,
+      Complete: false
+    };
 
-          const db_entry = {
-            CustomerUid: userContext.currUser.uid,
-            PrinterUid: null,
-            File: downloadURL,
-            FileName: printJob.file.name,
-            Quantity: printJob.quantity,
-            Material: printJob.material,
-            Color: printJob.color,
-            CompletionDate: printJob.completionDate,
-            Comment: printJob.comment,
-            Infill: printJob.infill,
-            LayerHeight: printJob.layerHeight,
-            History: {
-              'Submitted': getDate(),
-              'Accepted': null,
-              'Printed': null,
-              'Exchanged': null,
-            },
-            Complete: false
-          };
+    addJob(firebaseDb, db_entry)
+      .then((jobRef) => {
+        const Id = jobRef.id;
 
-          addJob(firebaseDb, db_entry)
-            .then((jobRef) => { navigate(`/Orders/${jobRef.id}`) });
-        });
-      }
-    );
+        //upload thumbnail. Needs to be done before navigating to order page
+        uploadThumbnail(printJob.thumbnail, Id)
+        .then(() => {
+          // upload stl file. On completion, make listing available on jobs page
+          uploadStl(printJob.file, Id)
+          .then(() => {
+            const docRef = doc(firebaseDb, `Jobs/${Id}`);
+            updateDoc(docRef, {UploadedFile: true})
+          })
+          .catch(error => {
+            console.error("Error uploading stl file: ", error);
+          })
+
+          navigate(`/Orders/${Id}`);
+        })
+        .catch(error => {
+          console.error("Error uploading thumbnail: ", error);
+        })
+      })
+      .catch(error => {
+        console.error("Error uploading job data: ", error);
+      })      
   };
 
   return (
@@ -103,6 +117,7 @@ export default function Create() {
           <Upload
             printJob={printJob}
             updateFile={(newFile) => updatePrintJob("file", newFile)}
+            updateThumbnail={(newThumbnail) => updatePrintJob("thumbnail", newThumbnail)}
           />
         </MultiStepFormPage>
         <MultiStepFormPage title="Configure">
