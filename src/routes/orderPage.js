@@ -2,7 +2,7 @@ import { useNavigate, useParams } from "react-router-dom"
 import { firebaseDb } from "../firebase/firebase"
 import { addDoc, doc, getDoc, updateDoc } from "firebase/firestore"
 import { useState, useEffect } from "react"
-import JobCard from "../components/jobCard"
+import JobCardOrderPage from "../components/jobCardOrderPage"
 import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import { useAuth } from "../contexts/authContext"
 
@@ -258,7 +258,7 @@ export default function OrderPage({isPrinter=false}) {
                         <div className="text-lg font-semibold">
                             Details
                         </div>
-                        <JobCard job={jobData} onSelectJob={()=>{}} showDownloadBtn={true} file={jobData.file}/>
+                        <JobCardOrderPage job={jobData} onSelectJob={()=>{}} showDownloadBtn={true} file={jobData.file}/>
                     </div>
                     <div className="border border-2 mt-2 p-2 rounded-md">
                         <div className="text-lg font-semibold">
