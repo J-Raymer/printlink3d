@@ -3,14 +3,10 @@ import React, { useState, useEffect, useRef } from "react";
 import { useDropzone } from "react-dropzone";
 import { STLLoader } from "three/examples/jsm/loaders/STLLoader";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import errorIcon from "../images/error_icon.png"
 
 export default function Upload({ printJob, updateFile, updateSnap }) {
-  const [uploaded, setUploaded] = useState(printJob.file !== null);
-
-  const onCancel = () => {
-    updateFile(null);
-    setUploaded(false);
-  };
+  const [error, setError] = useState(false);
 
   /*
    * Setup ThreeJS Scene
@@ -148,6 +144,7 @@ export default function Upload({ printJob, updateFile, updateSnap }) {
     camera.updateProjectionMatrix();
     renderer.render(sceneState, camera)
     const imageDataURL = renderer.domElement.toDataURL("image/png");
+    console.log(imageDataURL);
     updateSnap(imageDataURL);
     resize3DViewer();
   }
@@ -155,46 +152,66 @@ export default function Upload({ printJob, updateFile, updateSnap }) {
   /*
    * Setup DropZone
    */
-  const { acceptedFiles, getRootProps, getInputProps, open } = useDropzone({
+  const { getRootProps, getInputProps, open } = useDropzone({
     accept: {
       "model/stl": [".stl"],
     },
     noClick: true,
     noKeyboard: true,
-    maxFiles: 1,
+    multiple: false,
     onDrop: (acceptedFiles) => {
-      updateFile(acceptedFiles[0]);
-      addFileToScene(acceptedFiles[0]);
+      if (acceptedFiles.length === 0) {
+        setError(true);
+        return;
+      }
+
+      const file = acceptedFiles[0];
+      const extension = file.name.split('.').pop().toLocaleLowerCase();
+
+      if (extension !== 'stl') {
+        setError(true)
+        return;
+      }
+
+      updateFile(file);
+      addFileToScene(file);
+      setError(false);
     },
   });
 
-    return (
-        <>
-          {
-             printJob.file === null ?
-              <div className="flex flex-col h-full">
-                <p className="text-4xl font-bold mt-3">Upload an STL file</p>
-                <div className="flex flex-col mt-4 grow">
-                  <div {...getRootProps()} className="h-full border-dashed border-2 border-gray-400 p-4 flex text-center justify-center items-center rounded" style={{backgroundColor: "#f7f7f7"}}>
-                    <input {...getInputProps()} />
-                    <div className="text-3xl">
-                      <p>Drag and drop<br/>or</p>
-                      <span onClick={open} className="text-3xl text-blue-500 cursor-pointer underline">Browse files</span>
-                    </div>
-                  </div>
+  return (
+    <>
+      {
+        printJob.file === null ?
+          <div className="flex flex-col h-full">
+            <p className="text-4xl font-bold mt-3">Upload an STL file</p>
+            <div className="flex flex-col mt-4 grow">
+              <div {...getRootProps()} className="h-full border-dashed border-2 border-gray-400 p-4 flex text-center justify-center items-center rounded" style={{ backgroundColor: "#f7f7f7" }}>
+                <input {...getInputProps()} />
+                <div className="text-3xl">
+                  <p>Drag and drop<br />or</p>
+                  <span onClick={open} className="text-3xl text-blue-500 cursor-pointer underline">Browse files</span>
                 </div>
               </div>
-            :
-              <div className="flex flex-col h-full">
-                <div className="flex w-full items-center mt-3 justify-between">
-                    <p className="text-4xl font-bold">Selected: {printJob.file.name}</p>
-                    <p onClick={() => removeSTL()} className="text-4xl text-blue-500 cursor-pointer underline">Change File</p>
-                </div>
-                <div className="flex flex-col items-center justify-center full-without-title mt-4 grow" id="canvas-rect">
-                  <div className="rounded" ref={containerRef}></div>
-                </div>
+            </div>
+            {error && (
+              <div className="flex items-center pt-3">
+                <img src={errorIcon} className="w-6 h-6" />
+                <p className="font-bold pl-2">We currently only accept single .stl files</p>
               </div>
-          }
-        </>
-    );
-  }
+            )}
+          </div>
+          :
+          <div className="flex flex-col h-full">
+            <div className="flex w-full items-center mt-3 justify-between">
+              <p className="text-4xl font-bold">Selected: {printJob.file.name}</p>
+              <p onClick={() => removeSTL()} className="text-4xl text-blue-500 cursor-pointer underline">Change File</p>
+            </div>
+            <div className="flex flex-col items-center justify-center full-without-title mt-4 grow" id="canvas-rect">
+              <div className="rounded" ref={containerRef}></div>
+            </div>
+          </div>
+      }
+    </>
+  );
+}

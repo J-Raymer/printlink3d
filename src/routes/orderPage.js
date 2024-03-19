@@ -220,10 +220,10 @@ export default function OrderPage({isPrinter=false}) {
                 let thumbnail = null;
           
                 try {
-                thumbnail = await getThumbnail(doc.id);
+                    thumbnail = await getThumbnail(Id);
                 } catch (error) {
-                console.error("Error fetching thumbnail: ", error)
-                thumbnail = null;
+                    console.error("Error fetching thumbnail: ", error)
+                    thumbnail = null;
                 }
 
                 const data = snapshot.data();
@@ -232,7 +232,7 @@ export default function OrderPage({isPrinter=false}) {
                     infill: data.Infill,
                     material: data.Material,
                     distance: data.Radius,
-                    fileName: data.File,
+                    fileName: data.FileName,
                     history: (data.History)? data.History : fakeHistory,
                     quantity: data.Quantity,
                     color: data.Color,

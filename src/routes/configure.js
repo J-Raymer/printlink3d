@@ -2,9 +2,9 @@ import Selector from "../components/selector";
 import HelpButton from "../components/helpButton";
 import TextForm from "../components/textForm";
 import { useEffect, useState } from "react";
-import { collection, onSnapshot } from "firebase/firestore";
 import { firebaseDb } from "../firebase/firebase";
 import JobCard from "../components/jobCard";
+import { getMaterials } from "../backend";
 
 function StyledLine({ title, inputComponent, helpButtonComponent }) {
   return (
@@ -14,9 +14,9 @@ function StyledLine({ title, inputComponent, helpButtonComponent }) {
           <div className="mx-2">
             <div className="text-lg font-semibold">{title} </div>
           </div>
-          <div className="">{helpButtonComponent}</div>
+          {helpButtonComponent}
         </div>
-        <div className="">{inputComponent}</div>
+        {inputComponent}
       </div>
     </div>
   );
@@ -24,7 +24,7 @@ function StyledLine({ title, inputComponent, helpButtonComponent }) {
 
 function TextArea({ value, onChange }) {
   return (
-    <div className="">
+    <div>
       <textarea
         class="px-2 py-1 bg-gray-50 border border-gray-300 text-gray-900 rounded-md focus:ring-blue-500 focus:border-blue-500 block"
         value={value}
@@ -112,6 +112,13 @@ export default function Configure({ printJob, changePrintJob }) {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [materials, setMaterials] = useState([]);
 
+  useEffect(() => {
+    async function fetchMaterials() {
+      setMaterials(await getMaterials(firebaseDb));
+    }
+    fetchMaterials();
+  }, []);
+
   const changeQuantity = (e) => {
     const newQuantity = e.target.value;
     changePrintJob(newQuantity, "quantity");
@@ -128,24 +135,6 @@ export default function Configure({ printJob, changePrintJob }) {
   };
   const changeInfill = (x) => changePrintJob(x, "infill");
   const changeLayerHeight = (x) => changePrintJob(x, "layerHeight");
-
-  useEffect(() => {
-    const unsubscribe = onSnapshot(
-      collection(firebaseDb, "Material"),
-      (snapshot) => {
-        const fetchedMaterials = [];
-        snapshot.docs.forEach((doc) => {
-          const data = doc.data();
-          fetchedMaterials.push(data);
-          setMaterials(fetchedMaterials);
-        });
-      }
-    );
-
-    return () => {
-      unsubscribe(); // Cleanup function to unsubscribe from real-time updates when the component unmounts
-    };
-  }, []);
 
   return (
     <div>

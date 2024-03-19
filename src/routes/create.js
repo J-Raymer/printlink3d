@@ -1,12 +1,13 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import MultiStepForm from "../components/multistepform";
 import MultiStepFormPage from "../components/multistepformpage";
 import Configure from "./configure";
 import Upload from "./upload";
-import { AddJob } from "../backend";
+import { addJob } from "../backend";
 import { firebaseDb, firebaseStorage } from "../firebase/firebase";
-import { ref, uploadBytes } from "firebase/storage"
+import { ref, uploadBytes, getStorage, uploadBytesResumable, getDownloadURL } from "firebase/storage"
+import { doc, updateDoc } from "firebase/firestore"
 import { useAuth } from "../contexts/authContext/index"
 
 export default function Create() {
@@ -27,7 +28,7 @@ export default function Create() {
 
   const [printJob, setPrintJob] = useState(emptyPrintJob);
 
-  const updatePrintJob = (value, property) => {
+  const updatePrintJob = (property, value) => {
     setPrintJob((prevState) => ({ ...prevState, [property]: value }));
   };
 
@@ -37,6 +38,11 @@ export default function Create() {
     const snapBlob = await snapResource.blob();
     uploadBytes(storageRef, snapBlob);
   };
+
+  const uploadStl = async (stlFile, id) => {
+    var storageRef = ref(firebaseStorage, `print-files/${id}`);
+    uploadBytes(storageRef, stlFile);
+  }
 
   const getDate = () => {
     const date = new Date();
@@ -48,12 +54,10 @@ export default function Create() {
   };
 
   const onJobSubmit = () => {
-    //prompt user to create an account
-
     const db_entry = {
       CustomerUid: userContext.currUser.uid,
       PrinterUid: null,
-      File: printJob.file.name,
+      FileName: printJob.file.name,
       Quantity: printJob.quantity,
       Material: printJob.material,
       Color: printJob.color,
@@ -61,28 +65,43 @@ export default function Create() {
       Comment: printJob.comment,
       Infill: printJob.infill,
       LayerHeight: printJob.layerHeight,
-      History: {'Submitted':getDate(),
-                'Accepted':null,
-                'Printed':null,
-                'Exchanged':null,},
+      History: {
+        'Submitted': getDate(),
+        'Accepted': null,
+        'Printed': null,
+        'Exchanged': null,
+      },
+      UploadedFile: false,
       Complete: false
     };
-    
-    AddJob(firebaseDb, db_entry)
+
+    addJob(firebaseDb, db_entry)
       .then((jobRef) => {
-        uploadSnap(printJob.snap, jobRef.id)
+        const Id = jobRef.id;
+
+        //upload thumbnail. Needs to be done before navigating to order page
+        uploadSnap(printJob.snap, Id)
         .then(() => {
-          navigate(`/Orders/${jobRef.id}`);
+          // upload stl file. On completion, make listing available on jobs page
+          uploadStl(printJob.file, Id)
+          .then(() => {
+            const docRef = doc(firebaseDb, `Jobs/${Id}`);
+            updateDoc(docRef, {UploadedFile: true})
+          })
+          .catch(error => {
+            console.error("Error uploading stl file: ", error);
+          })
+
+          navigate(`/Orders/${Id}`);
         })
         .catch(error => {
-          console.error("Error uploading snapshot:", error);
+          console.error("Error uploading snap: ", error);
         })
       })
       .catch(error => {
-        console.error("Error uploading job:", error);
-        //perhaps display error popup to user
-      })
-    };
+        console.error("Error uploading job data: ", error);
+      })      
+  };
 
   return (
     <div>
@@ -97,8 +116,8 @@ export default function Create() {
         <MultiStepFormPage title="Upload">
           <Upload
             printJob={printJob}
-            updateFile={(newFile) => updatePrintJob(newFile, "file")}
-            updateSnap={(newSnap) => updatePrintJob(newSnap, "snap")}
+            updateFile={(newFile) => updatePrintJob("file", newFile)}
+            updateSnap={(newSnap) => updatePrintJob("snap", newSnap)}
           />
         </MultiStepFormPage>
         <MultiStepFormPage title="Configure">

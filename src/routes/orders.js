@@ -46,7 +46,7 @@ export default function Orders({isPrinter=false}) {
                 infill: data.Infill,
                 material: data.Material,
                 distance: data.Radius,
-                fileName: data.File,
+                fileName: data.FileName,
                 quantity: data.Quantity,
                 color: data.Color,
               });
@@ -58,7 +58,7 @@ export default function Orders({isPrinter=false}) {
                 infill: data.Infill,
                 material: data.Material,
                 distance: data.Radius,
-                fileName: data.File,
+                fileName: data.FileName,
                 quantity: data.Quantity,
                 color: data.Color,
               });
@@ -88,13 +88,13 @@ export default function Orders({isPrinter=false}) {
                       {(isPrinter) ? (<>Active Jobs</>) : (<>Active Orders</>)}
                     </div>
                     <div className="grid grid-cols-1 gap-4">
-                      {activeOrders.map((job) => (<JobCard job={job} onSelectJob={(job) => navigate(`/orders/${job.id}`)} img={job.snap}/>))}
+                      {activeOrders.map((job) => (<JobCard job={job} onSelectJob={(job) => navigate(`/${(isPrinter)? "jobs": "orders"}/${job.id}`)} img={job.snap}/>))}
                     </div>
                     <div className="text-xl font-extrabold p-6">
                       {(isPrinter) ? (<>Complete Jobs</>) : (<>Complete Orders</>)}
                     </div>
                     <div className="grid grid-cols-1 gap-4">
-                      {completeOrders.map((job) => (<JobCard job={job} onSelectJob={(job) => navigate(`/orders/${job.id}`)} img={job.snap}/>))}
+                      {completeOrders.map((job) => (<JobCard job={job} onSelectJob={(job) => navigate(`/${(isPrinter)? "jobs": "orders"}/${job.id}`)} img={job.snap}/>))}
                     </div>
                 </div>
               )

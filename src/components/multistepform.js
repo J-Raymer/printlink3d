@@ -40,7 +40,6 @@ export default function MultiStepForm({
   // TODO remove children count == 3 logic
   function renderNextOrSubmitBtn() {
     if (Children.count(children) == 3) {
-      console.log(step);
       if (step === 0) {
         return showNext ?
           <button className="bg-brand-blue border border-brand-blue text-white font-bold py-2 px-4 rounded" onClick={handleNextStep}>Next</button>
