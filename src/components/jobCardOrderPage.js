@@ -51,7 +51,7 @@ export default function JobCardOrderPage({
           <a
             href={file}
             download
-            className="bg-brand-blue hover:brand-blue-accent text-white font-bold py-2 px-4 w-[95%] mt-2 mb-2 inline-block text-center"
+            className="bg-brand-blue hover:brand-blue-accent text-white font-bold py-2 px-4 w-[95%] mt-2 mb-2 inline-block text-center rounded"
           >
             Download file
           </a>
