@@ -13,6 +13,17 @@ function ChatRoom({ jobId }) {
   const [newMessage, setNewMessage] = useState('');
   const userContext = useAuth();
 
+  const groupByAuthor = () => {
+    return messages.reduce((groups, message) => {
+      const key = message.author;
+      if (!groups[key]) {
+        groups[key] = [];
+      }
+      groups[key].push(message);
+      return groups;
+    }, {});
+  }
+
   const handleSendMessage = async () => {
     const message = {
       text: newMessage,
@@ -29,6 +40,22 @@ function ChatRoom({ jobId }) {
     if (e.key === 'Enter') {
       handleSendMessage();
     }
+  }
+
+  const renderMessages = () => {
+    const groupedMessages = groupByAuthor();
+    console.log(groupedMessages)
+
+    return Object.keys(groupedMessages).map(author => (
+      <div className={author === userContext.currUser.uid ? "flex justify-end" : "flex justify-start"}>
+        <div className="flex flex-col">
+          {groupedMessages[author].map(message => (
+            <p className={author === userContext.currUser.uid ? "p-2 bg-blue-100 rounded-md mb-1" : "p-2 bg-gray-100 rounded-md mb-1"}>{message.text}</p>
+          ))}
+          <p className={author === userContext.currUser.uid ? "text-right text-xs mb-1" : "text-left text-xs mb-1"}>{groupedMessages[author][0].username}</p>
+        </div>
+      </div>
+    ))
   }
 
   useEffect(() => {
@@ -55,15 +82,7 @@ function ChatRoom({ jobId }) {
     <div className="p-2">
       <div className="rounded-md bg-gray-50 h-48 overflow-y-scroll flex flex-col-reverse mb-2">
         <div className="flex flex-col justify-end p-4">
-          {messages.map(message =>
-          (
-            <div className={message.author === userContext.currUser.uid ? "flex justify-end" : "flex justify-start"}>
-              <div className="flex flex-col">
-                <p className={message.author === userContext.currUser.uid ? "p-2 bg-blue-100 rounded-md mb-1" : "p-2 bg-gray-100 rounded-md mb-1"}>{message.text}</p>
-                <p className={message.author === userContext.currUser.uid ? "text-right text-xs" : "text-left text-xs"}>{message.username}</p>
-              </div>
-            </div>
-          ))}
+          {renderMessages()}
         </div>
       </div>
       <div className="flex p-2 border border-2">
