@@ -18,6 +18,7 @@ function ChatRoom({ jobId }) {
       text: newMessage,
       timestamp: Date.now(),
       author: userContext.currUser.uid,
+      username: "Jasper"
     };
     setNewMessage('');
 
@@ -50,16 +51,17 @@ function ChatRoom({ jobId }) {
     };
   }, [jobId]);
 
-
-
   return (
     <div className="p-2">
       <div className="rounded-md bg-gray-50 h-48 overflow-y-scroll flex flex-col-reverse mb-2">
         <div className="flex flex-col justify-end p-4">
           {messages.map(message =>
           (
-            <div className={message.author === userContext.currUser.uid ? "flex justify-end" : "flex justify-start"}   >
-              <p className={message.author === userContext.currUser.uid ? "p-2 bg-blue-100 rounded-md mb-1" : "p-2 bg-gray-100 rounded-md mb-1"}>{message.text}</p>
+            <div className={message.author === userContext.currUser.uid ? "flex justify-end" : "flex justify-start"}>
+              <div className="flex flex-col">
+                <p className={message.author === userContext.currUser.uid ? "p-2 bg-blue-100 rounded-md mb-1" : "p-2 bg-gray-100 rounded-md mb-1"}>{message.text}</p>
+                <p className={message.author === userContext.currUser.uid ? "text-right text-xs" : "text-left text-xs"}>{message.username}</p>
+              </div>
             </div>
           ))}
         </div>
@@ -274,7 +276,7 @@ export default function OrderPage({ isPrinter = false }) {
                   <div className="text-lg font-semibold">
                     Details
                   </div>
-                  <JobCardOrderPage job={jobData} onSelectJob={() => { }} img={jobData.thumbnail} file={jobData.file}/>
+                  <JobCardOrderPage job={jobData} onSelectJob={() => { }} img={jobData.thumbnail} file={jobData.file} />
                 </div>
                 <div className="border border-2 mt-2 p-2 rounded-md">
                   <div className="text-lg font-semibold">
