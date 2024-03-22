@@ -111,6 +111,7 @@ function MaterialSelector({ init, materials, changeMaterial }) {
 export default function Configure({ printJob, changePrintJob }) {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [materials, setMaterials] = useState([]);
+  const [quantity, setQuantity] = useState(printJob.quantity);
 
   useEffect(() => {
     async function fetchMaterials() {
@@ -119,7 +120,11 @@ export default function Configure({ printJob, changePrintJob }) {
     fetchMaterials();
   }, []);
 
-  const changeQuantity = (x) => changePrintJob("quantity", x.target.value);
+  useEffect(() => {
+    changePrintJob("quantity", quantity);
+  }, [quantity]);
+
+  const changeQuantity = (x) => setQuantity(x.target.value);
   const changeMaterial = (x) => changePrintJob("material", x);
   const changeColor = (x) => changePrintJob("color", x);
   const changeCompletionDate = (x) => changePrintJob("completionDate", x.target.value);
@@ -146,11 +151,25 @@ export default function Configure({ printJob, changePrintJob }) {
               <TextForm
                 type="number"
                 min="1"
-                value={printJob.quantity}
+                max="999"
+                value={quantity}
                 onChange={changeQuantity}
+                onKeyDown={(e) => {
+                  if (!/[0-9]/.test(e.key) && e.keyCode !== 8) {
+                    e.preventDefault();
+                  } else if (e.target.value.length >= 3 && e.keyCode !== 8) {
+                    e.preventDefault();
+                  }
+                }}
+                onBlur={(e) => {
+                  if (e.target.value === "" || Number(e.target.value) < 1) {
+                    setQuantity(1);
+                  }
+                }}
               />
             }
           />
+          { /* TODO fetch colors from backend */ }
           <StyledLine
             title="Color"
             inputComponent={

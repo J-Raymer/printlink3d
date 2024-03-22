@@ -6,6 +6,8 @@ export default function TextForm({
   max,
   step,
   value = null,
+  onKeyDown,
+  onBlur,
 }) {
   return (
     <input
@@ -18,6 +20,8 @@ export default function TextForm({
       min={min}
       max={max}
       step={step}
+      onKeyDown={onKeyDown}
+      onBlur={onBlur}
     />
   );
 }
