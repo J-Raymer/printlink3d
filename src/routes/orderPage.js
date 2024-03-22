@@ -15,14 +15,20 @@ function ChatRoom({ jobId }) {
 
   // Used for displaying user's name after each set of messages
   const groupByAuthor = () => {
-    return messages.reduce((groups, message) => {
-      const key = message.author;
-      if (!groups[key]) {
-        groups[key] = [];
+    return messages.reduce((groups, message, i) => {
+      // If this is the first message or the author is different from the previous message, start a new group
+      if (i === 0 || message.author !== messages[i - 1].author) {
+        groups.push({
+          author: message.author,
+          messages: [message],
+          firstTimestamp: message.timestamp,
+        });
+      } else {
+        // Otherwise, add the message to the last group
+        groups[groups.length - 1].messages.push(message);
       }
-      groups[key].push(message);
       return groups;
-    }, {});
+    }, []);
   }
 
   const handleSendMessage = async () => {
@@ -44,16 +50,16 @@ function ChatRoom({ jobId }) {
   }
 
   const renderMessages = () => {
-    const groupedMessages = groupByAuthor();
-    console.log(groupedMessages)
+    const groupedMessages = groupByAuthor(messages);
+    const sortedGroups = groupedMessages.sort((a, b) => a.firstTimestamp - b.firstTimestamp);
 
-    return Object.keys(groupedMessages).map(author => (
-      <div className={author === userContext.currUser.uid ? "flex justify-end" : "flex justify-start"}>
+    return sortedGroups.map(group => (
+      <div className={group.author === userContext.currUser.uid ? "flex justify-end" : "flex justify-start"}>
         <div className="flex flex-col">
-          {groupedMessages[author].map(message => (
-            <p className={author === userContext.currUser.uid ? "p-2 bg-blue-100 rounded-md mb-1" : "p-2 bg-gray-100 rounded-md mb-1"}>{message.text}</p>
+          {group.messages.map(message => (
+            <p className={message.author === userContext.currUser.uid ? "p-2 bg-blue-100 rounded-md mb-1" : "p-2 bg-gray-100 rounded-md mb-1"}>{message.text}</p>
           ))}
-          <p className={author === userContext.currUser.uid ? "text-right text-xs mb-1" : "text-left text-xs mb-1"}>{groupedMessages[author][0].username}</p>
+          <p className={group.author === userContext.currUser.uid ? "text-right text-xs mb-1" : "text-left text-xs mb-1"}>{group.messages[0].username}</p>
         </div>
       </div>
     ))
