@@ -13,6 +13,7 @@ function ChatRoom({ jobId }) {
   const [newMessage, setNewMessage] = useState('');
   const userContext = useAuth();
 
+  // Used for displaying user's name after each set of messages
   const groupByAuthor = () => {
     return messages.reduce((groups, message) => {
       const key = message.author;
