@@ -119,11 +119,11 @@ export default function Configure({ printJob, changePrintJob }) {
     fetchMaterials();
   }, []);
 
-  const changeQuantity = (e) => changePrintJob("quantity", e.target.value);
+  const changeQuantity = (x) => changePrintJob("quantity", x.target.value);
   const changeMaterial = (x) => changePrintJob("material", x);
   const changeColor = (x) => changePrintJob("color", x);
-  const changeCompletionDate = (e) => changePrintJob("completionDate", e.target.value);
-  const changeComment = (e) => changePrintJob("comment", e.target.value);
+  const changeCompletionDate = (x) => changePrintJob("completionDate", x.target.value);
+  const changeComment = (x) => changePrintJob("comment", x.target.value);
   const changeInfill = (x) => changePrintJob("infill", x);
   const changeLayerHeight = (x) => changePrintJob("layerHeight", x);
 
