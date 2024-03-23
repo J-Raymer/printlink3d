@@ -55,11 +55,13 @@ function ChatRoom({ jobId }) {
 
     return sortedGroups.map(group => (
       <div className={group.author === userContext.currUser.uid ? "flex justify-end" : "flex justify-start"}>
-        <div className="flex flex-col">
-          {group.messages.map(message => (
-            <p className={message.author === userContext.currUser.uid ? "p-2 bg-blue-100 rounded-md mb-1" : "p-2 bg-gray-100 rounded-md mb-1"}>{message.text}</p>
-          ))}
-          <p className={group.author === userContext.currUser.uid ? "text-right text-xs mb-1" : "text-left text-xs mb-1"}>{group.messages[0].username}</p>
+        <div style={{width: 'max-content'}}>
+          <div className="flex flex-col">
+            {group.messages.map(message => (
+              <p key={message.timestamp} className={message.author === userContext.currUser.uid ? "p-2 bg-blue-100 rounded-md mb-1 inline-block max-w-max" : "p-2 bg-gray-100 rounded-md mb-1 inline-block max-w-max"}>{message.text}</p>
+            ))}
+            <p className={group.author === userContext.currUser.uid ? "text-right text-xs mb-1" : "text-left text-xs mb-1"}>{group.messages[0].username}</p>
+          </div>
         </div>
       </div>
     ))
@@ -106,8 +108,6 @@ function ChatRoom({ jobId }) {
       </div>
     </div>
   )
-
-
 }
 
 function OrderStatus({ history, jobId, isPrinter }) {
