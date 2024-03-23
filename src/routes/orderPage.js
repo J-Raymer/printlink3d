@@ -36,6 +36,7 @@ function ChatRoom({ jobId }) {
       text: newMessage,
       timestamp: Date.now(),
       author: userContext.currUser.uid,
+      // TODO fetch username from user context
       username: "Jasper"
     };
     setNewMessage('');
