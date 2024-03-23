@@ -237,7 +237,6 @@ export default function OrderPage({ isPrinter = false }) {
           material: data.Material,
           distance: data.Radius,
           file: file,
-          fileName: data.FileName,
           jobName: data.JobName,
           history: (data.History) ? data.History : fakeHistory,
           quantity: data.Quantity,
