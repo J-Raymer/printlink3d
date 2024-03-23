@@ -65,6 +65,7 @@ export default function Browse() {
             distance: data.Radius,
             fileName: data.FileName,
             file: data.File,
+            jobName: data.JobName,
             name: data.Name,
             email: data.Email,
             color: data.Color,
@@ -197,7 +198,7 @@ export default function Browse() {
               <img
                 className="h-96 w-full object-cover md:w-96"
                 src={(selectedJob.thumbnail)? selectedJob.thumbnail: boat}
-                alt={selectedJob.fileName}
+                alt={selectedJob.jobName}
               />
               <div className="ml-5">
                 <p><strong>File Name:</strong> {selectedJob.fileName}</p>

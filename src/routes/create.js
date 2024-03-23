@@ -70,6 +70,7 @@ export default function Create() {
       CustomerUid: userContext.currUser.uid,
       PrinterUid: null,
       FileName: printJob.file.name,
+      JobName: printJob.jobName,
       Quantity: printJob.quantity,
       Material: printJob.material,
       Color: printJob.color,
