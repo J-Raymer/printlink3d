@@ -8,7 +8,6 @@ import MultiStepForm from "../components/multistepform";
 import MultiStepFormPage from "../components/multistepformpage";
 import { useAuth } from "../contexts/authContext";
 import { useNavigate } from "react-router-dom";
-import boat from "../images/boat.jpg";
 import { getThumbnail, getColors, getMaterials } from "../backend";
 
 export default function Browse() {
@@ -196,7 +195,7 @@ export default function Browse() {
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <img
                 className="h-96 w-full object-cover md:w-96"
-                src={(selectedJob.thumbnail)? selectedJob.thumbnail: boat}
+                src={selectedJob.thumbnail}
                 alt={selectedJob.fileName}
               />
               <div className="ml-5">

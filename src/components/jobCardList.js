@@ -1,5 +1,4 @@
 import JobCard from './jobCard'
-import boat from "../images/boat.jpg";
 
 export default function JobCardList({ jobs, filters, selectedJob, onSelectJob, onUnselectJob }) {
   return (
@@ -15,7 +14,7 @@ export default function JobCardList({ jobs, filters, selectedJob, onSelectJob, o
             isSelected={selectedJob===job}
             onSelectJob={onSelectJob}
             onUnselectJob={onUnselectJob}
-            img={(job.thumbnail)? job.thumbnail: boat}
+            img={job.thumbnail}
           />);
         }})
       }

@@ -4,9 +4,8 @@ import MultiStepForm from "../components/multistepform";
 import MultiStepFormPage from "../components/multistepformpage";
 import Configure from "./configure";
 import Upload from "./upload";
-import { addJob } from "../backend";
-import { firebaseDb, firebaseStorage } from "../firebase/firebase";
-import { ref, uploadBytes, getStorage, uploadBytesResumable, getDownloadURL } from "firebase/storage"
+import { addJob, uploadThumbnail, uploadStl } from "../backend";
+import { firebaseDb } from "../firebase/firebase";
 import { doc, updateDoc } from "firebase/firestore"
 import { useAuth } from "../contexts/authContext/index"
 
@@ -31,18 +30,6 @@ export default function Create() {
   const updatePrintJob = (property, value) => {
     setPrintJob((prevState) => ({ ...prevState, [property]: value }));
   };
-
-  const uploadThumbnail = async (thumbnail, id) => {
-    var storageRef = ref(firebaseStorage, `images/${id}.png`)
-    const thumbnailResource = await fetch(thumbnail);
-    const thumbnailBlob = await thumbnailResource.blob();
-    uploadBytes(storageRef, thumbnailBlob);
-  };
-
-  const uploadStl = async (stlFile, id) => {
-    var storageRef = ref(firebaseStorage, `print-files/${id}.stl`);
-    uploadBytes(storageRef, stlFile);
-  }
 
   const getDate = () => {
     const date = new Date();

@@ -26,8 +26,6 @@ export default function Upload({ printJob, updateFile, updateThumbnail }) {
   spotlight.intensity = 35;
   scene.add(light);
   scene.add(spotlight);
-  //var helper = new THREE.SpotLightHelper(spotlight);
-  //scene.add(helper)
 
   // Create standard perspective camera
   const camera = new THREE.PerspectiveCamera(75, 1.0, 0.1, 1000);
