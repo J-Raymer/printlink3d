@@ -54,11 +54,11 @@ function ChatRoom({ jobId }) {
     const sortedGroups = groupedMessages.sort((a, b) => a.firstTimestamp - b.firstTimestamp);
 
     return sortedGroups.map(group => (
-      <div className={group.author === userContext.currUser.uid ? "flex justify-end" : "flex justify-start"}>
-        <div style={{width: 'max-content'}}>
+      <div key={group.id} className={group.author === userContext.currUser.uid ? "flex justify-end" : "flex justify-start"}>
+        <div style={{ display: 'flex', flexDirection: 'row-reverse', width: 'max-content'}}>
           <div className="flex flex-col">
             {group.messages.map(message => (
-              <p key={message.timestamp} className={message.author === userContext.currUser.uid ? "p-2 bg-blue-100 rounded-md mb-1 inline-block max-w-max" : "p-2 bg-gray-100 rounded-md mb-1 inline-block max-w-max"}>{message.text}</p>
+              <p key={message.timestamp} className={message.author === userContext.currUser.uid ? "p-2 bg-blue-100 rounded-md mb-1 max-w-max self-end" : "p-2 bg-gray-100 rounded-md mb-1 max-w-max self-start"}>{message.text}</p>
             ))}
             <p className={group.author === userContext.currUser.uid ? "text-right text-xs mb-1" : "text-left text-xs mb-1"}>{group.messages[0].username}</p>
           </div>
