@@ -6,10 +6,12 @@ export default function TextForm({
   max,
   step,
   value = null,
+  width = 10,
 }) {
   return (
     <input
-      className="shadow appearance-none w-40 bg-gray-50 border rounded py-2 px-3  border-gray-300 text-gray-900 text-sm "
+      style={{ width: `${width}rem` }}
+      className="shadow appearance-none bg-gray-50 border rounded py-2 px-3 border-gray-300 text-gray-900 text-sm"
       id={type}
       placeholder={placeholder}
       type={type}

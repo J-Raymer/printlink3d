@@ -58,11 +58,10 @@ function MaterialSelector({ init, materials, changeMaterial }) {
                     onClick={() => handleItemClick(m)}
                     className={`shadow rounded border border-gray-300 text-gray-900 text-sm p-2 cursor-pointer transform transition-transform duration-200
                                     
-                                   ${
-                                     selectedItem.Type === m.Type
-                                       ? "bg-blue-200"
-                                       : "bg-gray-50"
-                                   }`}
+                                   ${selectedItem.Type === m.Type
+                        ? "bg-blue-200"
+                        : "bg-gray-50"
+                      }`}
                   >
                     <div className="relative group">
                       <div className="w-96 absolute rounded-sm hidden bg-white border border-gray-300 p-2 mt-8 group-hover:block z-10">
@@ -135,11 +134,12 @@ export default function Configure({ printJob, changePrintJob }) {
   };
   const changeInfill = (x) => changePrintJob(x, "infill");
   const changeLayerHeight = (x) => changePrintJob(x, "layerHeight");
+  const changeJobName = (x) => changePrintJob(x, "jobName");
 
   return (
     <div>
       <div>
-        <JobCard job={printJob} onSelectJob={()=>{}} img={printJob.thumbnail}/>
+        <JobCard job={printJob} onSelectJob={() => { }} img={printJob.thumbnail} />
       </div>
       <div className="p-5">
         <div className="my-4">
@@ -149,6 +149,17 @@ export default function Configure({ printJob, changePrintJob }) {
           </h2>
         </div>
         <div className="flex-col">
+          <StyledLine
+            title="Job Name"
+            inputComponent={
+              <TextForm
+                type="text"
+                value={printJob.jobName}
+                onChange={changeJobName}
+                width={30}
+              />
+            }
+          />
           <StyledLine
             title="Quantity"
             inputComponent={

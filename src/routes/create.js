@@ -16,6 +16,7 @@ export default function Create() {
 
   const emptyPrintJob = {
     thumbnail: null,
+    jobName: "",
     file: null,
     quantity: 1,
     material: "Plastic",
@@ -31,6 +32,14 @@ export default function Create() {
   const updatePrintJob = (property, value) => {
     setPrintJob((prevState) => ({ ...prevState, [property]: value }));
   };
+
+  const updateFile = (newFile) => {
+    updatePrintJob("file", newFile)
+    if (newFile !== null) {
+      // Strips the .stl extension from the file name
+      updatePrintJob("jobName", newFile.name.replace(/\.stl$/i, ""))
+    }
+  }
 
   const uploadThumbnail = async (thumbnail, id) => {
     var storageRef = ref(firebaseStorage, `images/${id}.png`)
@@ -116,7 +125,7 @@ export default function Create() {
         <MultiStepFormPage title="Upload">
           <Upload
             printJob={printJob}
-            updateFile={(newFile) => updatePrintJob("file", newFile)}
+            updateFile={(newFile) => updateFile(newFile)}
             updateThumbnail={(newThumbnail) => updatePrintJob("thumbnail", newThumbnail)}
           />
         </MultiStepFormPage>
