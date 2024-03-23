@@ -134,7 +134,7 @@ export default function Configure({ printJob, changePrintJob }) {
   };
   const changeInfill = (x) => changePrintJob(x, "infill");
   const changeLayerHeight = (x) => changePrintJob(x, "layerHeight");
-  const changeJobName = (x) => changePrintJob(x, "jobName");
+  const changeJobName = (x) => changePrintJob("jobName", x.target.value);
 
   return (
     <div>

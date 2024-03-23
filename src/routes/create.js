@@ -30,6 +30,7 @@ export default function Create() {
   const [printJob, setPrintJob] = useState(emptyPrintJob);
 
   const updatePrintJob = (property, value) => {
+    console.log(property, value);
     setPrintJob((prevState) => ({ ...prevState, [property]: value }));
   };
 
@@ -37,7 +38,9 @@ export default function Create() {
     updatePrintJob("file", newFile)
     if (newFile !== null) {
       // Strips the .stl extension from the file name
-      updatePrintJob("jobName", newFile.name.replace(/\.stl$/i, ""))
+      updatePrintJob("jobName", newFile.name.replace(/\.stl$/i, ""));
+    } else {
+      updatePrintJob("jobName", "");
     }
   }
 
