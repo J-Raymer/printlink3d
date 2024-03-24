@@ -51,8 +51,8 @@ export default function Create() {
     uploadBytes(storageRef, thumbnailBlob);
   };
 
-  const uploadStl = async (stlFile, id) => {
-    var storageRef = ref(firebaseStorage, `print-files/${id}.stl`);
+  const uploadStl = async (stlFile, jobName, id) => {
+    var storageRef = ref(firebaseStorage, `print-files/${jobName + "_" + id}.stl`);
     uploadBytes(storageRef, stlFile);
   }
 
@@ -96,7 +96,7 @@ export default function Create() {
         uploadThumbnail(printJob.thumbnail, Id)
         .then(() => {
           // upload stl file. On completion, make listing available on jobs page
-          uploadStl(printJob.file, Id)
+          uploadStl(printJob.file, printJob.jobName, Id)
           .then(() => {
             const docRef = doc(firebaseDb, `Jobs/${Id}`);
             updateDoc(docRef, {UploadedFile: true})

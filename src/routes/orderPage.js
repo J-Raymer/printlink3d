@@ -221,16 +221,17 @@ export default function OrderPage({ isPrinter = false }) {
         let thumbnail = null;
         let file = null;
 
+        const data = snapshot.data();
+
         try {
           thumbnail = await getThumbnail(Id);
-          file = await getFile(Id);
+          file = await getFile(data.JobName, Id);
         } catch (error) {
           console.error("Error fetching thumbnail: ", error)
           thumbnail = null;
           file = null;
         }
 
-        const data = snapshot.data();
         setJobData({
           thumbnail: thumbnail,
           infill: data.Infill,

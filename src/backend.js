@@ -97,9 +97,9 @@ export async function getThumbnail(jobId) {
   }) 
 }
 
-export async function getFile(jobId) {
+export async function getFile(jobName, jobId) {
   try {
-    const fileRef = ref(firebaseStorage, `print-files/${jobId}.stl`);
+    const fileRef = ref(firebaseStorage, `print-files/${jobName + "_" + jobId}.stl`);
     const downloadURL = await getDownloadURL(fileRef);
     return downloadURL;
   } catch (error) {
