@@ -15,6 +15,7 @@ export async function addPrinter(db, DocData) {
   const docRef = await addDoc(collection(db, "Printers"), DocData);
 }
 
+// TODO remove this function (not used)
 export async function getAllJobs(db) {
   const jobCollectionRef = collection(db, "Jobs");
   const querySnapshot = await getDocs(jobCollectionRef);
