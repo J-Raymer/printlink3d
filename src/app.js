@@ -35,7 +35,7 @@ function Layout() {
         <nav className="flex justify-between items-center w-full px-4 py-3 home-page">
           <Link to="/">
             <h2 className="text-4xl">
-              <span className="text-white">PrintLink3D</span>
+              <span className="text-white">PrintLink3d</span>
             </h2>
           </Link>
           <div className="flex space-x-4">
@@ -77,7 +77,7 @@ function Layout() {
         <nav className="flex justify-between items-center w-full px-4 py-3 app-page">
           <Link to="/">
             <h2 className="text-4xl">
-              <span className="fg-brand-blue">Print</span><span className="fg-brand-purple">Link3D</span>
+              <span className="fg-brand-blue">Print</span><span className="fg-brand-purple">Link3d</span>
             </h2>
           </Link>
           <div className="flex space-x-4">

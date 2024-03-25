@@ -60,7 +60,7 @@ export default function Home() {
             <div className="w-[40%] pr-12">
               <h2 className="font-bold text-5xl mb-8">I Have a 3D Printer</h2>
               <p className="text-xl mb-8">Select a job in your local area and start making extra money! It’s as easy as that.
-                 <br/><br/>Our mission at PrintLink3D is to connect customers with local 3D printing enthusiasts. Interested? </p>
+                 <br/><br/>Our mission at PrintLink3d is to connect customers with local 3D printing enthusiasts. Interested? </p>
               <Link to="/browse" className="bg-brand-purple text-white p-4 px-6 rounded">Browse Jobs</Link>
             </div>
             <div className="w-[60%]">
