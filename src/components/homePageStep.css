@@ -1,5 +1,5 @@
-.step-circle {
-    --b:5px;  /* border width*/
+/*.step-circle {
+    --b:5px;  /* border width*
     color: #313149;
     margin: 10px;
     aspect-ratio: 1;
@@ -23,4 +23,4 @@
        linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
             mask-composite: exclude;
-}
+}*/
