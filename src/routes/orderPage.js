@@ -127,12 +127,11 @@ function OrderStatus({ history, jobId, isPrinter }) {
   const ModifyStatus = (state) => {
     if (state === "Exchanged") {
       setRatingModalVisible(true);
-      // updateDoc(docRef, { Complete: true });
-      return;
     }
+    
     var updatedHistory = history
     updatedHistory[state] = getDate();
-
+    
     const docRef = doc(firebaseDb, `Jobs/${jobId}`);
     updateDoc(docRef, { History: updatedHistory })
       .then(() => setEditState(false));
@@ -173,6 +172,12 @@ function OrderStatus({ history, jobId, isPrinter }) {
     )
   }
 
+  const onSubmitRating = () => {
+    const docRef = doc(firebaseDb, `Jobs/${jobId}`);
+    updateDoc(docRef, { Complete: true });
+    setRatingModalVisible(false);
+  }
+
   const states = [
     'Submitted',
     'Accepted',
@@ -202,8 +207,8 @@ function OrderStatus({ history, jobId, isPrinter }) {
       {
         ratingModalVisible &&
         <RatingModal
-        submitRating={() => setRatingModalVisible(false)}
-        isModalVisible={ratingModalVisible}/>
+          submitRating={() => onSubmitRating()}
+          isModalVisible={ratingModalVisible} />
       }
     </>
   )
