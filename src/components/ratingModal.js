@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import TextArea from './textArea';
 
-export default function RatingModal({ submitRating, isModalVisible }) {
+export default function RatingModal({ submitRating, isModalVisible, isCustomer }) {
   const [overallRating, setOverallRating] = useState(null);
   const [printQualityRating, setPrintQualityRating] = useState(null);
   const [communicationRating, setCommunicationRating] = useState(null);
@@ -11,12 +11,12 @@ export default function RatingModal({ submitRating, isModalVisible }) {
   const overallRatings = ['Good', 'Neutral', 'Bad'];
   const numberRatings = [1, 2, 3, 4, 5];
 
+  // Only enable submit button if all ratings are selected
   React.useEffect(() => {
-    if (overallRating && printQualityRating && communicationRating && exchangeRating) {
-      setCanSubmit(true);
-    } else {
-      setCanSubmit(false);
-    }
+    setCanSubmit(
+      (isCustomer && overallRating && printQualityRating && communicationRating && exchangeRating) ||
+      (!isCustomer && overallRating && communicationRating && exchangeRating)
+    );
   }, [overallRating, printQualityRating, communicationRating, exchangeRating]);
 
   return (
@@ -37,20 +37,24 @@ export default function RatingModal({ submitRating, isModalVisible }) {
               </p>
             ))}
           </div>
-          <div className="flex items-center mt-10">
-            <div className="w-1/3 text-2xl">Print Quality:</div>
-            <div className="w-2/3 flex">
-              {numberRatings.map((rating) => (
-                <p
-                  key={rating}
-                  className={`text-2xl mr-5 cursor-pointer border-2 px-2 rounded ${printQualityRating === rating ? 'border-blue-500' : 'border-transparent'}`}
-                  onClick={() => setPrintQualityRating(rating)}
-                >
-                  {rating}
-                </p>
-              ))}
-            </div>
-          </div>
+          {
+            isCustomer && (
+              <div className="flex items-center mt-10">
+                <div className="w-1/3 text-2xl">Print Quality:</div>
+                <div className="w-2/3 flex">
+                  {numberRatings.map((rating) => (
+                    <p
+                      key={rating}
+                      className={`text-2xl mr-5 cursor-pointer border-2 px-2 rounded ${printQualityRating === rating ? 'border-blue-500' : 'border-transparent'}`}
+                      onClick={() => setPrintQualityRating(rating)}
+                    >
+                      {rating}
+                    </p>
+                  ))}
+                </div>
+              </div>
+            )
+          }
           <div className="flex items-center mt-10">
             <div className="w-1/3 text-2xl">Communication:</div>
             <div className="w-2/3 flex">

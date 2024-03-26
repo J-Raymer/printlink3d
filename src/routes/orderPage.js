@@ -127,6 +127,7 @@ function OrderStatus({ history, jobId, isPrinter }) {
   const ModifyStatus = (state) => {
     if (state === "Exchanged") {
       setRatingModalVisible(true);
+      return;
     }
     
     var updatedHistory = history
@@ -208,7 +209,8 @@ function OrderStatus({ history, jobId, isPrinter }) {
         ratingModalVisible &&
         <RatingModal
           submitRating={() => onSubmitRating()}
-          isModalVisible={ratingModalVisible} />
+          isModalVisible={ratingModalVisible}
+          isCustomer={false}/>
       }
     </>
   )
