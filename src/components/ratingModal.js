@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import TextArea from './textArea';
+import { addRating } from '../backend';
+import { firebaseDb } from '../firebase/firebase';
 
-export default function RatingModal({ submitRating, isModalVisible, isCustomer }) {
+export default function RatingModal({onClose, isModalVisible, isCustomer, targetUserUid }) {
   const [overallRating, setOverallRating] = useState(null);
   const [printQualityRating, setPrintQualityRating] = useState(null);
   const [communicationRating, setCommunicationRating] = useState(null);
   const [exchangeRating, setExchangeRating] = useState(null);
   const [canSubmit, setCanSubmit] = useState(false);
+  const [comment, setComment] = useState('');
 
   const overallRatings = ['Good', 'Neutral', 'Bad'];
   const numberRatings = [1, 2, 3, 4, 5];
@@ -18,6 +21,33 @@ export default function RatingModal({ submitRating, isModalVisible, isCustomer }
       (!isCustomer && overallRating && communicationRating && exchangeRating)
     );
   }, [overallRating, printQualityRating, communicationRating, exchangeRating]);
+
+  const onSubmit = () => {
+    const overallRatingNumber = overallRatings.indexOf(overallRating) + 1;
+    let averageRating, rating;
+    if (isCustomer) {
+      averageRating = (overallRatingNumber * 1.66 + printQualityRating + communicationRating + exchangeRating) / 4;
+      rating = {
+        targetUserUid,
+        averageRating,
+        printQualityRating,
+        communicationRating,
+        exchangeRating,
+        comment,
+      };
+    } else {
+      averageRating = (overallRatingNumber * 1.66 + communicationRating + exchangeRating) / 3;
+      rating = {
+        targetUserUid,
+        averageRating,
+        communicationRating,
+        exchangeRating,
+        comment,
+      };
+    }
+    addRating(firebaseDb, rating);
+    onClose();
+  }
 
   return (
     isModalVisible && (
@@ -85,9 +115,9 @@ export default function RatingModal({ submitRating, isModalVisible, isCustomer }
           </div>
           <div className="mt-10">
             <div className="text-2xl mb-5">Comment:</div>
-            <TextArea />
+            <TextArea value={comment} onChange={(e) => setComment(e.target.value)}/>
           </div>
-          <button className={`float-right mt-4 p-2 px-4 rounded text-white ${canSubmit ? 'bg-brand-blue' : 'bg-gray-300'}`} onClick={submitRating} disabled={!canSubmit}>Submit</button>
+          <button className={`float-right mt-4 p-2 px-4 rounded text-white ${canSubmit ? 'bg-brand-blue' : 'bg-gray-300'}`} onClick={() => onSubmit()} disabled={!canSubmit}>Submit</button>
         </div>
       </div>
     )

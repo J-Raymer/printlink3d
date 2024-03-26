@@ -50,8 +50,6 @@ function ChatRoom({ jobId }) {
     };
   }, [jobId]);
 
-
-
   return (
     <div className="p-2">
       <div className="rounded-md bg-gray-50 h-48 overflow-y-scroll flex flex-col-reverse mb-2">
@@ -78,11 +76,9 @@ function ChatRoom({ jobId }) {
       </div>
     </div>
   )
-
-
 }
 
-function OrderStatus({ history, jobId, isPrinter }) {
+function OrderStatus({ history, jobId, isPrinter, customerUid }) {
   const [editState, setEditState] = useState(false);
   const [ratingModalVisible, setRatingModalVisible] = useState(false);
 
@@ -136,7 +132,6 @@ function OrderStatus({ history, jobId, isPrinter }) {
     const docRef = doc(firebaseDb, `Jobs/${jobId}`);
     updateDoc(docRef, { History: updatedHistory })
       .then(() => setEditState(false));
-
   };
 
   function ModifiableItem({ state }) {
@@ -173,9 +168,7 @@ function OrderStatus({ history, jobId, isPrinter }) {
     )
   }
 
-  const onSubmitRating = () => {
-    const docRef = doc(firebaseDb, `Jobs/${jobId}`);
-    updateDoc(docRef, { Complete: true });
+  const onRatingModalClose = () => {
     setRatingModalVisible(false);
   }
 
@@ -208,9 +201,10 @@ function OrderStatus({ history, jobId, isPrinter }) {
       {
         ratingModalVisible &&
         <RatingModal
-          submitRating={() => onSubmitRating()}
+          onClose={() => onRatingModalClose()}
           isModalVisible={ratingModalVisible}
-          isCustomer={false}/>
+          isCustomer={false}
+          targetUserUid={customerUid}/>
       }
     </>
   )
@@ -257,6 +251,7 @@ export default function OrderPage({ isPrinter = false }) {
           history: (data.History) ? data.History : fakeHistory,
           quantity: data.Quantity,
           color: data.Color,
+          CustomerUid: data.CustomerUid,
         });
 
         setDataLoading(false);
@@ -296,7 +291,7 @@ export default function OrderPage({ isPrinter = false }) {
                   <div className="text-lg font-semibold">
                     Status
                   </div>
-                  <OrderStatus history={jobData.history} jobId={Id} isPrinter={isPrinter} />
+                  <OrderStatus history={jobData.history} jobId={Id} customerUid={jobData.CustomerUid} isPrinter={isPrinter} />
                 </div>
               </div>
               <div className="w-1/3">
@@ -311,8 +306,6 @@ export default function OrderPage({ isPrinter = false }) {
           )
         }
       </div>
-
     </div>
-
   )
 }
