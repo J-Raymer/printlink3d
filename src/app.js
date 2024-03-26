@@ -32,14 +32,14 @@ function Layout() {
 
     function homepageNav() {
       return (
-        <nav className="flex justify-between items-center w-full px-4 py-3 home-page">
+        <nav className="flex flex-col md:flex-row md:justify-between items-center w-full px-4 py-3 home-page">
           <Link to="/">
             <h2 className="text-4xl">
               <span className="text-white">PrintLink3d</span>
             </h2>
           </Link>
-          <div className="flex space-x-4">
-            <Link to="/create" className="bg-brand-blue text-white p-2 px-4 rounded"><h2>Order</h2></Link>
+          <div className="flex flex-col md:flex-row md:space-x-4 w-full md:w-auto">
+            <Link to="/create" className="bg-brand-blue text-white p-2 px-4 mb-2 md:mb-0 mt-2 md:mt-0 rounded"><h2>Order</h2></Link>
             <Link to="/browse" className="bg-brand-purple text-white p-2 px-4 rounded"><h2>View Jobs</h2></Link>
             { auth && auth.userLoggedIn ? (
               <div
