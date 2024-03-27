@@ -3,7 +3,6 @@ import HelpButton from "../components/helpButton";
 import TextForm from "../components/textForm";
 import { useEffect, useState } from "react";
 import { firebaseDb } from "../firebase/firebase";
-import JobCard from "../components/jobCard";
 import { getMaterials } from "../backend";
 
 function StyledLine({ title, inputComponent, helpButtonComponent }) {
@@ -138,9 +137,6 @@ export default function Configure({ printJob, changePrintJob }) {
 
   return (
     <div>
-      <div>
-        <JobCard job={printJob} onSelectJob={() => { }} img={printJob.thumbnail} />
-      </div>
       <div className="p-5">
         <div className="my-4">
           <h2 className="text-3xl font-semibold text-gray-800">

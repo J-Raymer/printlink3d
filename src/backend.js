@@ -1,5 +1,5 @@
 import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
-import { getStorage, ref, uploadBytes, getBlob, getDownloadURL } from "firebase/storage";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { firebaseStorage } from "./firebase/firebase";
 
 export async function addJob(db, DocData) {
@@ -106,4 +106,16 @@ export async function getFile(jobName, jobId) {
     console.error('Error getting download URL:', error);
     throw error;
   }
+}
+
+export async function uploadThumbnail(thumbnail, id) {
+  var storageRef = ref(firebaseStorage, `images/${id}.png`)
+  const thumbnailResource = await fetch(thumbnail);
+  const thumbnailBlob = await thumbnailResource.blob();
+  uploadBytes(storageRef, thumbnailBlob);
+};
+
+export async function uploadStl(stlFile, id) {
+  var storageRef = ref(firebaseStorage, `print-files/${id}.stl`);
+  uploadBytes(storageRef, stlFile);
 }

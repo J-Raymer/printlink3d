@@ -1,5 +1,3 @@
-import boat from "../images/boat.jpg";
-
 export default function JobCard({
   job,
   isSelected,
@@ -20,11 +18,18 @@ export default function JobCard({
       style={{ height: isSelected ? "auto" : "fit-content" }}
     >
       <div className="md:flex-shrink-0">
-        <img
-          className="h-48 w-full object-cover md:w-48"
-          src={(img)? img: boat}
-          alt={job.jobName}
-        />
+        <div className="h-48 w-full object-cover md:w-48">
+        {(img)? 
+          (<img            
+            src={img}
+            alt={job.fileName}
+          /> )
+          :
+          (<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="gray">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636" />
+          </svg>)
+        } 
+        </div>
       </div>
       <div className="pl-5 pt-5 text-gray-600">
         <div className="uppercase tracking-wide text-sm text-indigo-500 font-semibold">
