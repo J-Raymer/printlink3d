@@ -26,13 +26,6 @@ export default function Create() {
     layerHeight: "0.2 mm",
   };
 
-  const [printJob, setPrintJob] = useState(emptyPrintJob);
-
-  const updatePrintJob = (property, value) => {
-    console.log(property, value);
-    setPrintJob((prevState) => ({ ...prevState, [property]: value }));
-  };
-
   const updateFile = (newFile) => {
     updatePrintJob("file", newFile)
     if (newFile !== null) {
@@ -43,17 +36,12 @@ export default function Create() {
     }
   }
 
-  const uploadThumbnail = async (thumbnail, id) => {
-    var storageRef = ref(firebaseStorage, `images/${id}.png`)
-    const thumbnailResource = await fetch(thumbnail);
-    const thumbnailBlob = await thumbnailResource.blob();
-    uploadBytes(storageRef, thumbnailBlob);
-  };
+  const [printJob, setPrintJob] = useState(emptyPrintJob);
 
-  const uploadStl = async (stlFile, jobName, id) => {
-    var storageRef = ref(firebaseStorage, `print-files/${jobName + "_" + id}.stl`);
-    uploadBytes(storageRef, stlFile);
-  }
+  const updatePrintJob = (property, value) => {
+    console.log(property, value);
+    setPrintJob((prevState) => ({ ...prevState, [property]: value }));
+  };
 
   const getDate = () => {
     const date = new Date();

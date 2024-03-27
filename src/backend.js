@@ -115,7 +115,8 @@ export async function uploadThumbnail(thumbnail, id) {
   uploadBytes(storageRef, thumbnailBlob);
 };
 
-export async function uploadStl(stlFile, id) {
-  var storageRef = ref(firebaseStorage, `print-files/${id}.stl`);
-  uploadBytes(storageRef, stlFile);
+export async function uploadStl(file, jobName, id) {
+  console.log(jobName + "_" + id + ".stl")
+  var storageRef = ref(firebaseStorage, `print-files/${jobName + "_" + id}.stl`);
+  uploadBytes(storageRef, file);
 }
