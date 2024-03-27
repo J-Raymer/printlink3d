@@ -123,7 +123,6 @@ function OrderStatus({ history, jobId, isPrinter, customerUid }) {
   const ModifyStatus = (state) => {
     if (state === "Exchanged") {
       setRatingModalVisible(true);
-      return;
     }
     
     var updatedHistory = history
