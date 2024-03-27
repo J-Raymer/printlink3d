@@ -3,14 +3,29 @@ import pencil_icon from "../images/pencil.png";
 import TextForm from "../components/textForm";
 import { useState, useRef } from "react";
 import MapSearch from "../components/mapSearch";
-import Review from "../components/review";
+import ReviewCard from "../components/reviewCard";
+import { getReviewsForUser } from "../backend";
+import { firebaseDb } from "../firebase/firebase";
+import { useEffect } from "react";
+import { useAuth } from "../contexts/authContext";
 
 export default function Profile() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [pfp, setPfp] = useState(default_pfp);
+  const [reviews, setReviews] = useState([]);
   const fileInputRef = useRef();
+  const userContext = useAuth();
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      const result = await getReviewsForUser(firebaseDb, userContext.currUser.uid);
+      setReviews(result);
+    };
+
+    fetchReviews();
+  }, []);
 
   const handleFileSelection = (event) => {
     if (event.target.files.length > 0) {
@@ -75,7 +90,9 @@ export default function Profile() {
       </div>
       <div>
         <p className="text-2xl font-bold">Reviews</p>
-        <Review />
+        {reviews.map((review) => (
+          <ReviewCard review={review} />
+        ))}
       </div>
     </div>
   );

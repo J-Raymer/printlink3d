@@ -12,6 +12,15 @@ export async function addRating(db, rating) {
   return docRef;
 }
 
+export async function getReviewsForUser(db, targetUserUid) {
+  const docRef = collection(db, "Ratings");
+  const q = query(docRef, where("targetUserUid", "==", targetUserUid));
+  const querySnapshot = await getDocs(q);
+  const ratings = querySnapshot.docs.map(doc => doc.data());
+  console.log(ratings);
+  return ratings;
+}
+
 export async function getAllJobs(db) {
   const jobCollectionRef = collection(db, "Jobs");
   const querySnapshot = await getDocs(jobCollectionRef);
