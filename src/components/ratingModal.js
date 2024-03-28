@@ -23,10 +23,11 @@ export default function RatingModal({onClose, isModalVisible, isCustomer, target
   }, [overallRating, printQualityRating, communicationRating, exchangeRating]);
 
   const onSubmit = () => {
-    const overallRatingNumber = overallRatings.indexOf(overallRating) + 1;
+    const overallRatingNumber = getOverallRatingNumber();
     let averageRating, rating;
     if (isCustomer) {
-      averageRating = (overallRatingNumber * 1.66 + printQualityRating + communicationRating + exchangeRating) / 4;
+      console.log(overallRatingNumber, printQualityRating, communicationRating, exchangeRating)
+      averageRating = (overallRatingNumber + printQualityRating + communicationRating + exchangeRating) / 4;
       rating = {
         targetUserUid,
         averageRating,
@@ -36,7 +37,8 @@ export default function RatingModal({onClose, isModalVisible, isCustomer, target
         comment,
       };
     } else {
-      averageRating = (overallRatingNumber * 1.66 + communicationRating + exchangeRating) / 3;
+      console.log(overallRatingNumber, communicationRating, exchangeRating);
+      averageRating = (overallRatingNumber + communicationRating + exchangeRating) / 3;
       rating = {
         targetUserUid,
         averageRating,
@@ -47,6 +49,19 @@ export default function RatingModal({onClose, isModalVisible, isCustomer, target
     }
     addRating(firebaseDb, rating);
     onClose();
+  }
+
+  const getOverallRatingNumber = () => {
+    switch(overallRating) {
+      case 'Good':
+        return 5;
+      case 'Neutral':
+        return 3;
+      case 'Bad':
+        return 1;
+      default:
+        return null;
+    }
   }
 
   return (
