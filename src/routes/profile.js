@@ -2,9 +2,6 @@ import default_pfp from "../images/default_pfp.jpg";
 import pencil_icon from "../images/pencil.png";
 import TextForm from "../components/textForm";
 import { useState, useRef } from "react";
-import MapSearch from "../components/mapSearch";
-import MapWithSearchBar from "../components/MapWithSearchBar";
-import MapSearch2 from "../components/mapSearch2";
 
 export default function Profile() {
   const [firstName, setFirstName] = useState("");
@@ -73,7 +70,6 @@ export default function Profile() {
           onChange={(x) => setEmail(x.target.value)}
         />
     
-        <MapSearch2 />
       </div>
     </div>
   );

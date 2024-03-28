@@ -4,13 +4,9 @@ import TextForm from "../components/textForm";
 import { useEffect, useState, useRef } from "react";
 import { firebaseDb } from "../firebase/firebase";
 import { getMaterials } from "../backend";
-import MapSearch from "../components/mapSearch";
-import MapSearch2 from "../components/mapSearch2";
 import GooglePlacesAutocomplete, { geocodeByPlaceId, getLatLng} from 'react-google-places-autocomplete';
 import { GoogleMap, LoadScript, Marker, Circle } from '@react-google-maps/api';
 const libraries = ['places'];
-
-
 
 
 function StyledLine({ title, inputComponent, helpButtonComponent }) {
