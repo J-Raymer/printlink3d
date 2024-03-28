@@ -1,12 +1,13 @@
-import { useNavigate, useParams } from "react-router-dom"
-import { firebaseDb } from "../firebase/firebase"
-import { addDoc, doc, getDoc, updateDoc } from "firebase/firestore"
-import { useState, useEffect } from "react"
-import JobCardOrderPage from "../components/jobCardOrderPage"
+import { useNavigate, useParams } from "react-router-dom";
+import { firebaseDb } from "../firebase/firebase";
+import { addDoc, doc, getDoc, updateDoc } from "firebase/firestore";
+import { useState, useEffect } from "react";
+import JobCardOrderPage from "../components/jobCardOrderPage";
 import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
-import { useAuth } from "../contexts/authContext"
-import { getThumbnail, getFile } from "../backend"
-
+import { useAuth } from "../contexts/authContext";
+import { getThumbnail, getFile } from "../backend";
+import RatingModal from "../components/ratingModal";
+import { getDate } from "../utils"
 
 function ChatRoom({ jobId }) {
   const [messages, setMessages] = useState([]);
@@ -111,8 +112,9 @@ function ChatRoom({ jobId }) {
   )
 }
 
-function OrderStatus({ history, jobId, isPrinter }) {
+function OrderStatus({ history, jobId, isPrinter, customerUid }) {
   const [editState, setEditState] = useState(false);
+  const [ratingModalVisible, setRatingModalVisible] = useState(false);
 
   function CompleteItem({ state, date }) {
     const [showInfo, setShowInfo] = useState(false);
@@ -143,26 +145,17 @@ function OrderStatus({ history, jobId, isPrinter }) {
     )
   }
 
-  const getDate = () => {
-    const date = new Date();
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-    const year = date.getFullYear();
-
-    return `${day}/${month}/${year}`;
-  }
-
   const ModifyStatus = (state) => {
+    if (state === "Exchanged") {
+      setRatingModalVisible(true);
+    }
+    
     var updatedHistory = history
     updatedHistory[state] = getDate();
-
+    
     const docRef = doc(firebaseDb, `Jobs/${jobId}`);
     updateDoc(docRef, { History: updatedHistory })
       .then(() => setEditState(false));
-
-    if (state == "Exchanged") {
-      updateDoc(docRef, { Complete: true });
-    }
   };
 
   function ModifiableItem({ state }) {
@@ -199,6 +192,9 @@ function OrderStatus({ history, jobId, isPrinter }) {
     )
   }
 
+  const onRatingModalClose = () => {
+    setRatingModalVisible(false);
+  }
 
   const states = [
     'Submitted',
@@ -212,20 +208,29 @@ function OrderStatus({ history, jobId, isPrinter }) {
   })
 
   return (
-    <div className="flex flex-col">
-      {(isPrinter) ? (<div className="flex justify-end mr-3">
-        <button className="text-blue-500 text-sm hover:underline focus:outline-none" onClick={() => { setEditState(!editState) }}>
-          {(editState) ? ("Cancel") : ("Edit")}
-        </button>
-      </div>) : <></>}
-      <div className="flex justify-center">
-        {orderStatus.map((step) =>
-        ((step.date !== null) ?
-          (<CompleteItem state={step.state} date={step.date} />) :
-          ((editState) ? <ModifiableItem state={step.state} /> : <IncompleteItem state={step.state} />)))}
+    <>
+      <div className="flex flex-col">
+        {(isPrinter) ? (<div className="flex justify-end mr-3">
+          <button className="text-blue-500 text-sm hover:underline focus:outline-none" onClick={() => { setEditState(!editState) }}>
+            {(editState) ? ("Cancel") : ("Edit")}
+          </button>
+        </div>) : <></>}
+        <div className="flex justify-center">
+          {orderStatus.map((step) =>
+          ((step.date !== null) ?
+            (<CompleteItem state={step.state} date={step.date} />) :
+            ((editState) ? <ModifiableItem state={step.state} /> : <IncompleteItem state={step.state} />)))}
+        </div>
       </div>
-    </div>
-
+      {
+        ratingModalVisible &&
+        <RatingModal
+          onClose={() => onRatingModalClose()}
+          isModalVisible={ratingModalVisible}
+          isCustomer={false}
+          targetUserUid={customerUid}/>
+      }
+    </>
   )
 }
 
@@ -270,6 +275,7 @@ export default function OrderPage({ isPrinter = false }) {
           history: (data.History) ? data.History : fakeHistory,
           quantity: data.Quantity,
           color: data.Color,
+          CustomerUid: data.CustomerUid,
         });
 
         setDataLoading(false);
@@ -309,7 +315,7 @@ export default function OrderPage({ isPrinter = false }) {
                   <div className="text-lg font-semibold">
                     Status
                   </div>
-                  <OrderStatus history={jobData.history} jobId={Id} isPrinter={isPrinter} />
+                  <OrderStatus history={jobData.history} jobId={Id} customerUid={jobData.CustomerUid} isPrinter={isPrinter} />
                 </div>
               </div>
               <div className="w-1/3">
@@ -324,8 +330,6 @@ export default function OrderPage({ isPrinter = false }) {
           )
         }
       </div>
-
     </div>
-
   )
 }

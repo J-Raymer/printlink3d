@@ -4,6 +4,7 @@ import TextForm from "../components/textForm";
 import { useEffect, useState } from "react";
 import { firebaseDb } from "../firebase/firebase";
 import { getMaterials } from "../backend";
+import TextArea from "../components/textArea";
 
 function StyledLine({ title, inputComponent, helpButtonComponent }) {
   return (
@@ -17,20 +18,6 @@ function StyledLine({ title, inputComponent, helpButtonComponent }) {
         </div>
         {inputComponent}
       </div>
-    </div>
-  );
-}
-
-function TextArea({ value, onChange }) {
-  return (
-    <div>
-      <textarea
-        class="px-2 py-1 bg-gray-50 border border-gray-300 text-gray-900 rounded-md focus:ring-blue-500 focus:border-blue-500 block"
-        value={value}
-        onChange={onChange}
-        rows="4"
-        cols="50"
-      />
     </div>
   );
 }

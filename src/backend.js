@@ -7,12 +7,9 @@ export async function addJob(db, DocData) {
   return docRef;
 }
 
-export async function addCustomer(db, DocData) {
-  const docRef = await addDoc(collection(db, "Customers"), DocData);
-}
-
-export async function addPrinter(db, DocData) {
-  const docRef = await addDoc(collection(db, "Printers"), DocData);
+export async function addRating(db, rating) {
+  const docRef = await addDoc(collection(db, "Ratings"), rating);
+  return docRef;
 }
 
 export async function getAllJobs(db) {
@@ -74,26 +71,26 @@ export async function getColors(db) {
 export async function getThumbnail(jobId) {
   return new Promise((resolve, reject) => {
     getDownloadURL(ref(firebaseStorage, `images/${jobId}.png`))
-    .then((url) => {
+      .then((url) => {
         const xhr = new XMLHttpRequest();
         xhr.responseType = 'blob';
         xhr.onload = () => {
-            const blob = xhr.response;
-            const reader = new FileReader();
-            reader.readAsDataURL(blob);
+          const blob = xhr.response;
+          const reader = new FileReader();
+          reader.readAsDataURL(blob);
 
-            reader.onloadend = function() {
-                resolve(reader.result);
-            }
+          reader.onloadend = function () {
+            resolve(reader.result);
+          }
         };
         xhr.open('GET', url);
         xhr.send();
-    })
-    .catch((error) => {
-      console.error("Error fetching thumbnail: ", error);
-      reject(error);
-    })
-  }) 
+      })
+      .catch((error) => {
+        console.error("Error fetching thumbnail: ", error);
+        reject(error);
+      })
+  })
 }
 
 export async function getFile(jobId) {
