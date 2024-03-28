@@ -26,7 +26,6 @@ export default function RatingModal({onClose, isModalVisible, isCustomer, target
     const overallRatingNumber = getOverallRatingNumber();
     let averageRating, rating;
     if (isCustomer) {
-      console.log(overallRatingNumber, printQualityRating, communicationRating, exchangeRating)
       averageRating = (overallRatingNumber + printQualityRating + communicationRating + exchangeRating) / 4;
       rating = {
         targetUserUid,
@@ -37,7 +36,6 @@ export default function RatingModal({onClose, isModalVisible, isCustomer, target
         comment,
       };
     } else {
-      console.log(overallRatingNumber, communicationRating, exchangeRating);
       averageRating = (overallRatingNumber + communicationRating + exchangeRating) / 3;
       rating = {
         targetUserUid,
