@@ -15,6 +15,7 @@ export async function addPrinter(db, DocData) {
   const docRef = await addDoc(collection(db, "Printers"), DocData);
 }
 
+// TODO remove this function (not used)
 export async function getAllJobs(db) {
   const jobCollectionRef = collection(db, "Jobs");
   const querySnapshot = await getDocs(jobCollectionRef);
@@ -96,9 +97,9 @@ export async function getThumbnail(jobId) {
   }) 
 }
 
-export async function getFile(jobId) {
+export async function getFile(jobName, jobId) {
   try {
-    const fileRef = ref(firebaseStorage, `print-files/${jobId}.stl`);
+    const fileRef = ref(firebaseStorage, `print-files/${jobName + "_" + jobId}.stl`);
     const downloadURL = await getDownloadURL(fileRef);
     return downloadURL;
   } catch (error) {
@@ -114,7 +115,8 @@ export async function uploadThumbnail(thumbnail, id) {
   uploadBytes(storageRef, thumbnailBlob);
 };
 
-export async function uploadStl(stlFile, id) {
-  var storageRef = ref(firebaseStorage, `print-files/${id}.stl`);
-  uploadBytes(storageRef, stlFile);
+export async function uploadStl(file, jobName, id) {
+  console.log(jobName + "_" + id + ".stl")
+  var storageRef = ref(firebaseStorage, `print-files/${jobName + "_" + id}.stl`);
+  uploadBytes(storageRef, file);
 }

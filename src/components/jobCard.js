@@ -33,7 +33,7 @@ export default function JobCard({
       </div>
       <div className="pl-5 pt-5 text-gray-600">
         <div className="uppercase tracking-wide text-sm text-indigo-500 font-semibold">
-          {job.fileName}
+          {job.jobName}
         </div>
         <p className="mt-2">
           <span className="font-semibold mt-2">Material: </span>

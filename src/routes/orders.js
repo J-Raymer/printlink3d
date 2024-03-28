@@ -45,9 +45,9 @@ export default function Orders({isPrinter=false}) {
               infill: data.Infill,
               material: data.Material,
               distance: data.Radius,
-              fileName: data.FileName,
               quantity: data.Quantity,
               color: data.Color,
+              jobName: data.JobName,
             };
             
             (completeOrder) ? fetchedComplete.push(order) : fetchedActive.push(order);
