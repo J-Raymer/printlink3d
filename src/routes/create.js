@@ -29,8 +29,8 @@ export default function Create() {
   const updateFile = (newFile) => {
     updatePrintJob("file", newFile)
     if (newFile !== null) {
-      // Strips the .stl extension from the file name
-      updatePrintJob("jobName", newFile.name.replace(/\.stl$/i, ""));
+      // Strips the .stl extension from the file name and limits it to 100 characters
+      updatePrintJob("jobName", newFile.name.replace(/\.stl$/i, "").substring(0, 100));
     } else {
       updatePrintJob("jobName", "");
     }

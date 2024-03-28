@@ -4,6 +4,7 @@ import TextForm from "../components/textForm";
 import { useEffect, useState } from "react";
 import { firebaseDb } from "../firebase/firebase";
 import { getMaterials } from "../backend";
+import { MAX_JOB_NAME_LENGTH } from "../constants";
 
 function StyledLine({ title, inputComponent, helpButtonComponent }) {
   return (
@@ -153,6 +154,7 @@ export default function Configure({ printJob, changePrintJob }) {
                 value={printJob.jobName}
                 onChange={changeJobName}
                 width={30}
+                maxLength={MAX_JOB_NAME_LENGTH}
               />
             }
           />
