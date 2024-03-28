@@ -216,17 +216,19 @@ export default function Browse() {
                       }}
                   />
                 </LoadScript>
-                <h1>Radius of travel: (km)</h1>
-                <TextForm //draws the radius input box and updates the radius state
-                    type="Distance"
-                    min="1"
-                    value={radius}
-                    // set the radius and log that it changed
-                    onChange={(e) => {
-                        setRadius(Number(e.target.value));
-                        console.log(Number(e.target.value));
-                    }}
-                />
+                <div className="mt-3">
+                  <h1>Radius of travel: (km)</h1>
+                  <TextForm //draws the radius input box and updates the radius state
+                      type="Distance"
+                      min="1"
+                      value={radius}
+                      // set the radius and log that it changed
+                      onChange={(e) => {
+                          setRadius(Number(e.target.value));
+                          console.log(Number(e.target.value));
+                      }}
+                  />
+                </div>
               </div>
             </div>
             <div className="grow p-3 pt-0 overflow-y-scroll">
