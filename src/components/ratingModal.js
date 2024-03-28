@@ -19,31 +19,63 @@ export default function RatingModal({ onClose, isModalVisible, isCustomer, targe
   const renderStars = () => {
     let stars = [];
     for (let i = 0; i < 5; i++) {
-      let fill = "none";
+      let fillLeft = "none";
+      let fillRight = "none";
       let stroke = "gray";
-      if (i < hoveredStar) {
-        fill = "black";
+      if (i < Math.floor(hoveredStar)) {
+        fillLeft = "black";
+        fillRight = "black";
+        stroke = "black";
+      } else if (i < hoveredStar) {
+        fillLeft = "black";
         stroke = "black";
       }
       stars.push(
-        <svg
+        <div
           key={i}
-          xmlns="http://www.w3.org/2000/svg"
-          fill={fill}
-          viewBox="0 0 24 24"
-          strokeWidth={1.5}
-          stroke={stroke}
-          width="35"
-          height="35"
-          onMouseEnter={() => setHoveredStar(i + 1)}
-          onMouseLeave={() => setHoveredStar(null)}
+          style={{ display: "flex" }}
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M12 2l3.09 6.26L22 9.27l-5 4.73L18.18 22 12 18.27 5.82 22 8 14 2 9.27l6.91-1.01L12 2z"
-          />
-        </svg>
+          <div
+            onMouseEnter={() => setHoveredStar(i + 0.5)}
+            onMouseLeave={() => setHoveredStar(null)}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 12 24"
+              strokeWidth={1.5}
+              stroke={stroke}
+              width="17.5"
+              height="35"
+            >
+              <path
+                fill={fillLeft}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 2l3.09 6.26L22 9.27l-5 4.73L18.18 22 12 18.27 5.82 22 8 14 2 9.27l6.91-1.01L12 2z"
+              />
+            </svg>
+          </div>
+          <div
+            onMouseEnter={() => setHoveredStar(i + 1)}
+            onMouseLeave={() => setHoveredStar(null)}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="12 0 12 24"
+              strokeWidth={1.5}
+              stroke={stroke}
+              width="17.5"
+              height="35"
+            >
+              <path
+                fill={fillRight}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 2l3.09 6.26L22 9.27l-5 4.73L18.18 22 12 18.27 5.82 22 8 14 2 9.27l6.91-1.01L12 2z"
+              />
+            </svg>
+          </div>
+        </div>
       );
     }
     return stars;
