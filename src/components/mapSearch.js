@@ -3,6 +3,11 @@ import {APIProvider, Marker, AdvancedMarker, Map} from '@vis.gl/react-google-map
 import GooglePlacesAutocomplete, { geocodeByPlaceId, getLatLng} from 'react-google-places-autocomplete';
 import TextForm from "./textForm";
 
+// This component is the depreciated version of the map search bar, it is not currently used in the project
+// Left for reference in case Jasper wants to use this react google maps package instead of the one used in the project
+
+
+
 export default function MapSearch() {
     const [map, setMap] = useState({
         lat: 48.4284,

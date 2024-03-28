@@ -1,15 +1,23 @@
 import Selector from "../components/selector";
 import HelpButton from "../components/helpButton";
 import TextForm from "../components/textForm";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { firebaseDb } from "../firebase/firebase";
 import { getMaterials } from "../backend";
+import MapSearch from "../components/mapSearch";
+import MapSearch2 from "../components/mapSearch2";
+import GooglePlacesAutocomplete, { geocodeByPlaceId, getLatLng} from 'react-google-places-autocomplete';
+import { GoogleMap, LoadScript, Marker, Circle } from '@react-google-maps/api';
+const libraries = ['places'];
+
+
+
 
 function StyledLine({ title, inputComponent, helpButtonComponent }) {
   return (
     <div>
       <div className="flex py-6">
-        <div className="w-60 flex pl-3">
+        <div className="w-40 flex pl-3">
           <div className="mx-2">
             <div className="text-lg font-semibold">{title} </div>
           </div>
@@ -29,7 +37,7 @@ function TextArea({ value, onChange }) {
         value={value}
         onChange={onChange}
         rows="4"
-        cols="50"
+        cols="40"
       />
     </div>
   );
@@ -135,6 +143,25 @@ export default function Configure({ printJob, changePrintJob }) {
   const changeInfill = (x) => changePrintJob(x, "infill");
   const changeLayerHeight = (x) => changePrintJob(x, "layerHeight");
 
+
+  // Map-Related Constants
+  const [selectedLocation, setSelectedLocation] = useState({
+    lat: 48.4284,
+    lng: -123.3656,
+  });
+  const [radius, setRadius] = useState(0);
+  const [search_value, setSearchValue] = useState(null);
+
+  const mapRef = useRef(null);
+  const [circleRef, setCircleRef] = useState(null);
+
+  const apiKey = 'AIzaSyCe8pXdsTx4MXjIr0JSF10N08Y3oMxoFk8';
+
+  const mapContainerStyle = {
+      height: '500px',
+      width: '100%',
+  };
+
   return (
     <div>
       <div className="p-5">
@@ -144,173 +171,262 @@ export default function Configure({ printJob, changePrintJob }) {
             Print Parameters{" "}
           </h2>
         </div>
-        <div className="flex-col">
-          <StyledLine
-            title="Quantity"
-            inputComponent={
-              <TextForm
-                type="number"
-                min="1"
-                value={printJob.quantity}
-                onChange={changeQuantity}
-              />
-            }
-          />
-          <StyledLine
-            title="Color"
-            inputComponent={
-              <Selector
-                label="color"
-                options={[
-                  "No Preference",
-                  "Red",
-                  "Blue",
-                  "Green",
-                  "Purple",
-                  "Orange",
-                  "Yellow",
-                  "Brown",
-                  "Gray",
-                  "Black",
-                  "White",
-                ]}
-                initValue={printJob.color}
-                onChange={changeColor}
-              />
-            }
-          />
-          <StyledLine
-            title="Material"
-            inputComponent={
-              <MaterialSelector
-                init={{ Type: printJob.material }}
-                materials={materials}
-                changeMaterial={changeMaterial}
-              />
-            }
-            helpButtonComponent={
-              <HelpButton
-                helpText={
-                  "The material used in your print. The plastic option allows the printer to decide, but other options are available."
-                }
-              />
-            }
-          />
-          <StyledLine
-            title="Comment"
-            inputComponent={
-              <TextArea value={printJob.comment} onChange={changeComment} />
-            }
-            helpButtonComponent={
-              <HelpButton
-                helpText={
-                  "Enter any additional print details or specifications you want to communicate to the printer."
-                }
-              />
-            }
-          />
-        </div>
-      </div>
-      <div className="p-5">
-        <button onClick={() => setShowAdvanced(!showAdvanced)}>
-          <div className="flex">
-            <div className="pr-3 font-semibold">Advanced Options</div>
-            {showAdvanced ? (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="w-6 h-6"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="m4.5 15.75 7.5-7.5 7.5 7.5"
-                />
-              </svg>
-            ) : (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="w-6 h-6"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="m19.5 8.25-7.5 7.5-7.5-7.5"
-                />
-              </svg>
-            )}
-          </div>
-        </button>
-        {showAdvanced ? (
-          <div className="p-5">
-            <div className="rounded-lg bg-slate-50">
+        {/* Splitting page into 2 columns */}
+        <div className="grid  grid-cols-2 gap-2">
+          {/* Column 1 */}
+          <div className="bg-white p-4"> 
+            <div className="flex-col">
               <StyledLine
-                title="Complete By"
+                title="Quantity"
                 inputComponent={
                   <TextForm
-                    type="date"
-                    value={printJob.completionDate}
-                    onChange={changeCompletionDate}
+                    type="number"
+                    min="1"
+                    value={printJob.quantity}
+                    onChange={changeQuantity}
+                  />
+                }
+              />
+              <StyledLine
+                title="Color"
+                inputComponent={
+                  <Selector
+                    label="color"
+                  options={[
+                    "No Preference",
+                    "Red",
+                    "Blue",
+                    "Green",
+                    "Purple",
+                    "Orange",
+                    "Yellow",
+                    "Brown",
+                    "Gray",
+                    "Black",
+                    "White",
+                  ]}
+                  initValue={printJob.color}
+                  onChange={changeColor}
+                />
+              }
+              />
+              <StyledLine
+                title="Material"
+                inputComponent={
+                  <MaterialSelector
+                    init={{ Type: printJob.material }}
+                    materials={materials}
+                    changeMaterial={changeMaterial}
                   />
                 }
                 helpButtonComponent={
                   <HelpButton
                     helpText={
-                      "The date by which you want your print. You can leave it blank if there is no time constraint."
+                      "The material used in your print. The plastic option allows the printer to decide, but other options are available."
                     }
                   />
                 }
               />
               <StyledLine
-                title="Infill Density"
+                title="Comment"
                 inputComponent={
-                  <Selector
-                    options={Array.from(
-                      { length: 21 },
-                      (_, index) => (index * 5).toString() + "%"
-                    )}
-                    initValue={printJob.infill}
-                    onChange={changeInfill}
-                  />
+                  <TextArea value={printJob.comment} onChange={changeComment} />
                 }
                 helpButtonComponent={
                   <HelpButton
                     helpText={
-                      "The density of the internal structure of your print. A higher density is stronger but more expensive."
+                      "Enter any additional print details or specifications you want to communicate to the printer."
                     }
                   />
                 }
               />
-              <StyledLine
-                title="Layer Height"
-                inputComponent={
-                  <Selector
-                    options={["0.1 mm", "0.2 mm", "0.3 mm"]}
-                    initValue={printJob.layerHeight}
-                    onChange={changeLayerHeight}
-                  />
-                }
-                helpButtonComponent={
-                  <HelpButton
-                    helpText={
-                      "The height of each print layer. Lower values produce a higher resolution print."
-                    }
-                  />
-                }
-              />
+              <div className="p-5">
+              <button onClick={() => setShowAdvanced(!showAdvanced)}>
+                <div className="flex">
+                  <div className="pr-3 text-lg font-semibold">Advanced Options</div>
+                  {showAdvanced ? (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke-width="1.5"
+                      stroke="currentColor"
+                      class="w-6 h-6"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="m4.5 15.75 7.5-7.5 7.5 7.5"
+                      />
+                    </svg>
+                  ) : (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke-width="1.5"
+                      stroke="currentColor"
+                      class="w-6 h-6"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="m19.5 8.25-7.5 7.5-7.5-7.5"
+                      />
+                    </svg>
+                  )}
+                </div>
+              </button>
+              {showAdvanced ? (
+                <div className="p-5">
+                  <div className="rounded-lg bg-slate-50">
+                    <StyledLine
+                      title="Complete By"
+                      inputComponent={
+                        <TextForm
+                          type="date"
+                          value={printJob.completionDate}
+                          onChange={changeCompletionDate}
+                        />
+                      }
+                      helpButtonComponent={
+                        <HelpButton
+                          helpText={
+                            "The date by which you want your print. You can leave it blank if there is no time constraint."
+                          }
+                        />
+                      }
+                    />
+                    <StyledLine
+                      title="Infill Density"
+                      inputComponent={
+                        <Selector
+                          options={Array.from(
+                            { length: 21 },
+                            (_, index) => (index * 5).toString() + "%"
+                          )}
+                          initValue={printJob.infill}
+                          onChange={changeInfill}
+                        />
+                      }
+                      helpButtonComponent={
+                        <HelpButton
+                          helpText={
+                            "The density of the internal structure of your print. A higher density is stronger but more expensive."
+                          }
+                        />
+                      }
+                    />
+                    <StyledLine
+                      title="Layer Height"
+                      inputComponent={
+                        <Selector
+                          options={["0.1 mm", "0.2 mm", "0.3 mm"]}
+                          initValue={printJob.layerHeight}
+                          onChange={changeLayerHeight}
+                        />
+                      }
+                      helpButtonComponent={
+                        <HelpButton
+                          helpText={
+                            "The height of each print layer. Lower values produce a higher resolution print."
+                          }
+                        />
+                      }
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div />
+              )}
             </div>
+          </div>  
+          
+          </div> 
+
+          {/* Column 2 */}
+          <div className="bg-white p-4">
+            
+            {/* Next two columns are nested in an API loader */}
+            <LoadScript
+                  googleMapsApiKey={apiKey}
+                  libraries={libraries}
+              >
+              {/* Second Column split */}
+              <div className="grid  grid-cols-2 gap-2">
+                
+                  {/* Column 2.1 */}
+                  <div className='mt-2 text-lg font-semibold'>
+                    <div className="mt-20">
+                      <h1>Location</h1> 
+                        <GooglePlacesAutocomplete //package for the google places API autocomplete search bar
+                            selectProps={{
+                                search_value,        
+                                onChange: (value) => { //when the search value changes (by enter or selection of autcomplete results)
+                                    console.log(value);
+                                    setSearchValue(value);
+                                    geocodeByPlaceId(value.value.place_id)
+                                        .then(results => getLatLng(results[0]))
+                                        .then(({ lat, lng }) => {
+                                        setSelectedLocation({ lat, lng });
+                                        console.log(lat, lng);
+                                        });
+                                },
+                            }}
+                      />
+
+                      <br></br>
+                      
+                      <h1>Radius of travel (km)</h1>
+                      <TextForm //draws the radius input box and updates the radius state
+                          type="Distance"
+                          min="1"
+                          value={radius}
+                          // set the radius and log that it changed
+                          onChange={(e) => {
+                              setRadius(Number(e.target.value));
+                              setCircleRef(Number(e.target.value));
+                              console.log(typeof(e.target.value));
+                          }}
+                      />
+
+                    </div>
+
+                  </div>
+
+                  {/* Column 2.2 */}
+                  <div className="mt-2 text-lg font-semibold">
+                    <GoogleMap
+                          onLoad = {map => {(mapRef.current = map); console.log(mapRef.current)}}
+                          mapContainerStyle={mapContainerStyle}
+                          center={selectedLocation} 
+                          zoom={13}
+                          // onLoad={map => {(mapRef.current = map); console.log(mapRef.current)}}
+                          options={{
+                              disableDefaultUI: true,
+                            }}
+                          >
+                          <Marker position={selectedLocation} key={`marker-${selectedLocation.lat}-${selectedLocation.lng}`}/>
+
+
+                          {circleRef && <Circle center={selectedLocation} radius={radius*1000} key={`marker-`} options={{
+                                  fillColor: 'rgba(0, 128, 128, 0.5)',
+                                  strokeColor: '#FFFFFF',
+                                  strokeOpacity: 0.8,
+                                  strokeWeight: 2,
+                              }} />}
+                          
+                      </GoogleMap>
+                  </div>
+              
+              </div>
+            </LoadScript>
           </div>
-        ) : (
-          <div />
-        )}
-      </div>
+
+        </div>
+          
+          </div>
+        
     </div>
   );
 }

@@ -3,6 +3,8 @@ import pencil_icon from "../images/pencil.png";
 import TextForm from "../components/textForm";
 import { useState, useRef } from "react";
 import MapSearch from "../components/mapSearch";
+import MapWithSearchBar from "../components/MapWithSearchBar";
+import MapSearch2 from "../components/mapSearch2";
 
 export default function Profile() {
   const [firstName, setFirstName] = useState("");
@@ -70,7 +72,8 @@ export default function Profile() {
           placeholder="Email"
           onChange={(x) => setEmail(x.target.value)}
         />
-        <MapSearch />
+    
+        <MapSearch2 />
       </div>
     </div>
   );
