@@ -4,22 +4,9 @@ import { addRating } from '../backend';
 import { firebaseDb } from '../firebase/firebase';
 import { getDate } from '../utils';
 
-export default function RatingModal({ onClose, isModalVisible, isCustomer, targetUserUid }) {
-  const [overallRating, setOverallRating] = useState(null);
-  const [canSubmit, setCanSubmit] = useState(false);
-  const [comment, setComment] = useState('');
-  const [hoveredStarPrintQuality, setHoveredStarPrintQuality] = useState(null);
-  const [hoveredStarCommunication, setHoveredStarCommunication] = useState(null);
-  const [hoveredStarExchange, setHoveredStarExchange] = useState(null);
-  const [selectedStarPrintQuality, setSelectedStarPrintQuality] = useState(null);
-  const [selectedStarCommunication, setSelectedStarCommunication] = useState(null);
-  const [selectedStarExchange, setSelectedStarExchange] = useState(null);
-
-
-  const overallRatings = ['Good', 'Neutral', 'Bad'];
-
-  const renderStars = (hoveredStar, setHoveredStar, selectedStar, setSelectedStar) => {
-    let stars = [];
+// TODO pull svgs into separate component
+function Stars(hoveredStar, setHoveredStar, selectedStar, setSelectedStar) {
+  let stars = [];
     for (let i = 0; i < 5; i++) {
       let fillLeft = "none";
       let fillRight = "none";
@@ -83,7 +70,20 @@ export default function RatingModal({ onClose, isModalVisible, isCustomer, targe
       );
     }
     return stars;
-  };
+}
+
+export default function RatingModal({ onClose, isModalVisible, isCustomer, targetUserUid }) {
+  const [overallRating, setOverallRating] = useState(null);
+  const [canSubmit, setCanSubmit] = useState(false);
+  const [comment, setComment] = useState('');
+  const [hoveredStarPrintQuality, setHoveredStarPrintQuality] = useState(null);
+  const [hoveredStarCommunication, setHoveredStarCommunication] = useState(null);
+  const [hoveredStarExchange, setHoveredStarExchange] = useState(null);
+  const [selectedStarPrintQuality, setSelectedStarPrintQuality] = useState(null);
+  const [selectedStarCommunication, setSelectedStarCommunication] = useState(null);
+  const [selectedStarExchange, setSelectedStarExchange] = useState(null);
+
+  const overallRatings = ['Good', 'Neutral', 'Bad'];
 
   // Only enable submit button if all ratings are selected
   React.useEffect(() => {
@@ -160,7 +160,7 @@ export default function RatingModal({ onClose, isModalVisible, isCustomer, targe
               <div className="flex items-center mt-10">
                 <div className="w-1/3 text-2xl">Print Quality:</div>
                 <div className="w-2/3 flex">
-                  {renderStars(hoveredStarPrintQuality, setHoveredStarPrintQuality, selectedStarPrintQuality, setSelectedStarPrintQuality)}
+                  {Stars(hoveredStarPrintQuality, setHoveredStarPrintQuality, selectedStarPrintQuality, setSelectedStarPrintQuality)}
                 </div>
               </div>
             )
@@ -168,13 +168,13 @@ export default function RatingModal({ onClose, isModalVisible, isCustomer, targe
           <div className="flex items-center mt-10">
             <div className="w-1/3 text-2xl">Communication:</div>
             <div className="w-2/3 flex">
-              {renderStars(hoveredStarCommunication, setHoveredStarCommunication, selectedStarCommunication, setSelectedStarCommunication)}
+              {Stars(hoveredStarCommunication, setHoveredStarCommunication, selectedStarCommunication, setSelectedStarCommunication)}
             </div>
           </div>
           <div className="flex items-center mt-10">
             <div className="w-1/3 text-2xl">Exchange:</div>
             <div className="w-2/3 flex">
-              {renderStars(hoveredStarExchange, setHoveredStarExchange, selectedStarExchange, setSelectedStarExchange)}
+              {Stars(hoveredStarExchange, setHoveredStarExchange, selectedStarExchange, setSelectedStarExchange)}
             </div>
           </div>
           <div className="mt-10">
