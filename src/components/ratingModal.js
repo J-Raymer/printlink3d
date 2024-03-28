@@ -4,16 +4,50 @@ import { addRating } from '../backend';
 import { firebaseDb } from '../firebase/firebase';
 import { getDate } from '../utils';
 
-export default function RatingModal({onClose, isModalVisible, isCustomer, targetUserUid }) {
+export default function RatingModal({ onClose, isModalVisible, isCustomer, targetUserUid }) {
   const [overallRating, setOverallRating] = useState(null);
   const [printQualityRating, setPrintQualityRating] = useState(null);
   const [communicationRating, setCommunicationRating] = useState(null);
   const [exchangeRating, setExchangeRating] = useState(null);
   const [canSubmit, setCanSubmit] = useState(false);
   const [comment, setComment] = useState('');
+  const [hoveredStar, setHoveredStar] = useState(null);
 
   const overallRatings = ['Good', 'Neutral', 'Bad'];
-  const numberRatings = [1, 2, 3, 4, 5];
+
+
+  const renderStars = () => {
+    let stars = [];
+    for (let i = 0; i < 5; i++) {
+      let fill = "none";
+      let stroke = "gray";
+      if (i < hoveredStar) {
+        fill = "black";
+        stroke = "black";
+      }
+      stars.push(
+        <svg
+          key={i}
+          xmlns="http://www.w3.org/2000/svg"
+          fill={fill}
+          viewBox="0 0 24 24"
+          strokeWidth={1.5}
+          stroke={stroke}
+          width="35"
+          height="35"
+          onMouseEnter={() => setHoveredStar(i + 1)}
+          onMouseLeave={() => setHoveredStar(null)}
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M12 2l3.09 6.26L22 9.27l-5 4.73L18.18 22 12 18.27 5.82 22 8 14 2 9.27l6.91-1.01L12 2z"
+          />
+        </svg>
+      );
+    }
+    return stars;
+  };
 
   // Only enable submit button if all ratings are selected
   React.useEffect(() => {
@@ -54,7 +88,7 @@ export default function RatingModal({onClose, isModalVisible, isCustomer, target
   }
 
   const getOverallRatingNumber = () => {
-    switch(overallRating) {
+    switch (overallRating) {
       case 'Good':
         return 5;
       case 'Neutral':
@@ -89,15 +123,7 @@ export default function RatingModal({onClose, isModalVisible, isCustomer, target
               <div className="flex items-center mt-10">
                 <div className="w-1/3 text-2xl">Print Quality:</div>
                 <div className="w-2/3 flex">
-                  {numberRatings.map((rating) => (
-                    <p
-                      key={rating}
-                      className={`text-2xl mr-5 cursor-pointer border-2 px-2 rounded ${printQualityRating === rating ? 'border-blue-500' : 'border-transparent'}`}
-                      onClick={() => setPrintQualityRating(rating)}
-                    >
-                      {rating}
-                    </p>
-                  ))}
+                  {renderStars()}
                 </div>
               </div>
             )
@@ -105,34 +131,18 @@ export default function RatingModal({onClose, isModalVisible, isCustomer, target
           <div className="flex items-center mt-10">
             <div className="w-1/3 text-2xl">Communication:</div>
             <div className="w-2/3 flex">
-              {numberRatings.map((rating) => (
-                <p
-                  key={rating}
-                  className={`text-2xl mr-5 cursor-pointer border-2 px-2 rounded ${communicationRating === rating ? 'border-blue-500' : 'border-transparent'}`}
-                  onClick={() => setCommunicationRating(rating)}
-                >
-                  {rating}
-                </p>
-              ))}
+              {renderStars()}
             </div>
           </div>
           <div className="flex items-center mt-10">
             <div className="w-1/3 text-2xl">Exchange:</div>
             <div className="w-2/3 flex">
-              {numberRatings.map((rating) => (
-                <p
-                  key={rating}
-                  className={`text-2xl mr-5 cursor-pointer border-2 px-2 rounded ${exchangeRating === rating ? 'border-blue-500' : 'border-transparent'}`}
-                  onClick={() => setExchangeRating(rating)}
-                >
-                  {rating}
-                </p>
-              ))}
+              {renderStars()}
             </div>
           </div>
           <div className="mt-10">
             <div className="text-2xl mb-5">Comment:</div>
-            <TextArea value={comment} onChange={(e) => setComment(e.target.value)}/>
+            <TextArea value={comment} onChange={(e) => setComment(e.target.value)} />
           </div>
           <button className={`float-right mt-4 p-2 px-4 rounded text-white ${canSubmit ? 'bg-brand-blue' : 'bg-gray-300'}`} onClick={() => onSubmit()} disabled={!canSubmit}>Submit</button>
         </div>
