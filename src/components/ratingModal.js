@@ -6,9 +6,6 @@ import { getDate } from '../utils';
 
 export default function RatingModal({ onClose, isModalVisible, isCustomer, targetUserUid }) {
   const [overallRating, setOverallRating] = useState(null);
-  const [printQualityRating, setPrintQualityRating] = useState(null);
-  const [communicationRating, setCommunicationRating] = useState(null);
-  const [exchangeRating, setExchangeRating] = useState(null);
   const [canSubmit, setCanSubmit] = useState(false);
   const [comment, setComment] = useState('');
   const [hoveredStarPrintQuality, setHoveredStarPrintQuality] = useState(null);
@@ -88,41 +85,37 @@ export default function RatingModal({ onClose, isModalVisible, isCustomer, targe
     return stars;
   };
 
-  // Use the renderStars function for each rating
-  const printQualityStars = renderStars(hoveredStarPrintQuality, setHoveredStarPrintQuality);
-  const communicationStars = renderStars(hoveredStarCommunication, setHoveredStarCommunication);
-  const exchangeStars = renderStars(hoveredStarExchange, setHoveredStarExchange);
-
   // Only enable submit button if all ratings are selected
   React.useEffect(() => {
+    console.log(overallRating, selectedStarPrintQuality, selectedStarCommunication, selectedStarExchange)
     setCanSubmit(
-      (isCustomer && overallRating && printQualityRating && communicationRating && exchangeRating) ||
-      (!isCustomer && overallRating && communicationRating && exchangeRating)
+      (isCustomer && overallRating && selectedStarPrintQuality !== null && selectedStarCommunication !== null && selectedStarExchange !== null) ||
+      (!isCustomer && overallRating && selectedStarCommunication !== null && selectedStarExchange !== null)
     );
-  }, [overallRating, printQualityRating, communicationRating, exchangeRating]);
+  }, [overallRating, selectedStarPrintQuality, selectedStarCommunication, selectedStarExchange]);
 
   const onSubmit = () => {
     const overallRatingNumber = getOverallRatingNumber();
     const date = getDate();
     let averageRating, rating;
     if (isCustomer) {
-      averageRating = (overallRatingNumber + printQualityRating + communicationRating + exchangeRating) / 4;
+      averageRating = (overallRatingNumber + selectedStarPrintQuality + selectedStarCommunication + selectedStarExchange) / 4;
       rating = {
         targetUserUid,
         averageRating,
-        printQualityRating,
-        communicationRating,
-        exchangeRating,
+        printQualityRating: selectedStarPrintQuality,
+        communicationRating: selectedStarCommunication,
+        exchangeRating: selectedStarExchange,
         comment,
         date
       };
     } else {
-      averageRating = (overallRatingNumber + communicationRating + exchangeRating) / 3;
+      averageRating = (overallRatingNumber + selectedStarCommunication + selectedStarExchange) / 3;
       rating = {
         targetUserUid,
         averageRating,
-        communicationRating,
-        exchangeRating,
+        communicationRating: selectedStarCommunication,
+        exchangeRating: selectedStarExchange,
         comment,
         date
       };
