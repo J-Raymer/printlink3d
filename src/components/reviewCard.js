@@ -1,3 +1,5 @@
+import { getFormattedDate } from "../utils";
+
 export default function ReviewCard({ review }) {
   const renderStars = () => {
     let rating = review.averageRating;
@@ -40,7 +42,7 @@ export default function ReviewCard({ review }) {
     <div className="flex flex-col p-4 border-2 border-gray-200 rounded-lg mb-4">
       <div className="flex items-center">
         {renderStars()}
-        <p className="ml-2">March 25, 2024</p>
+        <p className="ml-2">{getFormattedDate(review.date)}</p>
       </div>
       {review.comment && <p className="mt-2">{review.comment}</p>}
     </div>
