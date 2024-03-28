@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import TextArea from './textArea';
 import { addRating } from '../backend';
 import { firebaseDb } from '../firebase/firebase';
+import { getDate } from '../utils';
 
 export default function RatingModal({onClose, isModalVisible, isCustomer, targetUserUid }) {
   const [overallRating, setOverallRating] = useState(null);
@@ -24,6 +25,7 @@ export default function RatingModal({onClose, isModalVisible, isCustomer, target
 
   const onSubmit = () => {
     const overallRatingNumber = getOverallRatingNumber();
+    const date = getDate();
     let averageRating, rating;
     if (isCustomer) {
       averageRating = (overallRatingNumber + printQualityRating + communicationRating + exchangeRating) / 4;
@@ -34,6 +36,7 @@ export default function RatingModal({onClose, isModalVisible, isCustomer, target
         communicationRating,
         exchangeRating,
         comment,
+        date
       };
     } else {
       averageRating = (overallRatingNumber + communicationRating + exchangeRating) / 3;
@@ -43,6 +46,7 @@ export default function RatingModal({onClose, isModalVisible, isCustomer, target
         communicationRating,
         exchangeRating,
         comment,
+        date
       };
     }
     addRating(firebaseDb, rating);

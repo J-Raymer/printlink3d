@@ -7,6 +7,7 @@ import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import { useAuth } from "../contexts/authContext";
 import { getThumbnail, getFile } from "../backend";
 import RatingModal from "../components/ratingModal";
+import { getDate } from "../utils"
 
 function ChatRoom({ jobId }) {
   const [messages, setMessages] = useState([]);
@@ -142,15 +143,6 @@ function OrderStatus({ history, jobId, isPrinter, customerUid }) {
 
       </>
     )
-  }
-
-  const getDate = () => {
-    const date = new Date();
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-    const year = date.getFullYear();
-
-    return `${day}/${month}/${year}`;
   }
 
   const ModifyStatus = (state) => {
