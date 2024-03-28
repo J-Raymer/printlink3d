@@ -88,7 +88,7 @@ export default function Profile() {
         />
         <MapSearch />
       </div>
-      <div>
+      <div className="border-2 border-gray-300 p-2 rounded">
         <p className="text-2xl font-bold">Reviews</p>
         {reviews.map((review) => (
           <ReviewCard review={review} />
