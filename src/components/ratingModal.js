@@ -11,22 +11,27 @@ export default function RatingModal({ onClose, isModalVisible, isCustomer, targe
   const [exchangeRating, setExchangeRating] = useState(null);
   const [canSubmit, setCanSubmit] = useState(false);
   const [comment, setComment] = useState('');
-  const [hoveredStar, setHoveredStar] = useState(null);
+  const [hoveredStarPrintQuality, setHoveredStarPrintQuality] = useState(null);
+  const [hoveredStarCommunication, setHoveredStarCommunication] = useState(null);
+  const [hoveredStarExchange, setHoveredStarExchange] = useState(null);
+  const [selectedStarPrintQuality, setSelectedStarPrintQuality] = useState(null);
+  const [selectedStarCommunication, setSelectedStarCommunication] = useState(null);
+  const [selectedStarExchange, setSelectedStarExchange] = useState(null);
+
 
   const overallRatings = ['Good', 'Neutral', 'Bad'];
 
-
-  const renderStars = () => {
+  const renderStars = (hoveredStar, setHoveredStar, selectedStar, setSelectedStar) => {
     let stars = [];
     for (let i = 0; i < 5; i++) {
       let fillLeft = "none";
       let fillRight = "none";
       let stroke = "gray";
-      if (i < Math.floor(hoveredStar)) {
+      if (i < Math.floor(hoveredStar) || i < Math.floor(selectedStar)) {
         fillLeft = "black";
         fillRight = "black";
         stroke = "black";
-      } else if (i < hoveredStar) {
+      } else if (i < hoveredStar || i < selectedStar) {
         fillLeft = "black";
         stroke = "black";
       }
@@ -38,6 +43,7 @@ export default function RatingModal({ onClose, isModalVisible, isCustomer, targe
           <div
             onMouseEnter={() => setHoveredStar(i + 0.5)}
             onMouseLeave={() => setHoveredStar(null)}
+            onClick={() => setSelectedStar(i + 0.5)}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -58,6 +64,7 @@ export default function RatingModal({ onClose, isModalVisible, isCustomer, targe
           <div
             onMouseEnter={() => setHoveredStar(i + 1)}
             onMouseLeave={() => setHoveredStar(null)}
+            onClick={() => setSelectedStar(i + 1)}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -80,6 +87,11 @@ export default function RatingModal({ onClose, isModalVisible, isCustomer, targe
     }
     return stars;
   };
+
+  // Use the renderStars function for each rating
+  const printQualityStars = renderStars(hoveredStarPrintQuality, setHoveredStarPrintQuality);
+  const communicationStars = renderStars(hoveredStarCommunication, setHoveredStarCommunication);
+  const exchangeStars = renderStars(hoveredStarExchange, setHoveredStarExchange);
 
   // Only enable submit button if all ratings are selected
   React.useEffect(() => {
@@ -155,7 +167,7 @@ export default function RatingModal({ onClose, isModalVisible, isCustomer, targe
               <div className="flex items-center mt-10">
                 <div className="w-1/3 text-2xl">Print Quality:</div>
                 <div className="w-2/3 flex">
-                  {renderStars()}
+                  {renderStars(hoveredStarPrintQuality, setHoveredStarPrintQuality, selectedStarPrintQuality, setSelectedStarPrintQuality)}
                 </div>
               </div>
             )
@@ -163,13 +175,13 @@ export default function RatingModal({ onClose, isModalVisible, isCustomer, targe
           <div className="flex items-center mt-10">
             <div className="w-1/3 text-2xl">Communication:</div>
             <div className="w-2/3 flex">
-              {renderStars()}
+              {renderStars(hoveredStarCommunication, setHoveredStarCommunication, selectedStarCommunication, setSelectedStarCommunication)}
             </div>
           </div>
           <div className="flex items-center mt-10">
             <div className="w-1/3 text-2xl">Exchange:</div>
             <div className="w-2/3 flex">
-              {renderStars()}
+              {renderStars(hoveredStarExchange, setHoveredStarExchange, selectedStarExchange, setSelectedStarExchange)}
             </div>
           </div>
           <div className="mt-10">
