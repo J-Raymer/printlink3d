@@ -15,8 +15,7 @@ export function getDate() {
  * Converts the string date from getDate() to a formatted date string
  * @returns {string} formatted date string {Month Day, Year}
  */
-export function getFormattedDate() {
-    const dateStr = getDate();
+export function getFormattedDate(dateStr) {
     const [day, month, year] = dateStr.split('/');
     const monthName = monthNames[parseInt(month) - 1];
 
