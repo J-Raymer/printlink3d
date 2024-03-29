@@ -204,13 +204,11 @@ export default function Browse() {
                       selectProps={{
                           search_value,        
                           onChange: (value) => { //when the search value changes (by enter or selection of autcomplete results)
-                              console.log(value);
                               setSearchValue(value);
                               geocodeByPlaceId(value.value.place_id)
                                   .then(results => getLatLng(results[0]))
                                   .then(({ lat, lng }) => {
                                   setSelectedLocation({ lat, lng });
-                                  console.log(lat, lng);
                                   });
                           },
                       }}
@@ -225,7 +223,6 @@ export default function Browse() {
                       // set the radius and log that it changed
                       onChange={(e) => {
                           setRadius(Number(e.target.value));
-                          console.log(Number(e.target.value));
                       }}
                   />
                 </div>

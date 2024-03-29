@@ -359,13 +359,11 @@ export default function Configure({ printJob, changePrintJob }) {
                             selectProps={{
                                 search_value,        
                                 onChange: (value) => { //when the search value changes (by enter or selection of autcomplete results)
-                                    console.log(value);
                                     setSearchValue(value);
                                     geocodeByPlaceId(value.value.place_id)
                                         .then(results => getLatLng(results[0]))
                                         .then(({ lat, lng }) => {
                                         setSelectedLocation({ lat, lng });
-                                        console.log(lat, lng);
                                         });
                                 },
                             }}
@@ -382,7 +380,6 @@ export default function Configure({ printJob, changePrintJob }) {
                           onChange={(e) => {
                               setRadius(Number(e.target.value));
                               setCircleRef(Number(e.target.value));
-                              console.log(typeof(e.target.value));
                           }}
                       />
 
@@ -393,11 +390,10 @@ export default function Configure({ printJob, changePrintJob }) {
                   {/* Column 2.2 */}
                   <div className="mt-2 text-lg font-semibold">
                     <GoogleMap
-                          onLoad = {map => {(mapRef.current = map); console.log(mapRef.current)}}
+                          onLoad = {map => {(mapRef.current = map)}}
                           mapContainerStyle={mapContainerStyle}
                           center={selectedLocation} 
                           zoom={13}
-                          // onLoad={map => {(mapRef.current = map); console.log(mapRef.current)}}
                           options={{
                               disableDefaultUI: true,
                             }}
