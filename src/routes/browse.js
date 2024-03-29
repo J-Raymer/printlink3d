@@ -160,7 +160,7 @@ export default function Browse() {
   });
   const [radius, setRadius] = useState(0);
   const [search_value, setSearchValue] = useState(null);
-  const apiKey = 'AIzaSyDq0eG4aeLqWijh_E83UgP1N9ae3QcttUM';
+  const apiKey = 'AIzaSyCe8pXdsTx4MXjIr0JSF10N08Y3oMxoFk8';
 
 
   return (
