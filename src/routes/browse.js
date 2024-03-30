@@ -9,6 +9,12 @@ import MultiStepFormPage from "../components/multistepformpage";
 import { useAuth } from "../contexts/authContext";
 import { useNavigate } from "react-router-dom";
 import { getThumbnail, getColors, getMaterials } from "../backend";
+import GooglePlacesAutocomplete, { geocodeByPlaceId, getLatLng} from 'react-google-places-autocomplete';
+import TextForm from "../components/textForm";
+import { LoadScript } from '@react-google-maps/api';
+const libraries = ['places'];
+
+
 
 export default function Browse() {
   const [availableColors, setAvailableColors] = useState([]);
@@ -148,6 +154,16 @@ export default function Browse() {
     );
   }
 
+  // Map-Related Constants
+  const [selectedLocation, setSelectedLocation] = useState({
+    lat: 48.4284,
+    lng: -123.3656,
+  });
+  const [radius, setRadius] = useState(0);
+  const [search_value, setSearchValue] = useState(null);
+  const apiKey = 'AIzaSyBN9FNice6SVThI5Yo_MmQS9Or-votMad8';
+
+
   return (
     <div>
       {!userContext.userLoggedIn && <Navigate to={"/login"} replace={true} />}
@@ -178,6 +194,39 @@ export default function Browse() {
               <div className="mt-3">
                 <h3>Sort Bid:</h3>
                 <Selector label="Bid" options={["Lowest to highest", "Highest to lowest"]} padding={1} />
+              </div>
+              <div className="mt-3">
+                <h1>Location:</h1> 
+                <LoadScript
+                  googleMapsApiKey={apiKey}
+                  libraries={libraries}
+                >
+                  <GooglePlacesAutocomplete //package for the google places API autocomplete search bar
+                      selectProps={{
+                          search_value,        
+                          onChange: (value) => { //when the search value changes (by enter or selection of autcomplete results)
+                              setSearchValue(value);
+                              geocodeByPlaceId(value.value.place_id)
+                                  .then(results => getLatLng(results[0]))
+                                  .then(({ lat, lng }) => {
+                                  setSelectedLocation({ lat, lng });
+                                  });
+                          },
+                      }}
+                  />
+                </LoadScript>
+                <div className="mt-3">
+                  <h1>Radius of travel: (km)</h1>
+                  <TextForm //draws the radius input box and updates the radius state
+                      type="Distance"
+                      min="1"
+                      value={radius}
+                      // set the radius and log that it changed
+                      onChange={(e) => {
+                          setRadius(Number(e.target.value));
+                      }}
+                  />
+                </div>
               </div>
             </div>
             <div className="grow p-3 pt-0 overflow-y-scroll">
