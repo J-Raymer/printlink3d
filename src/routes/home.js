@@ -11,7 +11,7 @@ export default function Home() {
           <h2 className="text-white text-2xl font-bold mb-6 md:text-8xl">3D Printing Made Local</h2>
           <div className="mx-4 md:mx-0">
             <a className="p-4 py-3 bg-brand-blue rounded text-white mb-3 md:mb-0 md:mr-3 text-xl font-bold inline-block w-full md:w-[280px] text-center" href="#iwantprint">I have something to print</a>
-            <a className="p-4 py-3 bg-brand-blue rounded text-white text-xl font-bold inline-block w-full md:w-[280px] text-center" href="#ihaveprinter">I have a 3D printer</a>
+            <a className="p-4 py-3 bg-brand-purple rounded text-white text-xl font-bold inline-block w-full md:w-[280px] text-center" href="#ihaveprinter">I have a 3D printer</a>
           </div>
         </div>
       </div>
@@ -53,7 +53,7 @@ export default function Home() {
             </div>
 
           </div>
-          <Link to="/create" className="mt-8 bg-brand-purple text-white p-4 px-6 rounded">Get Started</Link>
+          <Link to="/create" className="mt-8 bg-brand-blue text-white p-4 px-6 rounded">Get Started</Link>
         </div>
         <div id="ihaveprinter">
           <div className="flex flex-col w-[90%] md:flex-row items-center p-12 rounded" style={{backgroundColor: '#F7F7F7'}}>
