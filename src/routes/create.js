@@ -59,7 +59,10 @@ export default function Create() {
         'Exchanged': null,
       },
       UploadedFile: false,
-      Complete: false
+      Complete: false,
+      Radius: printJob.radius,
+      Latitude: printJob.latitude,
+      Longitude: printJob.longitude,
     };
 
     addJob(firebaseDb, db_entry)
