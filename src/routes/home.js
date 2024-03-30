@@ -1,95 +1,81 @@
-import HomePageStep from "../components/homePageStep";
-import printing_home_photo from "../images/3D_printing_home_photo_cropped.jpg";
-import printer_photo from "../images/3D_printer.jpg";
 import { Link } from "react-router-dom";
+import banner_photo from "../images/homepage-main.jpg";
+import sub_photo from "../images/homepage-sub-small.jpg";
 
 export default function Home() {
-  const steps = [
-    [
-      "Upload a 3D model",
-      "We accept STL files or a link to ",
-      <a
-        href="https://www.thingiverse.com/"
-        className="text-blue-500"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        thingiverse
-      </a>,
-    ],
-    [
-      "Set your preferences",
-      "Customize your print by specifying material, color, and infill",
-    ],
-    [
-      "Submit your order",
-      "We’ll connect you with a local 3D printing enthusiast to get your order printed",
-    ],
-    ["Pickup your order", "Connect with your 3D printer to pickup your print!"],
-  ];
-
-  const renderSteps = () => {
-    return steps.map((step, index) => (
-      <HomePageStep
-        key={index}
-        step={index + 1}
-        title={step[0]}
-        text={step.slice(1)}
-      />
-    ));
-  };
-
   return (
     <div>
-      <div className="flex items-center justify-center">
-        <div
-          className="w-full bg-center bg-cover bg-no-repeat flex flex-col items-center justify-center"
-          style={{ backgroundImage: `url(${printing_home_photo})` }}
-        >
-          <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl text-white p-10 overflow-hidden">
-            3D Printing Made Local
-          </h1>
-          <Link to="/create" className="bg-custom-purple hover:bg-custom-purple-hover border-black text-white font-bold py-3 px-4 rounded-lg text-2xl sm:text-1xl md:text-2xl lg:text-3xl mb-10">
-            Create An Order
-          </Link>
+      <div className="bg-center bg-cover bg-no-repeat" style={{backgroundImage: `url(${banner_photo})`, height: '100vh'}}>
+        <div style={{backgroundColor: 'rgba(0,0,0,0.5)', top: '0', bottom: '0', left: '0', right: '0', position: 'absolute', zIndex: '1'}}></div>
+        <div className="flex flex-col h-full items-center justify-center gap-4 relative" style={{zIndex: '2'}}>
+          <h2 className="text-white text-2xl font-bold mb-6 md:text-8xl">3D Printing Made Local</h2>
+          <div className="mx-4 md:mx-0">
+            <a className="p-4 py-3 bg-brand-blue rounded text-white mb-3 md:mb-0 md:mr-3 text-xl font-bold inline-block w-full md:w-[280px] text-center" href="#iwantprint">I have something to print</a>
+            <a className="p-4 py-3 bg-brand-purple rounded text-white text-xl font-bold inline-block w-full md:w-[280px] text-center" href="#ihaveprinter">I have a 3D printer</a>
+          </div>
         </div>
       </div>
-      <div className="text-center mt-5">
-        <h1 className="text-4xl font-extrabold">How It Works</h1>
-        {renderSteps()}
-      </div>
-      <div className="flex justify-center mt-10 mb-10">
-        <div className="w-4/5 h-0.5 bg-gradient-to-r from-purple-400 to-purple-600"></div>
-      </div>
-      <div className="text-center mt-5">
-        <h1 className="text-4xl font-extrabold">Own a 3D Printer?</h1>
-      </div>
-      <div className="flex flex-col sm:flex-row mt-5">
-        <div className="flex flex-col sm:flex-row items-center">
-          <div className="order-2 sm:order-1 mt-5 sm:mt-0">
-            <p className="ml-10 text-lg font-medium">
-              Select a job in your local area and start making extra money! It’s
-              as easy as that.
-              <br />
-              <br />
-              Our mission at PrintLink3D is to connect customers with local 3D
-              printing enthusiasts. Interested?
-            </p>
-            <div className="flex justify-center">
-              <Link to="/browse" className="mt-10 bg-custom-purple hover:bg-custom-purple-hover border-black text-white font-bold py-3 px-4 rounded-lg text-2xl sm:text-1xl md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl">
-                Get Started
-              </Link>
+      <div className="container mx-[5%] w-[90%] md:w-full md:m-auto">
+        <div id="iwantprint" className="flex flex-col items-center justify-center py-[100px]">
+          <h2 className="font-bold text-5xl pb-8 text-center">Getting Your Model Printed</h2>
+          <div className="flex flex-col md:flex-row gap-12 w-full py-8">
+
+            <div className="flex flex-col items-center p-4 pb-8 px-12 rounded w-full md:w-[25%] text-xl text-center" style={{border: '1px solid #ccc'}}>
+              <div class="flex items-center justify-center w-24 h-24 step-circle rounded-full">
+                <span class="text-5xl font-bold">1</span>
+              </div>
+              <h2 className="text-2xl mb-4">Upload a 3D Model</h2>
+              <p>We accept STL files or a link to <a href="https://www.thingiverse.com/" className="fg-brand-blue">thingiverse</a></p>
+            </div>
+
+            <div className="flex flex-col items-center p-4 pb-8 px-12 rounded w-full md:w-[25%] text-xl text-center" style={{border: '1px solid #ccc'}}>
+              <div class="flex items-center justify-center w-24 h-24 step-circle rounded-full">
+                <span class="text-5xl font-bold">2</span>
+              </div>
+              <h2 className="text-2xl mb-4 mt-3">Set Your Preferences</h2>
+              <p>Customize your print by specifying material, color, and infill</p>
+            </div>
+
+            <div className="flex flex-col items-center p-4 pb-8 px-12 rounded w-full md:w-[25%] text-xl text-center" style={{border: '1px solid #ccc'}}>
+              <div class="flex items-center justify-center w-24 h-24 step-circle rounded-full">
+                <span class="text-5xl font-bold">3</span>
+              </div>
+              <h2 className="text-2xl mb-4 mt-3">Submit Your Order</h2>
+              <p>We’ll connect you with a local 3D printing enthusiast to get your order printed</p>
+            </div>
+
+            <div className="flex flex-col items-center p-4 pb-8 px-12 rounded w-full md:w-[25%] text-xl text-center" style={{border: '1px solid #ccc'}}>
+              <div class="flex items-center justify-center w-24 h-24 step-circle rounded-full">
+                <span class="text-5xl font-bold">4</span>
+              </div>
+              <h2 className="text-2xl mb-4 mt-3">Pickup Your Order</h2>
+              <p>Connect with your 3D printer to pickup your print</p>
+            </div>
+
+          </div>
+          <Link to="/create" className="mt-8 bg-brand-blue text-white p-4 px-6 rounded">Get Started</Link>
+        </div>
+        <div id="ihaveprinter">
+          <div className="flex flex-col w-[90%] md:flex-row items-center p-12 rounded" style={{backgroundColor: '#F7F7F7'}}>
+            <div className=" w-[100%] md:w-[40%] pr-12">
+              <h2 className="font-bold text-5xl mb-8">I Have a 3D Printer</h2>
+              <p className="text-xl mb-8">Select a job in your local area and start making extra money! It’s as easy as that.
+                 <br/><br/>Our mission at PrintLink3d is to connect customers with local 3D printing enthusiasts. Interested? </p>
+              <Link to="/browse" className="bg-brand-purple text-white p-4 px-6 rounded">Browse Jobs</Link>
+            </div>
+            <div className="w-full md:w-[60%]">
+              <img className="rounded" src={sub_photo}/>
             </div>
           </div>
-          <div className="order-1 sm:order-2">
-            <img
-              src={printer_photo}
-              alt="3D printer"
-              className="w-1/2 sm:w-full mx-auto"
-            />
-          </div>
         </div>
       </div>
+
+      <div className="bg-black w-full h-[70px] mt-[100px]">
+        <div className="container m-auto text-white pt-[25px]">
+          <p className="text-xl font-bold">&copy; PrintLink3d 2024</p>
+        </div>
+      </div>
+
     </div>
   );
 }
