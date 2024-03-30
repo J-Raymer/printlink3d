@@ -223,7 +223,6 @@ export default function Browse() {
                       // set the radius and log that it changed
                       onChange={(e) => {
                           setRadius(Number(e.target.value));
-                          changeRadius(Number(e.target.value));
                       }}
                   />
                 </div>
