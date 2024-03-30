@@ -24,6 +24,9 @@ export default function Create() {
     comment: "",
     infill: "25%",
     layerHeight: "0.2 mm",
+    radius: 0,
+    latitude: 0,
+    longitude: 0,
   };
 
   const updateFile = (newFile) => {
