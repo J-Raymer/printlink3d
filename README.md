@@ -63,14 +63,13 @@ The My Jobs Page is the other end of the My Orders page. Here Printers can view 
 If using Ubuntu or WSL2 you can install node via: [Nodesource](https://deb.nodesource.com/)
 
 ## Setup
-Execute the following to setup your environment:
+Execute the following in the /printlink3d directory to setup your environment:
 ```
-cd app
 npm install
 ```
 
 ## Running
-To start the local dev server execute in the /app directory:
+Execute the following in the /printlink3d directory to start the local dev server:
 ```
 npm start
 ```
