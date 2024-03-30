@@ -20,23 +20,21 @@ export default function MapSearch() {
         <div className="mb-2 mt-5 max-w-40">
             <h1>Select your location</h1>
             <GooglePlacesAutocomplete //package for the google places API autocomplete search bar
-            apiKey="AIzaSyCe8pXdsTx4MXjIr0JSF10N08Y3oMxoFk8"
+            apiKey="AIzaSyBN9FNice6SVThI5Yo_MmQS9Or-votMad8"
             selectProps={{
                 search_value,        
                 onChange: (value) => { //when the search value changes (by enter or selection of autcomplete results)
-                console.log(value);
                 setSearchValue(value); //set the search value to the selected value
                 geocodeByPlaceId(value.value.place_id) //get the google geocode value via the place_id
                     .then(results => getLatLng(results[0])) //get the lat and lng from the google geocode
                     .then(({ lat, lng }) => {
                     setMap({lat, lng}); //set the map state to the lat and lng to update the marker and circle
-                    console.log(lat, lng);
                     });
                 },
             }}
             />
             <div className="aspect-square max-w-40">
-                <APIProvider apiKey={"AIzaSyCe8pXdsTx4MXjIr0JSF10N08Y3oMxoFk8"}>
+                <APIProvider apiKey={"AIzaSyBN9FNice6SVThI5Yo_MmQS9Or-votMad8"}>
                 <Map mapId={'filter-map'}
                     center={map} //set the center of the map to the lat and lng state, moves the map with map state change
                     defaultZoom={13} 

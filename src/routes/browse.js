@@ -160,7 +160,7 @@ export default function Browse() {
   });
   const [radius, setRadius] = useState(0);
   const [search_value, setSearchValue] = useState(null);
-  const apiKey = 'AIzaSyCe8pXdsTx4MXjIr0JSF10N08Y3oMxoFk8';
+  const apiKey = 'AIzaSyBN9FNice6SVThI5Yo_MmQS9Or-votMad8';
 
 
   return (
@@ -223,6 +223,7 @@ export default function Browse() {
                       // set the radius and log that it changed
                       onChange={(e) => {
                           setRadius(Number(e.target.value));
+                          changeRadius(Number(e.target.value));
                       }}
                   />
                 </div>

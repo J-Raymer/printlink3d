@@ -46,7 +46,7 @@ export default function MapSearch2() {
     //     }
     //   }, [selectedLocation, radius, mapRef]);
 
-    const apiKey = 'AIzaSyCe8pXdsTx4MXjIr0JSF10N08Y3oMxoFk8';
+    const apiKey = 'AIzaSyBN9FNice6SVThI5Yo_MmQS9Or-votMad8';
 
     const mapContainerStyle = {
         height: '500px',
