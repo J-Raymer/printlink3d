@@ -139,7 +139,6 @@ export default function Configure({ printJob, changePrintJob }) {
   const changeLayerHeight = (x) => changePrintJob(x, "layerHeight");
   const changeRadius = (x) => {
     changePrintJob("radius", x);
-    setCircleKey(0);
   }
   const changeLatitude = (x) => changePrintJob("latitude", x);
   const changeLongitude = (x) => changePrintJob("longitude", x);
@@ -386,6 +385,7 @@ export default function Configure({ printJob, changePrintJob }) {
                         setRadius(Number(e.target.value));
                         setCircleRef(Number(e.target.value));
                         changeRadius(Number(e.target.value));
+                        // TODO come up with a better solution for rerendering the circle (instead of using keys)
                         setCircleKey(1); // set the key to force a redraw
                       }}
                     />
