@@ -137,11 +137,15 @@ export default function Configure({ printJob, changePrintJob }) {
   };
   const changeInfill = (x) => changePrintJob(x, "infill");
   const changeLayerHeight = (x) => changePrintJob(x, "layerHeight");
-  const changeRadius = (x) => changePrintJob("radius", x);
+  const changeRadius = (x) => {
+    changePrintJob("radius", x);
+    setCircleKey(0);
+  }
   const changeLatitude = (x) => changePrintJob("latitude", x);
   const changeLongitude = (x) => changePrintJob("longitude", x);
 
   // Map-Related Constants
+  const [circleKey, setCircleKey] = useState(0);
   const [selectedLocation, setSelectedLocation] = useState({
     lat: 48.4284,
     lng: -123.3656,
@@ -382,6 +386,7 @@ export default function Configure({ printJob, changePrintJob }) {
                         setRadius(Number(e.target.value));
                         setCircleRef(Number(e.target.value));
                         changeRadius(Number(e.target.value));
+                        setCircleKey(1); // set the key to force a redraw
                       }}
                     />
                   </div>
@@ -398,12 +403,15 @@ export default function Configure({ printJob, changePrintJob }) {
                     }}
                   >
                   <Marker position={selectedLocation} key={`marker-${selectedLocation.lat}-${selectedLocation.lng}`} />
-                    {circleRef && <Circle center={selectedLocation} radius={radius * 1000} key={`marker-`} options={{
+                    <Circle
+                    center={selectedLocation}
+                    radius={radius * 1000}
+                    key={circleKey} options={{
                       fillColor: 'rgba(0, 128, 128, 0.5)',
                       strokeColor: '#FFFFFF',
                       strokeOpacity: 0.8,
                       strokeWeight: 2,
-                    }} />}
+                    }} />
                   </GoogleMap>
                 </div>
               </div>
