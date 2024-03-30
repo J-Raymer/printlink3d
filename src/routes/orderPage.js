@@ -1,12 +1,12 @@
 import { useNavigate, useParams } from "react-router-dom"
 import { firebaseDb } from "../firebase/firebase"
-import { addDoc, doc, getDoc, updateDoc } from "firebase/firestore"
+import { addDoc, doc, getDoc, updateDoc, Timestamp } from "firebase/firestore"
 import { useState, useEffect } from "react"
 import JobCardOrderPage from "../components/jobCardOrderPage"
-import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
+import { collection, onSnapshot, orderBy, query, where } from "firebase/firestore";
 import { useAuth } from "../contexts/authContext"
 import { getThumbnail, getFile } from "../backend"
-
+import CurrencyInput from "react-currency-input-field";
 
 function ChatRoom({ jobId }) {
   const [messages, setMessages] = useState([]);
@@ -182,9 +182,11 @@ function OrderStatus({ history, jobId, isPrinter }) {
     return { state: state, date: history[state] };
   })
 
+  const isModifiable = (isPrinter && (history["Accepted"] !== null))
+
   return (
     <div className="flex flex-col">
-      {(isPrinter) ? (<div className="flex justify-end mr-3">
+      {(isModifiable) ? (<div className="flex justify-end mr-3">
         <button className="text-blue-500 text-sm hover:underline focus:outline-none" onClick={() => { setEditState(!editState) }}>
           {(editState) ? ("Cancel") : ("Edit")}
         </button>
@@ -200,9 +202,195 @@ function OrderStatus({ history, jobId, isPrinter }) {
   )
 }
 
+function BidCard( { bidData, onSelect}) {
+  console.log(bidData);
+  const bidId = bidData.id;
+  const bidder = bidData.uid;
+  const amount = bidData.amount;
+
+  return (
+    <div className="flex gap-2 border border-2 mt-2 p-2 rounded-md">
+      <div className="w-2/3">
+        {bidder.substring(0, 6)} : ${amount}
+      </div>
+      <div className="">
+        <button onClick={() => onSelect(bidId, bidder)}>
+          Select Bid
+        </button>
+      </div>
+    </div>
+  )
+}
+
+function BidSelection( { jobId, history, onUpdate} ) {
+  console.log(history);
+  const [bids, setBids] = useState([]);
+
+  useEffect(() => {
+    const bidHistoryRef = collection(firebaseDb, `Jobs/${jobId}/BidHistory`);
+   
+    const bidsQuery = query(bidHistoryRef, where("Active", "==", true), orderBy("Timestamp", "desc"));
+
+    const unsubscribe = onSnapshot(bidsQuery, (snapshot) => {
+      const bids = [];
+
+      snapshot.docs.forEach((doc) => {
+        const data = doc.data();
+        const bid = {
+          id: doc.id,
+          uid: data.PrinterUid,
+          amount: data.Amount,
+          timestamp: data.Timestamp
+        }
+        console.log(data)
+        bids.push(bid);
+      });
+
+      setBids(bids);
+    })
+
+    return () => {
+      unsubscribe(); // Cleanup function to unsubscribe from real-time updates when the component unmounts
+    };
+  }, [jobId]);
+  
+  const getDate = () => {
+    const date = new Date();
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const year = date.getFullYear();
+
+    return `${day}/${month}/${year}`;
+  }
+
+  const onBidSelect = (BidId, PrinterId) => {
+    //update accepted bid with id
+    //update printerUid
+    //update History
+    let updatedHistory = history;
+    updatedHistory["Accepted"] = getDate();
+
+    const docRef = doc(firebaseDb, `Jobs/${jobId}`);
+    updateDoc(docRef, { AcceptedBid: BidId,
+                        PrinterUid: PrinterId,
+                        History: updatedHistory });
+    
+    onUpdate();
+  }
+
+
+  return (
+    <div>
+      {bids.map((bid, idx) => (
+        <div key={idx}>
+          <BidCard bidData={bid} onSelect={onBidSelect}/>
+        </div>
+      ))}
+    </div>
+  ) 
+}
+
+function BidStatus ({jobId}) {
+  const [bids, setBids] = useState([]);
+  const [latestBid, setLatestBid] = useState([]);
+  const [newBid, setNewBid] = useState([]);
+
+  const userContext = useAuth();
+  const uid = userContext.currUser.uid;
+
+  
+  useEffect(() => {
+    const bidHistoryRef = collection(firebaseDb, `Jobs/${jobId}/BidHistory`);
+
+    const bidsQuery = query(bidHistoryRef, where("Active", "==", true), where("PrinterUid", "==", uid));
+
+    const unsubscribe = onSnapshot(bidsQuery, (snapshot) => {
+      const bids = [];
+
+      snapshot.docs.forEach((doc) => {
+        const data = doc.data();
+        const bid = {
+          id: doc.id,
+          uid: data.PrinterUid,
+          amount: data.Amount,
+          timestamp: data.Timestamp
+        }
+        bids.push(bid);
+        
+        if (data.Active) {
+          setLatestBid(bid)
+        }
+      });
+
+      setBids(bids);
+    })
+
+    return () => {
+      unsubscribe(); // Cleanup function to unsubscribe from real-time updates when the component unmounts
+    };
+  }, [jobId]);
+
+  const handleBidChange = (value) => {
+    setNewBid(value);
+  }
+
+  const onBid = async (bidAmount) => {
+    const bidDetails = {
+      PrinterUid: uid,
+      Amount: bidAmount,      
+      Timestamp: Timestamp.now(),
+      Active: false,
+      PreviousBid: null
+    }
+    //update old active bid
+    //submit new bid
+    console.log(bidDetails);
+    
+    const bidHistoryRef = collection(firebaseDb, `Jobs/${jobId}/BidHistory`);
+    const prevBidRef = doc(firebaseDb, `Jobs/${jobId}/BidHistory/${latestBid.id}`)
+
+    updateDoc(prevBidRef, {})
+    
+    const docRef = await addDoc(bidHistoryRef, bidDetails);
+    updateDoc(prevBidRef, {Active: false, PreviousBid: docRef})
+      .then(updateDoc(docRef, {Active: true}))
+    
+
+    setNewBid(null);
+  }
+
+  return (
+    <div>
+      {bids.map((bid, idx) => (
+        <div key={idx}>
+          <BidCard bidData={bid} onSelect={() => console.log("I am the chosen one")}/>
+        </div>
+      ))}
+      <div className="m-2 flex">
+        <div>
+          Update bid:
+        </div>
+        <div>
+          <CurrencyInput
+            placeholder="Enter your bid"
+            allowNegativeValue={false}
+            value={newBid}
+            prefix="$"
+            step={1}
+            onValueChange={handleBidChange} />
+        </div>
+        <div>
+          <button onClick={() => onBid(newBid)}> submit bid! </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function OrderPage({ isPrinter = false }) {
   const Id = useParams().Id;
   const [jobData, setJobData] = useState([]);
+  const [showBids, setShowBids] = useState(false);
   const [dataLoading, setDataLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -231,6 +419,7 @@ export default function OrderPage({ isPrinter = false }) {
         }
 
         const data = snapshot.data();
+        
         setJobData({
           thumbnail: thumbnail,
           infill: data.Infill,
@@ -243,6 +432,7 @@ export default function OrderPage({ isPrinter = false }) {
           color: data.Color,
         });
 
+        setShowBids(data.AcceptedBid == null)
         setDataLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -250,7 +440,6 @@ export default function OrderPage({ isPrinter = false }) {
     };
 
     fetchData();
-
     return () => {
     };
   }, [Id]);
@@ -285,10 +474,35 @@ export default function OrderPage({ isPrinter = false }) {
               </div>
               <div className="w-1/3">
                 <div className="border border-2 mt-2 p-2 rounded-md">
-                  <div className="text-lg font-semibold">
-                    Chat
-                  </div>
-                  <ChatRoom jobId={Id} />
+                  {(showBids) ?
+                    (
+                    <>
+                      {(isPrinter) ?
+                        (
+                          <>
+                            <div className="text-lg font-semibold">
+                            Bid Status
+                            </div>
+                            <BidStatus jobId={Id}/>
+                          </>
+                        ) : (
+                          <>
+                            <div className="text-lg font-semibold">
+                            Offered Bids
+                            </div>
+                            <BidSelection jobId={Id} history={jobData.history} onUpdate={() => setShowBids(false)}/>
+                          </>
+                        )
+                      }
+                    </>
+                    ) : (
+                    <>
+                      <div className="text-lg font-semibold">
+                      Chat
+                      </div>
+                      <ChatRoom jobId={Id} />
+                    </>
+                  )}
                 </div>
               </div>
             </div>

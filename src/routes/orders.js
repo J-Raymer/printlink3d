@@ -1,13 +1,14 @@
 import JobCard from "../components/jobCard";
 import React, { useState, useEffect } from 'react';
 import { firebaseDb } from '../firebase/firebase';
-import { collection, getDocs, onSnapshot, query, where } from "firebase/firestore";
+import { collection, onSnapshot, or, and, query, where } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/authContext";
 import { getThumbnail } from "../backend";
 
 export default function Orders({isPrinter=false}) {
-    const [activeOrders, setActiveOrders] = useState([]);
+    const [listedOrders, setListedOrders] = useState([]);
+    const [acceptedOrders, setAcceptedOrders] = useState([]);
     const [completeOrders, setCompleteOrders] = useState([]);
     const navigate = useNavigate();
     const userContext = useAuth();
@@ -15,15 +16,21 @@ export default function Orders({isPrinter=false}) {
     
     useEffect(() => {
       setDataLoading(true);
+      const uid = userContext.currUser.uid;
 
       const jobRef = collection(firebaseDb, 'Jobs');
       const jobQuery = (isPrinter) ? 
-                                  query(jobRef, where("PrinterUid", "==", userContext.currUser.uid)) :
-                                  query(jobRef, where("CustomerUid", "==", userContext.currUser.uid));
+                                  query(jobRef, or(
+                                    where("PrinterUid", "==", uid),
+                                    and(
+                                      where("PrinterUid", "==", null),
+                                      where("BidderUid", "array-contains", uid)))) :
+                                  query(jobRef, where("CustomerUid", "==", uid)) ;
       
       const unsubscribe = onSnapshot(jobQuery, async (snapshot) => {
         try {
-          const fetchedActive = [];
+          const fetchedListed = [];
+          const fetchedAccepted = [];
           const fetchedComplete = [];
     
           await Promise.all(snapshot.docs.map(async (doc) => {
@@ -37,7 +44,13 @@ export default function Orders({isPrinter=false}) {
               thumbnail = null;
             }
 
+            if (isPrinter && (data.AcceptedBid !== undefined) && (data.PrinterUid !== uid)) {              
+              console.error("Shouldn't have this job: ", data)
+            }
+
+            const acceptedBid = (data.AcceptedBid !== undefined) ? data.AcceptedBid: true;
             const completeOrder = (data.Complete !== undefined) ? data.Complete : true;       
+
             const order = {
               thumbnail: thumbnail,
               id: doc.id,
@@ -50,10 +63,17 @@ export default function Orders({isPrinter=false}) {
               color: data.Color,
             };
             
-            (completeOrder) ? fetchedComplete.push(order) : fetchedActive.push(order);
+            if (completeOrder) {
+              fetchedComplete.push(order)
+            } else if (acceptedBid) {
+              fetchedAccepted.push(order)
+            } else {
+              fetchedListed.push(order)
+            }
           }));
     
-          setActiveOrders(fetchedActive);
+          setListedOrders(fetchedListed)
+          setAcceptedOrders(fetchedAccepted);
           setCompleteOrders(fetchedComplete);
           setDataLoading(false);
         } catch (error) {
@@ -73,10 +93,16 @@ export default function Orders({isPrinter=false}) {
               (
                 <div>
                     <div className="text-xl font-extrabold p-6">
-                      {(isPrinter) ? (<>Active Jobs</>) : (<>Active Orders</>)}
+                      {(isPrinter) ? (<>Bid Jobs</>) : (<>Listed Orders</>)}
                     </div>
                     <div className="grid grid-cols-1 gap-4">
-                      {activeOrders.map((job) => (<JobCard job={job} onSelectJob={(job) => navigate(`/${(isPrinter)? "jobs": "orders"}/${job.id}`)} img={job.thumbnail}/>))}
+                      {listedOrders.map((job) => (<JobCard job={job} onSelectJob={(job) => navigate(`/${(isPrinter)? "jobs": "orders"}/${job.id}`)} img={job.thumbnail}/>))}
+                    </div>
+                    <div className="text-xl font-extrabold p-6">
+                      {(isPrinter) ? (<>Current Jobs</>) : (<>Accepted Orders</>)}
+                    </div>
+                    <div className="grid grid-cols-1 gap-4">
+                      {acceptedOrders.map((job) => (<JobCard job={job} onSelectJob={(job) => navigate(`/${(isPrinter)? "jobs": "orders"}/${job.id}`)} img={job.thumbnail}/>))}
                     </div>
                     <div className="text-xl font-extrabold p-6">
                       {(isPrinter) ? (<>Complete Jobs</>) : (<>Complete Orders</>)}

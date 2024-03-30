@@ -6,7 +6,7 @@ import Configure from "./configure";
 import Upload from "./upload";
 import { addJob, uploadThumbnail, uploadStl } from "../backend";
 import { firebaseDb } from "../firebase/firebase";
-import { doc, updateDoc } from "firebase/firestore"
+import { doc, updateDoc, setDoc, collection } from "firebase/firestore"
 import { useAuth } from "../contexts/authContext/index"
 
 export default function Create() {
@@ -44,6 +44,7 @@ export default function Create() {
     const db_entry = {
       CustomerUid: userContext.currUser.uid,
       PrinterUid: null,
+      BidderUid: [],
       FileName: printJob.file.name,
       Quantity: printJob.quantity,
       Material: printJob.material,
@@ -59,6 +60,7 @@ export default function Create() {
         'Exchanged': null,
       },
       UploadedFile: false,
+      AcceptedBid: null,
       Complete: false
     };
 

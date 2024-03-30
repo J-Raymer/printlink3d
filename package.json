@@ -10,6 +10,7 @@
     "@vis.gl/react-google-maps": "^0.7.1",
     "firebase": "^10.8.0",
     "react": "^18.2.0",
+    "react-currency-input-field": "^3.8.0",
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.2.3",
     "react-google-places-autocomplete": "^4.0.1",

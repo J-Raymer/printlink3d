@@ -2,24 +2,28 @@ import JobCardList from "../components/jobCardList";
 import React, { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { firebaseDb } from "../firebase/firebase";
-import { collection, doc, onSnapshot, updateDoc, query, where } from "firebase/firestore";
+import { collection, doc, onSnapshot, updateDoc, query, where, addDoc, Timestamp, arrayUnion } from "firebase/firestore";
 import Selector from "../components/selector";
 import MultiStepForm from "../components/multistepform";
 import MultiStepFormPage from "../components/multistepformpage";
 import { useAuth } from "../contexts/authContext";
 import { useNavigate } from "react-router-dom";
 import { getThumbnail, getColors, getMaterials } from "../backend";
+import CurrencyInput from "react-currency-input-field";
 
 export default function Browse() {
   const [availableColors, setAvailableColors] = useState([]);
   const [availableMaterials, setAvailableMaterials] = useState([]);
   const [selectedJob, setSelectedJob] = useState(null);
+  const [currentBid, setCurrentBid] = useState(null);
   const [jobs, setJobs] = useState([]);
   const [filters, setFilters] = useState({
     "materials": availableMaterials,
     "colors": availableColors,
     "bid_order": 0,
   });
+  const userContext = useAuth();
+  const navigate = useNavigate();
   
   useEffect(() => {
     async function fetchColors() {
@@ -39,7 +43,8 @@ export default function Browse() {
 
   useEffect(() => {
     const jobRef = collection(firebaseDb, 'Jobs');
-    const jobQuery = query(jobRef, where("PrinterUid", "==", null), where("UploadedFile", "==", true));
+    const jobQuery = query(jobRef, where("PrinterUid", "==", null), 
+                                  where("UploadedFile", "==", true));
     
     const unsubscribe = onSnapshot(jobQuery, async (snapshot) => {
       try {
@@ -47,32 +52,38 @@ export default function Browse() {
   
         await Promise.all(snapshot.docs.map(async (doc) => {
           const data = doc.data();
-          let thumbnail = null;
-          
-          try {
-            thumbnail = await getThumbnail(doc.id);
-          } catch (error) {
-            console.error("Error fetching thumbnail: ", error)
-            thumbnail = null;
-          }
 
-          fetchedJobs.push({
-            thumbnail: thumbnail,
-            doc: doc.id,
-            infill: data.Infill,
-            material: data.Material,
-            distance: data.Radius,
-            fileName: data.FileName,
-            file: data.File,
-            name: data.Name,
-            email: data.Email,
-            color: data.Color,
-            layerHeight: data.LayerHeight,
-            quantity: data.Quantity,
-            comment: data.Comment,
-            completionDate: data.CompletionDate,
-            history: data.History,
-          });
+          if ((data.BidderUid !== undefined) && (! data.BidderUid.includes(userContext.currUser.uid))) {
+            let thumbnail = null;
+
+            try {
+              thumbnail = await getThumbnail(doc.id);
+            } catch (error) {
+              console.error("Error fetching thumbnail: ", error)
+              thumbnail = null;
+            }
+  
+            fetchedJobs.push({
+              thumbnail: thumbnail,
+              doc: doc.id,
+              infill: data.Infill,
+              material: data.Material,
+              distance: data.Radius,
+              fileName: data.FileName,
+              file: data.File,
+              name: data.Name,
+              email: data.Email,
+              color: data.Color,
+              layerHeight: data.LayerHeight,
+              quantity: data.Quantity,
+              comment: data.Comment,
+              completionDate: data.CompletionDate,
+              bidHistory: data.BidHistory,
+              history: data.History,
+            });
+          } else {
+            console.log("Not parsing: ", doc);
+          }     
         }));
         
         setJobs(fetchedJobs);
@@ -86,14 +97,12 @@ export default function Browse() {
     };
   }, []);
 
-  const userContext = useAuth();
-  const navigate = useNavigate();
-
   const onSelectJob = (job) => {
     setSelectedJob(job);
   };
 
   const onUnselectJob = () => {
+    setCurrentBid(null);
     setSelectedJob(null);
   };
 
@@ -120,13 +129,34 @@ export default function Browse() {
   }
 
   const onSubmit = () => {
-    var updatedHistory = selectedJob.history;
+    let updatedHistory = selectedJob.history;
     updatedHistory["Accepted"] = getDate();
 
     const docRef = doc(firebaseDb, `Jobs/${selectedJob.doc}`);
     updateDoc(docRef, { PrinterUid: userContext.currUser.uid, History: updatedHistory })
       .then(() => { navigate(`/Jobs/${selectedJob.doc}`) });
   };
+
+  const handleBidChange = (value) => {
+    setCurrentBid(value);
+  }
+
+  const onBid = async (bidAmount) => {
+    const jobId = selectedJob.doc
+    const uid = userContext.currUser.uid
+    const bidDetails = {
+      PrinterUid: uid,
+      Amount: bidAmount,      
+      Timestamp: Timestamp.now(),
+      Active: true,
+      PreviousBid: null
+    }
+
+    console.log(bidDetails);
+    const docRef = await addDoc(collection(firebaseDb, `Jobs/${jobId}/BidHistory/`), bidDetails)
+    updateDoc(doc(firebaseDb, `Jobs/${jobId}`), { BidderUid: arrayUnion(uid)})
+      .then(() => { navigate(`/Jobs/${selectedJob.doc}`) });
+  }
 
   const renderColorSelector = () => {
     return (
@@ -214,7 +244,23 @@ export default function Browse() {
                 <p><strong>Completion Date:</strong> {selectedJob.completionDate !== "" ? selectedJob.completionDate : "None"}</p>
                 <br />
                 <p><strong>Comment:</strong> {selectedJob.comment !== "" ? selectedJob.comment : "None"}</p>
-              </div>
+
+                <div className="m-2 flex">
+                  <div>
+                    <CurrencyInput
+                      placeholder="Enter your bid"
+                      allowNegativeValue={false}
+                      value={currentBid}
+                      prefix="$"
+                      step={1}
+                      onValueChange={handleBidChange} />
+                  </div>
+                  <div>
+                    <button onClick={() => onBid(currentBid)}> submit bid! </button>
+                  </div>
+                </div>
+                
+                </div>
             </div>
           )}
         </MultiStepFormPage>
