@@ -1,4 +1,4 @@
-import JobCard from "../components/jobCard";
+import JobCard, {BidJobCard} from "../components/jobCard";
 import React, { useState, useEffect } from 'react';
 import { firebaseDb } from '../firebase/firebase';
 import { collection, onSnapshot, or, and, query, where } from "firebase/firestore";
@@ -96,7 +96,7 @@ export default function Orders({isPrinter=false}) {
                       {(isPrinter) ? (<>Bid Jobs</>) : (<>Listed Orders</>)}
                     </div>
                     <div className="grid grid-cols-1 gap-4">
-                      {listedOrders.map((job) => (<JobCard job={job} onSelectJob={(job) => navigate(`/${(isPrinter)? "jobs": "orders"}/${job.id}`)} img={job.thumbnail}/>))}
+                      {listedOrders.map((job) => (<BidJobCard job={job} isPrinter={isPrinter} onSelectJob={() => navigate(`/${(isPrinter)? "jobs": "orders"}/${job.id}`)} />))}
                     </div>
                     <div className="text-xl font-extrabold p-6">
                       {(isPrinter) ? (<>Current Jobs</>) : (<>Accepted Orders</>)}
