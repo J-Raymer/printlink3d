@@ -378,15 +378,17 @@ export default function Configure({ printJob, changePrintJob }) {
                     <h1>Radius of travel (km)</h1>
                     <TextForm //draws the radius input box and updates the radius state
                       type="Distance"
-                      min="1"
+                      min="0"
                       value={radius}
                       // set the radius and log that it changed
                       onChange={(e) => {
-                        setRadius(Number(e.target.value));
-                        setCircleRef(Number(e.target.value));
-                        changeRadius(Number(e.target.value));
-                        // TODO come up with a better solution for rerendering the circle (instead of using keys)
-                        setCircleKey(1); // set the key to force a redraw
+                        if (!isNaN(e.target.value)) {
+                          setRadius(Number(e.target.value));
+                          setCircleRef(Number(e.target.value));
+                          changeRadius(Number(e.target.value));
+                          // TODO come up with a better solution for rerendering the circle (instead of using keys)
+                          setCircleKey(1); // set the key to force a redraw
+                        }
                       }}
                     />
                   </div>
@@ -402,16 +404,16 @@ export default function Configure({ printJob, changePrintJob }) {
                       disableDefaultUI: true,
                     }}
                   >
-                  <Marker position={selectedLocation} key={`marker-${selectedLocation.lat}-${selectedLocation.lng}`} />
+                    <Marker position={selectedLocation} key={`marker-${selectedLocation.lat}-${selectedLocation.lng}`} />
                     <Circle
-                    center={selectedLocation}
-                    radius={radius * 1000}
-                    key={circleKey} options={{
-                      fillColor: 'rgba(0, 128, 128, 0.5)',
-                      strokeColor: '#FFFFFF',
-                      strokeOpacity: 0.8,
-                      strokeWeight: 2,
-                    }} />
+                      center={selectedLocation}
+                      radius={radius * 1000}
+                      key={circleKey} options={{
+                        fillColor: 'rgba(0, 128, 128, 0.5)',
+                        strokeColor: '#FFFFFF',
+                        strokeOpacity: 0.8,
+                        strokeWeight: 2,
+                      }} />
                   </GoogleMap>
                 </div>
               </div>

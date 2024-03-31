@@ -14,8 +14,6 @@ import TextForm from "../components/textForm";
 import { LoadScript } from '@react-google-maps/api';
 const libraries = ['places'];
 
-
-
 export default function Browse() {
   // Map-Related Constants
   const [selectedLocation, setSelectedLocation] = useState({
@@ -227,12 +225,15 @@ export default function Browse() {
                   <h1>Radius of travel: (km)</h1>
                   <TextForm //draws the radius input box and updates the radius state
                       type="Distance"
-                      min="1"
+                      min="0"
                       value={radius}
                       // set the radius and log that it changed
                       onChange={(e) => {
+                        // Ignore non-numeric input
+                        if (!isNaN(e.target.value)) {
                           setRadius(Number(e.target.value));
                           setFilters({ ...filters, radius: Number(e.target.value) });
+                        }
                       }}
                   />
                 </div>
