@@ -6,6 +6,7 @@ import JobCardOrderPage from "../components/jobCardOrderPage"
 import { collection, onSnapshot, orderBy, query, where } from "firebase/firestore";
 import { useAuth } from "../contexts/authContext"
 import { getThumbnail, getFile } from "../backend"
+import { BidSelection, BidCard } from "../components/bids"
 import CurrencyInput from "react-currency-input-field";
 
 function ChatRoom({ jobId }) {
@@ -231,93 +232,6 @@ function OrderStatus({ history, jobId, isPrinter }) {
   )
 }
 
-function BidCard( { bidData, onSelect}) {
-  console.log(bidData);
-  const bidId = bidData.id;
-  const bidder = bidData.uid;
-  const amount = bidData.amount;
-
-  return (
-    <div className="flex gap-2 border border-2 mt-2 p-2 rounded-md">
-      <div className="w-2/3">
-        {bidder.substring(0, 6)} : ${amount}
-      </div>
-      <div className="">
-        <button onClick={() => onSelect(bidId, bidder)}>
-          Select Bid
-        </button>
-      </div>
-    </div>
-  )
-}
-
-function BidSelection( { jobId, history, onUpdate} ) {
-  console.log(history);
-  const [bids, setBids] = useState([]);
-
-  useEffect(() => {
-    const bidHistoryRef = collection(firebaseDb, `Jobs/${jobId}/BidHistory`);
-   
-    const bidsQuery = query(bidHistoryRef, where("Active", "==", true), orderBy("Timestamp", "desc"));
-
-    const unsubscribe = onSnapshot(bidsQuery, (snapshot) => {
-      const bids = [];
-
-      snapshot.docs.forEach((doc) => {
-        const data = doc.data();
-        const bid = {
-          id: doc.id,
-          uid: data.PrinterUid,
-          amount: data.Amount,
-          timestamp: data.Timestamp
-        }
-        console.log(data)
-        bids.push(bid);
-      });
-
-      setBids(bids);
-    })
-
-    return () => {
-      unsubscribe(); // Cleanup function to unsubscribe from real-time updates when the component unmounts
-    };
-  }, [jobId]);
-  
-  const getDate = () => {
-    const date = new Date();
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-    const year = date.getFullYear();
-
-    return `${day}/${month}/${year}`;
-  }
-
-  const onBidSelect = (BidId, PrinterId) => {
-    //update accepted bid with id
-    //update printerUid
-    //update History
-    let updatedHistory = history;
-    updatedHistory["Accepted"] = getDate();
-
-    const docRef = doc(firebaseDb, `Jobs/${jobId}`);
-    updateDoc(docRef, { AcceptedBid: BidId,
-                        PrinterUid: PrinterId,
-                        History: updatedHistory });
-    
-    onUpdate();
-  }
-
-
-  return (
-    <div>
-      {bids.map((bid, idx) => (
-        <div key={idx}>
-          <BidCard bidData={bid} onSelect={onBidSelect}/>
-        </div>
-      ))}
-    </div>
-  ) 
-}
 
 function BidStatus ({jobId}) {
   const [bids, setBids] = useState([]);
@@ -392,7 +306,7 @@ function BidStatus ({jobId}) {
     <div>
       {bids.map((bid, idx) => (
         <div key={idx}>
-          <BidCard bidData={bid} onSelect={() => console.log("I am the chosen one")}/>
+          <BidCard bid={bid} onAccept={() => console.log("I am the chosen one")}/>
         </div>
       ))}
       <div className="m-2 flex">

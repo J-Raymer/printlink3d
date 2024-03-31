@@ -1,4 +1,4 @@
-import { addDoc, collection, getDocs, query, where, orderBy } from "firebase/firestore";
+import { addDoc, collection, getDocs, query, where, orderBy, onSnapshot } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { firebaseStorage } from "./firebase/firebase";
 import { firebaseDb } from "./firebase/firebase";
@@ -92,6 +92,15 @@ export async function getActiveBids(jobId) {
 
   return bids;
 }
+
+export function bidListener(jobId, snapshotCallback) {
+  const bidHistoryRef = collection(firebaseDb, `Jobs/${jobId}/BidHistory`);
+  const bidsQuery = query(bidHistoryRef, where("Active", "==", true), orderBy("Timestamp", "desc"));
+  const unsubscribe = onSnapshot(bidsQuery, (snapshot) => {snapshotCallback(snapshot)});
+  return unsubscribe;
+}
+
+//export function updateHistory(jobId, )
 
 export async function getThumbnail(jobId) {
   return new Promise((resolve, reject) => {
