@@ -24,13 +24,6 @@ export default function JobCardList({ jobs, filters, selectedJob, onSelectJob, o
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
       {
         jobs.map((job, i) => {
-        console.log('job radius:', job.jobRadius, 'filter radius:', filters["radius"]);
-        console.log('job lattitude:', job.jobLat, 'job longitude:', job.jobLng);
-        console.log('filter lattitude', filters["latitude"], 'filter longitude',  filters["longitude"]);
-        console.log('haversine:', haversine(filters["latitude"], filters["longitude"], job.jobLat, job.jobLng));
-        console.log(haversine(filters["latitude"], filters["longitude"], job.jobLat, job.jobLng) <= (filters["radius"] + job.jobRadius));
-
-
         if ((filters["materials"].includes(job.material) || job.material == "Plastic") &&
             (filters["colors"].includes(job.color) || job.color == "No Preference") &&
             //Filter for intersecting locations

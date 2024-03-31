@@ -94,7 +94,6 @@ export default function Browse() {
             jobLat: data.Latitude,
             jobLng: data.Longitude,
           });
-          console.log(fetchedJobs);
         }));
         
         setJobs(fetchedJobs);
@@ -217,7 +216,6 @@ export default function Browse() {
                               geocodeByPlaceId(value.value.place_id)
                                   .then(results => getLatLng(results[0]))
                                   .then(({ lat, lng }) => {
-                                  console.log('Search Results:', lat, lng);
                                   setSelectedLocation({ lat, lng });
                                   setFilters({ ...filters, latitude: lat, longitude: lng });
                                   });
