@@ -9,10 +9,11 @@ import MultiStepFormPage from "../components/multistepformpage";
 import { useAuth } from "../contexts/authContext";
 import { useNavigate } from "react-router-dom";
 import { getThumbnail, getColors, getMaterials } from "../backend";
-import CurrencyInput from "react-currency-input-field";
+
 import GooglePlacesAutocomplete, { geocodeByPlaceId, getLatLng} from 'react-google-places-autocomplete';
 import TextForm from "../components/textForm";
 import { LoadScript } from '@react-google-maps/api';
+import { BidSubmission } from "../components/bids";
 const libraries = ['places'];
 
 
@@ -21,7 +22,6 @@ export default function Browse() {
   const [availableColors, setAvailableColors] = useState([]);
   const [availableMaterials, setAvailableMaterials] = useState([]);
   const [selectedJob, setSelectedJob] = useState(null);
-  const [currentBid, setCurrentBid] = useState(null);
   const [jobs, setJobs] = useState([]);
   const [filters, setFilters] = useState({
     "materials": availableMaterials,
@@ -108,7 +108,7 @@ export default function Browse() {
   };
 
   const onUnselectJob = () => {
-    setCurrentBid(null);
+    //setCurrentBid(null);
     setSelectedJob(null);
   };
 
@@ -143,22 +143,10 @@ export default function Browse() {
       .then(() => { navigate(`/Jobs/${selectedJob.doc}`) });
   };
 
-  const handleBidChange = (value) => {
-    setCurrentBid(value);
-  }
-
-  const onBid = async (bidAmount) => {
-    const jobId = selectedJob.doc
-    const uid = userContext.currUser.uid
-    const bidDetails = {
-      PrinterUid: uid,
-      Amount: bidAmount,      
-      Timestamp: Timestamp.now(),
-      Active: true,
-      PreviousBid: null
-    }
-
+  const onBidSubmit = async (bidDetails) => {
     console.log(bidDetails);
+    const jobId = selectedJob.doc;
+    const uid = userContext.currUser.uid
     const docRef = await addDoc(collection(firebaseDb, `Jobs/${jobId}/BidHistory/`), bidDetails)
     updateDoc(doc(firebaseDb, `Jobs/${jobId}`), { BidderUid: arrayUnion(uid)})
       .then(() => { navigate(`/Jobs/${selectedJob.doc}`) });
@@ -293,23 +281,10 @@ export default function Browse() {
                 <p><strong>Completion Date:</strong> {selectedJob.completionDate !== "" ? selectedJob.completionDate : "None"}</p>
                 <br />
                 <p><strong>Comment:</strong> {selectedJob.comment !== "" ? selectedJob.comment : "None"}</p>
-
-                <div className="m-2 flex">
-                  <div>
-                    <CurrencyInput
-                      placeholder="Enter your bid"
-                      allowNegativeValue={false}
-                      value={currentBid}
-                      prefix="$"
-                      step={1}
-                      onValueChange={handleBidChange} />
-                  </div>
-                  <div>
-                    <button onClick={() => onBid(currentBid)}> submit bid! </button>
-                  </div>
-                </div>
-                
-                </div>
+              </div>
+              <div>
+                <BidSubmission jobId={selectedJob.doc} callback={onBidSubmit}/>
+              </div>
             </div>
           )}
         </MultiStepFormPage>
