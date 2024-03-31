@@ -1,4 +1,4 @@
-import { addDoc, collection, getDocs, query, where, orderBy, onSnapshot } from "firebase/firestore";
+import { addDoc, collection, getDocs, query, where, orderBy, onSnapshot, updateDoc, doc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { firebaseStorage } from "./firebase/firebase";
 import { firebaseDb } from "./firebase/firebase";
@@ -93,14 +93,24 @@ export async function getActiveBids(jobId) {
   return bids;
 }
 
-export function bidListener(jobId, snapshotCallback) {
+export function bidListener(jobId, snapshotCallback, uid=null) {
   const bidHistoryRef = collection(firebaseDb, `Jobs/${jobId}/BidHistory`);
-  const bidsQuery = query(bidHistoryRef, where("Active", "==", true), orderBy("Timestamp", "desc"));
+  let bidsQuery = null;
+  (uid === null) ? 
+    bidsQuery = query(bidHistoryRef, where("Active", "==", true), orderBy("Timestamp", "desc")) :
+    bidsQuery = query(bidHistoryRef, where("Active", "==", true), where("PrinterUid", "==", uid));
   const unsubscribe = onSnapshot(bidsQuery, (snapshot) => {snapshotCallback(snapshot)});
   return unsubscribe;
 }
 
-//export function updateHistory(jobId, )
+export function updateJob(jobId, update) {
+  const jobRef = doc(firebaseDb, `Jobs/${jobId}`);
+  updateDoc(jobRef, update);
+}
+
+export function updateHistory(jobId) {
+  //see modify status function in order page
+}
 
 export async function getThumbnail(jobId) {
   return new Promise((resolve, reject) => {

@@ -6,8 +6,7 @@ import JobCardOrderPage from "../components/jobCardOrderPage"
 import { collection, onSnapshot, orderBy, query, where } from "firebase/firestore";
 import { useAuth } from "../contexts/authContext"
 import { getThumbnail, getFile } from "../backend"
-import { BidSelection, BidCard } from "../components/bids"
-import CurrencyInput from "react-currency-input-field";
+import { BidSelection, BidStatus } from "../components/bids"
 
 function ChatRoom({ jobId }) {
   const [messages, setMessages] = useState([]);
@@ -229,104 +228,6 @@ function OrderStatus({ history, jobId, isPrinter }) {
       </div>
     </div>
 
-  )
-}
-
-
-function BidStatus ({jobId}) {
-  const [bids, setBids] = useState([]);
-  const [latestBid, setLatestBid] = useState([]);
-  const [newBid, setNewBid] = useState([]);
-
-  const userContext = useAuth();
-  const uid = userContext.currUser.uid;
-
-  
-  useEffect(() => {
-    const bidHistoryRef = collection(firebaseDb, `Jobs/${jobId}/BidHistory`);
-
-    const bidsQuery = query(bidHistoryRef, where("Active", "==", true), where("PrinterUid", "==", uid));
-
-    const unsubscribe = onSnapshot(bidsQuery, (snapshot) => {
-      const bids = [];
-
-      snapshot.docs.forEach((doc) => {
-        const data = doc.data();
-        const bid = {
-          id: doc.id,
-          uid: data.PrinterUid,
-          amount: data.Amount,
-          timestamp: data.Timestamp
-        }
-        bids.push(bid);
-        
-        if (data.Active) {
-          setLatestBid(bid)
-        }
-      });
-
-      setBids(bids);
-    })
-
-    return () => {
-      unsubscribe(); // Cleanup function to unsubscribe from real-time updates when the component unmounts
-    };
-  }, [jobId]);
-
-  const handleBidChange = (value) => {
-    setNewBid(value);
-  }
-
-  const onBid = async (bidAmount) => {
-    const bidDetails = {
-      PrinterUid: uid,
-      Amount: bidAmount,      
-      Timestamp: Timestamp.now(),
-      Active: false,
-      PreviousBid: null
-    }
-    //update old active bid
-    //submit new bid
-    console.log(bidDetails);
-    
-    const bidHistoryRef = collection(firebaseDb, `Jobs/${jobId}/BidHistory`);
-    const prevBidRef = doc(firebaseDb, `Jobs/${jobId}/BidHistory/${latestBid.id}`)
-
-    updateDoc(prevBidRef, {})
-    
-    const docRef = await addDoc(bidHistoryRef, bidDetails);
-    updateDoc(prevBidRef, {Active: false, PreviousBid: docRef})
-      .then(updateDoc(docRef, {Active: true}))
-    
-
-    setNewBid(null);
-  }
-
-  return (
-    <div>
-      {bids.map((bid, idx) => (
-        <div key={idx}>
-          <BidCard bid={bid} onAccept={() => console.log("I am the chosen one")}/>
-        </div>
-      ))}
-      <div className="m-2 flex">
-        <div>
-          Update bid:
-        </div>
-        <div>
-          <CurrencyInput
-            placeholder="Enter your bid"
-            allowNegativeValue={false}
-            value={newBid}
-            prefix="$"
-            step={1}
-            onValueChange={handleBidChange} />
-        </div>
-        <div>
-          <button onClick={() => onBid(newBid)}> submit bid! </button>
-        </div>
-      </div>
-    </div>
   )
 }
 

@@ -9,7 +9,6 @@ import MultiStepFormPage from "../components/multistepformpage";
 import { useAuth } from "../contexts/authContext";
 import { useNavigate } from "react-router-dom";
 import { getThumbnail, getColors, getMaterials } from "../backend";
-
 import GooglePlacesAutocomplete, { geocodeByPlaceId, getLatLng} from 'react-google-places-autocomplete';
 import TextForm from "../components/textForm";
 import { LoadScript } from '@react-google-maps/api';
