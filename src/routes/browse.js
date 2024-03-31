@@ -17,6 +17,15 @@ const libraries = ['places'];
 
 
 export default function Browse() {
+  // Map-Related Constants
+  const [selectedLocation, setSelectedLocation] = useState({
+    lat: 48.4284,
+    lng: -123.3656,
+  });
+  const [radius, setRadius] = useState(0);
+  const [search_value, setSearchValue] = useState(null);
+  const apiKey = 'AIzaSyBN9FNice6SVThI5Yo_MmQS9Or-votMad8';
+  // Other Constants
   const [availableColors, setAvailableColors] = useState([]);
   const [availableMaterials, setAvailableMaterials] = useState([]);
   const [selectedJob, setSelectedJob] = useState(null);
@@ -24,6 +33,9 @@ export default function Browse() {
   const [filters, setFilters] = useState({
     "materials": availableMaterials,
     "colors": availableColors,
+    "radius": radius,
+    "latitude": selectedLocation.lat,
+    "longitude": selectedLocation.lng,
     "bid_order": 0,
   });
   
@@ -77,8 +89,12 @@ export default function Browse() {
             quantity: data.Quantity,
             comment: data.Comment,
             completionDate: data.CompletionDate,
-            history: data.History,
+            history: data.History, 
+            jobRadius: data.Radius,
+            jobLat: data.Latitude,
+            jobLng: data.Longitude,
           });
+          console.log(fetchedJobs);
         }));
         
         setJobs(fetchedJobs);
@@ -153,14 +169,7 @@ export default function Browse() {
     );
   }
 
-  // Map-Related Constants
-  const [selectedLocation, setSelectedLocation] = useState({
-    lat: 48.4284,
-    lng: -123.3656,
-  });
-  const [radius, setRadius] = useState(0);
-  const [search_value, setSearchValue] = useState(null);
-  const apiKey = 'AIzaSyBN9FNice6SVThI5Yo_MmQS9Or-votMad8';
+  
 
 
   return (
@@ -208,7 +217,9 @@ export default function Browse() {
                               geocodeByPlaceId(value.value.place_id)
                                   .then(results => getLatLng(results[0]))
                                   .then(({ lat, lng }) => {
+                                  console.log('Search Results:', lat, lng);
                                   setSelectedLocation({ lat, lng });
+                                  setFilters({ ...filters, latitude: lat, longitude: lng });
                                   });
                           },
                       }}
@@ -223,6 +234,7 @@ export default function Browse() {
                       // set the radius and log that it changed
                       onChange={(e) => {
                           setRadius(Number(e.target.value));
+                          setFilters({ ...filters, radius: Number(e.target.value) });
                       }}
                   />
                 </div>

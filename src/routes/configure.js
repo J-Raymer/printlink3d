@@ -140,7 +140,7 @@ export default function Configure({ printJob, changePrintJob }) {
   const changeRadius = (x) => {
     changePrintJob("radius", x);
   }
-  const changeLatitude = (x) => changePrintJob("latitude", x);
+  const changelatitude = (x) => changePrintJob("latitude", x);
   const changeLongitude = (x) => changePrintJob("longitude", x);
 
   // Map-Related Constants
@@ -368,7 +368,7 @@ export default function Configure({ printJob, changePrintJob }) {
                             .then(results => getLatLng(results[0]))
                             .then(({ lat, lng }) => {
                               setSelectedLocation({ lat, lng });
-                              changeLatitude(lat);
+                              changelatitude(lat);
                               changeLongitude(lng);
                             });
                         },
