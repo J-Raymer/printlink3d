@@ -72,6 +72,18 @@ export async function getColors(db) {
   return colors;
 }
 
+export async function addBid(jobId, bid) {
+  const bidHistoryRef = collection(firebaseDb, `Jobs/${jobId}/BidHistory`);
+  return addDoc(bidHistoryRef, bid);
+}
+
+export function updateBid(jobId, bidId, update) {
+  console.log("update bid: ", bidId, update);
+
+  const bidRef = doc(firebaseDb, `Jobs/${jobId}/BidHistory/${bidId}`);
+  return updateDoc(bidRef, update);
+}
+
 export async function getActiveBids(jobId) {
   const bidHistoryRef = collection(firebaseDb, `Jobs/${jobId}/BidHistory`);
   const bidsQuery = query(bidHistoryRef, where("Active", "==", true), orderBy("Timestamp", "desc"));
@@ -105,7 +117,7 @@ export function bidListener(jobId, snapshotCallback, uid=null) {
 
 export function updateJob(jobId, update) {
   const jobRef = doc(firebaseDb, `Jobs/${jobId}`);
-  updateDoc(jobRef, update);
+  return updateDoc(jobRef, update);
 }
 
 export function updateHistory(jobId) {

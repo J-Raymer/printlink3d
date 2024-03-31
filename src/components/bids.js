@@ -2,23 +2,13 @@ import { useState, useEffect } from "react";
 import { Timestamp, arrayRemove } from "firebase/firestore";
 import CurrencyInput from "react-currency-input-field";
 import { useAuth } from "../contexts/authContext";
-import { bidListener, getActiveBids, updateJob } from "../backend";
+import { addBid, bidListener, getActiveBids, updateJob, updateBid } from "../backend";
 
 import { collection, query, where, orderBy, onSnapshot, doc, updateDoc, addDoc } from "firebase/firestore";
 import { firebaseDb } from "../firebase/firebase";
 import { useNavigate } from "react-router-dom";
 
-
-function BidStats( {jobId} ) {
-    const emptyStats = {
-        high: null,
-        low: null,
-        count: 0,
-        history: []
-    };
-    const [showStats, setShowStats] = useState(false);
-    const [stats, setStats] = useState(emptyStats);
-
+export function GetBidStats(jobId, setProp) {
     const updateStats = (bidsSnapshot) => {
         const bids = []
       
@@ -37,13 +27,12 @@ function BidStats( {jobId} ) {
             const amounts = bids.map((bid) => bid.amount);
 
             const stats = {
-                high: Math.max(...amounts),
-                low: Math.min(...amounts),
+                high: Math.max(...amounts).toFixed(2),
+                low: Math.min(...amounts).toFixed(2),
                 count: amounts.length,
                 history: []
             }
-            setStats(stats);
-            setShowStats(true);
+            setProp(stats);
         }
     }
 
@@ -54,6 +43,18 @@ function BidStats( {jobId} ) {
             unsubscribe();
         };
     }, [jobId]);
+}
+
+function BidStats( {jobId} ) {
+    const [showStats, setShowStats] = useState(false);
+    const [stats, setStats] = useState(null);
+
+    const updateStats = (stats) => {
+        setStats(stats);
+        setShowStats(true);
+    }
+
+    GetBidStats(jobId, updateStats)
 
     return (
         <div>
@@ -62,14 +63,23 @@ function BidStats( {jobId} ) {
                     <div className="text-lg font-semibold">
                     Current Bid Count:
                     </div>
-                    <div className="text-lg text-blue-500 font-semibold">
+                    <div className="text-lg text-blue-500 font-semibold px-3">
                         {stats.count}
                     </div>
                     <div className="text-lg font-semibold">
                     Current Bid Range:
                     </div>
-                    <div className="text-lg text-blue-500 font-semibold">
-                        ${stats.low} - ${stats.high}
+                    <div className="text-lg text-blue-500 font-semibold px-3">
+                        {(stats.count === 1) ? (
+                            <div>
+                                ${stats.low}
+                            </div>
+                        ) : (
+                            <div>
+                                ${stats.low} - ${stats.high}
+                            </div>
+                        )
+                        }
                     </div>
                 </div>
             ) : (
@@ -92,9 +102,11 @@ export function BidSubmission({ jobId, callback }) {
 
     const onSubmission = () => {
         if (currentBid !== null) {
+            const amount = Number(currentBid).toFixed(2);
+
             const bidDetails = {
                 PrinterUid: uid,
-                Amount: currentBid,      
+                Amount: amount,      
                 Timestamp: Timestamp.now(),
                 Active: true,
                 PreviousBid: null
@@ -256,7 +268,7 @@ export function BidStatus ({jobId}) {
     const userContext = useAuth();
     const uid = userContext.currUser.uid;
     
-    const updateBid = (snapshot) => {
+    const updateBidCallback = (snapshot) => {
         snapshot.docs.forEach((doc) => {
             const data = doc.data();
             const bid = {
@@ -273,7 +285,7 @@ export function BidStatus ({jobId}) {
     }
     
     useEffect(() => {
-        const unsubscribe = bidListener(jobId, updateBid, uid);
+        const unsubscribe = bidListener(jobId, updateBidCallback, uid);
   
         return () => {
             unsubscribe(); // Cleanup function to unsubscribe from real-time updates when the component unmounts
@@ -281,26 +293,33 @@ export function BidStatus ({jobId}) {
     }, [jobId]);
   
     const handleBidChange = (value) => {
-      setNewBid(value);
+        setNewBid(value);
     }
   
-    const onBid = async (bidAmount) => {
-      const bidDetails = {
-        PrinterUid: uid,
-        Amount: bidAmount,      
-        Timestamp: Timestamp.now(),
-        Active: false,
-        PreviousBid: null
-      }
-      
-      const bidHistoryRef = collection(firebaseDb, `Jobs/${jobId}/BidHistory`);
-      const prevBidRef = doc(firebaseDb, `Jobs/${jobId}/BidHistory/${latestBid.id}`)
-      
-      const docRef = await addDoc(bidHistoryRef, bidDetails);
-      updateDoc(prevBidRef, {Active: false, PreviousBid: docRef})
-        .then(updateDoc(docRef, {Active: true}))
+    const onBidUpdate = async (bidAmount) => {
+        if (bidAmount === undefined || bidAmount === null) {
+            return;
+        } else {
+            bidAmount = Number(bidAmount).toFixed(2);
+        }
 
-      setNewBid(null);
+        const bidDetails = {
+            PrinterUid: uid,
+            Amount: bidAmount,      
+            Timestamp: Timestamp.now(),
+            Active: false
+        }
+
+        const bidHistoryRef = collection(firebaseDb, `Jobs/${jobId}/BidHistory`);
+        const prevBidRef = doc(firebaseDb, `Jobs/${jobId}/BidHistory/${latestBid.id}`)
+        
+        const docRef = await addDoc(bidHistoryRef, bidDetails);
+        updateDoc(prevBidRef, {Active: false})
+            .then(updateDoc(docRef, {Active: true}))
+        
+        
+        setEditState(false);
+        setNewBid(null);
     }
   
     const deleteBid = () => {
@@ -326,8 +345,8 @@ export function BidStatus ({jobId}) {
             </div>
             <div>
                 <div className="m-2 flex gap-2 justify-between mr-4">
-                    <div className="py-2 px-4">
-                        $ {latestBid.amount} CAD
+                    <div className="text-lg text-blue-500 font-semibold py-2 px-4">
+                        ${latestBid.amount} CAD
                     </div>
                     {(editState) ? (
                         <div>
@@ -362,7 +381,7 @@ export function BidStatus ({jobId}) {
                                 </div>
                                 <div className=" bg-brand-blue border border-brand-blue text-white font-bold py-2 px-4 rounded-md">
                                     <button className="" 
-                                            onClick={() => onBid(newBid)}>
+                                            onClick={() => onBidUpdate(newBid)}>
                                                 Update Bid
                                     </button>
                                 </div>

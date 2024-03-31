@@ -1,13 +1,23 @@
+import { useState } from "react";
+import { GetBidStats } from "./bids";
+
 export default function JobCard({
   job,
   isSelected,
   onSelectJob,
   onUnselectJob,
-  img
+  img,
+  showBidStats = false
 }) {
+  const [bidStats, setBidStats] = useState(null);
+
   const handleClick = () => {
     !isSelected ? onSelectJob(job) : onUnselectJob();
   };
+
+  if (showBidStats) {
+    GetBidStats(job.doc, setBidStats);
+  }
 
   return (
     <div
@@ -51,6 +61,20 @@ export default function JobCard({
           <span className="font-semibold">Quantity: </span>
           <span className="font-normal">{job.quantity}</span>
         </p>
+        {(showBidStats) ? (  
+          <p className="mt-2">
+            <span className="font-semibold">Lowest Bid: </span>
+            {(bidStats !== null) ? (
+              <span className="font-normal">
+                ${bidStats.low} CAD
+              </span>
+            ) : (
+              <span className="font-normal">
+                N/A
+              </span>
+            )}
+          </p>
+        ) : (<> </>)}
       </div>
     </div>
   );

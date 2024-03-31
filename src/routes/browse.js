@@ -8,7 +8,7 @@ import MultiStepForm from "../components/multistepform";
 import MultiStepFormPage from "../components/multistepformpage";
 import { useAuth } from "../contexts/authContext";
 import { useNavigate } from "react-router-dom";
-import { getThumbnail, getColors, getMaterials } from "../backend";
+import { getThumbnail, getColors, getMaterials, updateJob, addBid } from "../backend";
 import GooglePlacesAutocomplete, { geocodeByPlaceId, getLatLng} from 'react-google-places-autocomplete';
 import TextForm from "../components/textForm";
 import { LoadScript } from '@react-google-maps/api';
@@ -124,30 +124,13 @@ export default function Browse() {
   const isFilterSelected = (category, label) => {
     return filters[category].includes(label);
   }
-  const getDate = () => {
-    const date = new Date();
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-    const year = date.getFullYear();
-
-    return `${day}/${month}/${year}`;
-  }
-
-  const onSubmit = () => {
-    let updatedHistory = selectedJob.history;
-    updatedHistory["Accepted"] = getDate();
-
-    const docRef = doc(firebaseDb, `Jobs/${selectedJob.doc}`);
-    updateDoc(docRef, { PrinterUid: userContext.currUser.uid, History: updatedHistory })
-      .then(() => { navigate(`/Jobs/${selectedJob.doc}`) });
-  };
 
   const onBidSubmit = async (bidDetails) => {
-    console.log(bidDetails);
     const jobId = selectedJob.doc;
-    const uid = userContext.currUser.uid
-    const docRef = await addDoc(collection(firebaseDb, `Jobs/${jobId}/BidHistory/`), bidDetails)
-    updateDoc(doc(firebaseDb, `Jobs/${jobId}`), { BidderUid: arrayUnion(uid)})
+    const uid = userContext.currUser.uid;
+
+    await addBid(jobId, bidDetails);
+    updateJob(jobId, { BidderUid: arrayUnion(uid) })
       .then(() => { navigate(`/Jobs/${selectedJob.doc}`) });
   }
 
@@ -188,7 +171,6 @@ export default function Browse() {
         submitText="Accept Job"
         showNext={selectedJob !== null}
         validDetails={true}
-        handleSubmit={onSubmit}
       >
         <MultiStepFormPage title="Select Job">
           <div className="flex h-full">
@@ -258,33 +240,36 @@ export default function Browse() {
         </MultiStepFormPage>
         <MultiStepFormPage title="Confirm">
           {selectedJob && (
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <img
-                className="h-96 w-full object-cover md:w-96"
-                src={selectedJob.thumbnail}
-                alt={selectedJob.fileName}
-              />
-              <div className="ml-5">
-                <p><strong>File Name:</strong> {selectedJob.fileName}</p>
-                <br />
-                <p><strong>Infill:</strong> {selectedJob.infill}</p>
-                <br />
-                <p><strong>Material:</strong> {selectedJob.material}</p>
-                <br />
-                <p><strong>Color:</strong> {selectedJob.color}</p>
-                <br />
-                <p><strong>Layer Height:</strong> {selectedJob.layerHeight}</p>
-                <br />
-                <p><strong>Quantity:</strong> {selectedJob.quantity}</p>
-                <br />
-                <p><strong>Completion Date:</strong> {selectedJob.completionDate !== "" ? selectedJob.completionDate : "None"}</p>
-                <br />
-                <p><strong>Comment:</strong> {selectedJob.comment !== "" ? selectedJob.comment : "None"}</p>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <img
+                  className="h-96 w-full object-cover md:w-96"
+                  src={selectedJob.thumbnail}
+                  alt={selectedJob.fileName}
+                />
+                <div className="ml-5">
+                  <p><strong>File Name:</strong> {selectedJob.fileName}</p>
+                  <br />
+                  <p><strong>Infill:</strong> {selectedJob.infill}</p>
+                  <br />
+                  <p><strong>Material:</strong> {selectedJob.material}</p>
+                  <br />
+                  <p><strong>Color:</strong> {selectedJob.color}</p>
+                  <br />
+                  <p><strong>Layer Height:</strong> {selectedJob.layerHeight}</p>
+                  <br />
+                  <p><strong>Quantity:</strong> {selectedJob.quantity}</p>
+                  <br />
+                  <p><strong>Completion Date:</strong> {selectedJob.completionDate !== "" ? selectedJob.completionDate : "None"}</p>
+                  <br />
+                  <p><strong>Comment:</strong> {selectedJob.comment !== "" ? selectedJob.comment : "None"}</p>
+                </div>
+                
+              </div>  
+              <div className="flex">
+                  <BidSubmission jobId={selectedJob.doc} callback={onBidSubmit}/>
               </div>
-              <div>
-                <BidSubmission jobId={selectedJob.doc} callback={onBidSubmit}/>
-              </div>
-            </div>
+            </div>  
           )}
         </MultiStepFormPage>
 
