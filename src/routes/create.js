@@ -15,6 +15,7 @@ export default function Create() {
 
   const emptyPrintJob = {
     thumbnail: null,
+    jobName: "",
     file: null,
     quantity: 1,
     material: "Plastic",
@@ -23,11 +24,25 @@ export default function Create() {
     comment: "",
     infill: "25%",
     layerHeight: "0.2 mm",
+    radius: 0,
+    latitude: 0,
+    longitude: 0,
   };
+
+  const updateFile = (newFile) => {
+    updatePrintJob("file", newFile)
+    if (newFile !== null) {
+      // Strips the .stl extension from the file name and limits it to 100 characters
+      updatePrintJob("jobName", newFile.name.replace(/\.stl$/i, "").substring(0, 100));
+    } else {
+      updatePrintJob("jobName", "");
+    }
+  }
 
   const [printJob, setPrintJob] = useState(emptyPrintJob);
 
   const updatePrintJob = (property, value) => {
+    console.log(property, value);
     setPrintJob((prevState) => ({ ...prevState, [property]: value }));
   };
 
@@ -46,7 +61,8 @@ export default function Create() {
       PrinterUid: null,
       BidderUid: [],
       FileName: printJob.file.name,
-      Quantity: printJob.quantity,
+      JobName: printJob.jobName,
+      Quantity: (printJob.quantity === "") ? "1" : printJob.quantity,
       Material: printJob.material,
       Color: printJob.color,
       CompletionDate: printJob.completionDate,
@@ -76,7 +92,7 @@ export default function Create() {
         uploadThumbnail(printJob.thumbnail, Id)
         .then(() => {
           // upload stl file. On completion, make listing available on jobs page
-          uploadStl(printJob.file, Id)
+          uploadStl(printJob.file, printJob.jobName, Id)
           .then(() => {
             const docRef = doc(firebaseDb, `Jobs/${Id}`);
             updateDoc(docRef, {UploadedFile: true})
@@ -109,7 +125,7 @@ export default function Create() {
         <MultiStepFormPage title="Upload">
           <Upload
             printJob={printJob}
-            updateFile={(newFile) => updatePrintJob("file", newFile)}
+            updateFile={(newFile) => updateFile(newFile)}
             updateThumbnail={(newThumbnail) => updatePrintJob("thumbnail", newThumbnail)}
           />
         </MultiStepFormPage>

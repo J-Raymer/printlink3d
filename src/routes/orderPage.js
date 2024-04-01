@@ -150,24 +150,24 @@ export default function OrderPage({ isPrinter = false }) {
         let thumbnail = null;
         let file = null;
 
+        const data = snapshot.data();
+
         try {
           thumbnail = await getThumbnail(Id);
-          file = await getFile(Id);
+          file = await getFile(data.JobName, Id);
         } catch (error) {
           console.error("Error fetching thumbnail: ", error)
           thumbnail = null;
           file = null;
         }
 
-        const data = snapshot.data();
-        
         setJobData({
           thumbnail: thumbnail,
           infill: data.Infill,
           material: data.Material,
           distance: data.Radius,
           file: file,
-          fileName: data.FileName,
+          jobName: data.JobName,
           history: (data.History) ? data.History : fakeHistory,
           quantity: data.Quantity,
           color: data.Color,
