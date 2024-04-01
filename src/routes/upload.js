@@ -135,6 +135,13 @@ export default function Upload({ printJob, updateFile, updateThumbnail }) {
     );
   }
 
+  function shortenFileName(fileName, length) {
+    if (fileName.length <= length) {
+      return fileName;
+    }
+    return fileName.substring(0, length) + "...";
+  }
+
   function captureThumbnail() {
     const croppedDimenstions = 200;
     renderer.setSize(croppedDimenstions, croppedDimenstions);
@@ -201,7 +208,7 @@ export default function Upload({ printJob, updateFile, updateThumbnail }) {
           :
           <div className="flex flex-col h-full">
             <div className="flex w-full items-center mt-3 justify-between">
-              <p className="text-4xl font-bold">Selected: {printJob.file.name}</p>
+              <p className="text-4xl font-bold">Selected: {shortenFileName(printJob.file.name, 35)}</p>
               <p onClick={() => removeSTL()} className="text-4xl text-blue-500 cursor-pointer underline">Change File</p>
             </div>
             <div className="flex flex-col items-center justify-center full-without-title mt-4 grow" id="canvas-rect">

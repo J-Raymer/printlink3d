@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { doc, updateDoc } from "firebase/firestore"
 import { useNavigate, Navigate } from "react-router-dom";
 import MultiStepForm from "../components/multistepform";
 import MultiStepFormPage from "../components/multistepformpage";
@@ -6,8 +7,8 @@ import Configure from "./configure";
 import Upload from "./upload";
 import { addJob, uploadThumbnail, uploadStl } from "../backend";
 import { firebaseDb } from "../firebase/firebase";
-import { doc, updateDoc } from "firebase/firestore"
-import { useAuth } from "../contexts/authContext/index"
+import { useAuth } from "../contexts/authContext/index";
+import { getDate } from "../utils";
 
 export default function Create() {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ export default function Create() {
 
   const emptyPrintJob = {
     thumbnail: null,
+    jobName: "",
     file: null,
     quantity: 1,
     material: "Plastic",
@@ -23,29 +25,36 @@ export default function Create() {
     comment: "",
     infill: "25%",
     layerHeight: "0.2 mm",
+    radius: 0,
+    latitude: 0,
+    longitude: 0,
   };
+
+  const updateFile = (newFile) => {
+    updatePrintJob("file", newFile)
+    if (newFile !== null) {
+      // Strips the .stl extension from the file name and limits it to 100 characters
+      updatePrintJob("jobName", newFile.name.replace(/\.stl$/i, "").substring(0, 100));
+    } else {
+      updatePrintJob("jobName", "");
+    }
+  }
 
   const [printJob, setPrintJob] = useState(emptyPrintJob);
 
   const updatePrintJob = (property, value) => {
+    console.log(property, value);
     setPrintJob((prevState) => ({ ...prevState, [property]: value }));
-  };
-
-  const getDate = () => {
-    const date = new Date();
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-    const year = date.getFullYear();
-
-    return `${day}/${month}/${year}`;
   };
 
   const onJobSubmit = () => {
     const db_entry = {
       CustomerUid: userContext.currUser.uid,
       PrinterUid: null,
+      BidderUid: [],
       FileName: printJob.file.name,
-      Quantity: printJob.quantity,
+      JobName: printJob.jobName,
+      Quantity: (printJob.quantity === "") ? "1" : printJob.quantity,
       Material: printJob.material,
       Color: printJob.color,
       CompletionDate: printJob.completionDate,
@@ -59,10 +68,12 @@ export default function Create() {
         'Exchanged': null,
       },
       UploadedFile: false,
+      AcceptedBid: null,
       Complete: false,
-      Radius: printJob.radius,
-      Latitude: printJob.latitude,
-      Longitude: printJob.longitude,
+      //Broken when merging main
+      //Radius: printJob.radius,
+      //Latitude: printJob.latitude,
+      //Longitude: printJob.longitude,
     };
 
     addJob(firebaseDb, db_entry)
@@ -73,7 +84,7 @@ export default function Create() {
         uploadThumbnail(printJob.thumbnail, Id)
         .then(() => {
           // upload stl file. On completion, make listing available on jobs page
-          uploadStl(printJob.file, Id)
+          uploadStl(printJob.file, printJob.jobName, Id)
           .then(() => {
             const docRef = doc(firebaseDb, `Jobs/${Id}`);
             updateDoc(docRef, {UploadedFile: true})
@@ -106,7 +117,7 @@ export default function Create() {
         <MultiStepFormPage title="Upload">
           <Upload
             printJob={printJob}
-            updateFile={(newFile) => updatePrintJob("file", newFile)}
+            updateFile={(newFile) => updateFile(newFile)}
             updateThumbnail={(newThumbnail) => updatePrintJob("thumbnail", newThumbnail)}
           />
         </MultiStepFormPage>
