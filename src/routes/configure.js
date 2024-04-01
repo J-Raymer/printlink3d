@@ -5,6 +5,7 @@ import { useEffect, useState, useRef } from "react";
 import { firebaseDb } from "../firebase/firebase";
 import { getMaterials } from "../backend";
 import TextArea from "../components/textArea";
+import { MAX_JOB_NAME_LENGTH } from "../constants";
 import GooglePlacesAutocomplete, { geocodeByPlaceId, getLatLng } from 'react-google-places-autocomplete';
 import { GoogleMap, LoadScript, Marker, Circle } from '@react-google-maps/api';
 const libraries = ['places'];
@@ -109,7 +110,10 @@ export default function Configure({ printJob, changePrintJob }) {
     fetchMaterials();
   }, []);
 
-  const changeQuantity = (x) => changePrintJob("quantity", x.target.value);
+  const changeQuantity = (x) => {
+    const q = (x.target.value === "0") ? 1 : x.target.value;
+    changePrintJob("quantity", q)
+  }
   const changeMaterial = (x) => changePrintJob("material", x);
   const changeColor = (x) => changePrintJob("color", x);
   const changeCompletionDate = (x) => changePrintJob("completionDate", x.target.value);
@@ -119,6 +123,7 @@ export default function Configure({ printJob, changePrintJob }) {
   const changeRadius = (x) => changePrintJob("radius", x);
   const changeLatitude = (x) => changePrintJob("latitude", x);
   const changeLongitude = (x) => changePrintJob("longitude", x);
+  const changeJobName = (x) => changePrintJob("jobName", x.target.value);
 
   // Map-Related Constants
   const [circleKey, setCircleKey] = useState(0);
@@ -154,13 +159,25 @@ export default function Configure({ printJob, changePrintJob }) {
           <div className="bg-white p-4">
             <div className="flex-col">
               <StyledLine
+                title="Job Name"
+                inputComponent={
+                  <TextForm
+                    type="text"
+                    value={printJob.jobName}
+                    onChange={changeJobName}
+                    width={30}
+                    maxLength={MAX_JOB_NAME_LENGTH}
+                  />
+                }
+              />
+              <StyledLine
                 title="Quantity"
                 inputComponent={
                   <TextForm
                     type="number"
                     min="1"
                     max="999"
-                    value={quantity}
+                    value={printJob.quantity}
                     onChange={changeQuantity}
                     onKeyDown={(e) => {
                       if (!/[0-9]/.test(e.key) && e.keyCode !== 8) {

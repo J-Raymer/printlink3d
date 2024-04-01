@@ -56,6 +56,7 @@ export default function Orders({isPrinter=false}) {
               distance: data.Radius,
               fileName: data.FileName,
               color: data.Color,
+              jobName: data.JobName,
             };
             
             if (completeOrder) {
