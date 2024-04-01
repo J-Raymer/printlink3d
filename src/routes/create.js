@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { doc, updateDoc } from "firebase/firestore"
 import { useNavigate, Navigate } from "react-router-dom";
 import MultiStepForm from "../components/multistepform";
 import MultiStepFormPage from "../components/multistepformpage";
@@ -36,6 +37,7 @@ export default function Create() {
     const db_entry = {
       CustomerUid: userContext.currUser.uid,
       PrinterUid: null,
+      BidderUid: [],
       FileName: printJob.file.name,
       Quantity: printJob.quantity,
       Material: printJob.material,
@@ -51,10 +53,12 @@ export default function Create() {
         'Exchanged': null,
       },
       UploadedFile: false,
+      AcceptedBid: null,
       Complete: false,
-      Radius: printJob.radius,
-      Latitude: printJob.latitude,
-      Longitude: printJob.longitude,
+      //Broken when merging main
+      //Radius: printJob.radius,
+      //Latitude: printJob.latitude,
+      //Longitude: printJob.longitude,
     };
 
     addJob(firebaseDb, db_entry)

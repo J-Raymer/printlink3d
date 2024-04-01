@@ -100,6 +100,7 @@ function MaterialSelector({ init, materials, changeMaterial }) {
 export default function Configure({ printJob, changePrintJob }) {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [materials, setMaterials] = useState([]);
+  const [quantity, setQuantity] = useState(printJob.quantity);
 
   useEffect(() => {
     async function fetchMaterials() {
@@ -108,25 +109,14 @@ export default function Configure({ printJob, changePrintJob }) {
     fetchMaterials();
   }, []);
 
-  const changeQuantity = (e) => {
-    const newQuantity = e.target.value;
-    changePrintJob(newQuantity, "quantity");
-  };
-  const changeMaterial = (x) => changePrintJob(x, "material");
-  const changeColor = (x) => changePrintJob(x, "color");
-  const changeCompletionDate = (e) => {
-    const newCompletionDate = e.target.value;
-    changePrintJob(newCompletionDate, "completionDate");
-  };
-  const changeComment = (e) => {
-    const newComment = e.target.value;
-    changePrintJob(newComment, "comment");
-  };
-  const changeInfill = (x) => changePrintJob(x, "infill");
-  const changeLayerHeight = (x) => changePrintJob(x, "layerHeight");
-  const changeRadius = (x) => {
-    changePrintJob("radius", x);
-  }
+  const changeQuantity = (x) => changePrintJob("quantity", x.target.value);
+  const changeMaterial = (x) => changePrintJob("material", x);
+  const changeColor = (x) => changePrintJob("color", x);
+  const changeCompletionDate = (x) => changePrintJob("completionDate", x.target.value);
+  const changeComment = (x) => changePrintJob("comment", x.target.value);
+  const changeInfill = (x) => changePrintJob("infill", x);
+  const changeLayerHeight = (x) => changePrintJob("layerHeight", x);
+  const changeRadius = (x) => changePrintJob("radius", x);
   const changeLatitude = (x) => changePrintJob("latitude", x);
   const changeLongitude = (x) => changePrintJob("longitude", x);
 
@@ -169,8 +159,21 @@ export default function Configure({ printJob, changePrintJob }) {
                   <TextForm
                     type="number"
                     min="1"
-                    value={printJob.quantity}
+                    max="999"
+                    value={quantity}
                     onChange={changeQuantity}
+                    onKeyDown={(e) => {
+                      if (!/[0-9]/.test(e.key) && e.keyCode !== 8) {
+                        e.preventDefault();
+                      } else if (e.target.value.length >= 3 && e.keyCode !== 8) {
+                        e.preventDefault();
+                      }
+                    }}
+                    onBlur={(e) => {
+                      if (e.target.value === "" || Number(e.target.value) < 1) {
+                        setQuantity(1);
+                      }
+                    }}
                   />
                 }
               />
@@ -389,16 +392,16 @@ export default function Configure({ printJob, changePrintJob }) {
                       disableDefaultUI: true,
                     }}
                   >
-                  <Marker position={selectedLocation} key={`marker-${selectedLocation.lat}-${selectedLocation.lng}`} />
+                    <Marker position={selectedLocation} key={`marker-${selectedLocation.lat}-${selectedLocation.lng}`} />
                     <Circle
-                    center={selectedLocation}
-                    radius={radius * 1000}
-                    key={circleKey} options={{
-                      fillColor: 'rgba(0, 128, 128, 0.5)',
-                      strokeColor: '#FFFFFF',
-                      strokeOpacity: 0.8,
-                      strokeWeight: 2,
-                    }} />
+                      center={selectedLocation}
+                      radius={radius * 1000}
+                      key={circleKey} options={{
+                        fillColor: 'rgba(0, 128, 128, 0.5)',
+                        strokeColor: '#FFFFFF',
+                        strokeOpacity: 0.8,
+                        strokeWeight: 2,
+                      }} />
                   </GoogleMap>
                 </div>
               </div>
