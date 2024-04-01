@@ -7,7 +7,8 @@ import Configure from "./configure";
 import Upload from "./upload";
 import { addJob, uploadThumbnail, uploadStl } from "../backend";
 import { firebaseDb } from "../firebase/firebase";
-import { useAuth } from "../contexts/authContext/index"
+import { useAuth } from "../contexts/authContext/index";
+import { getDate } from "../utils";
 
 export default function Create() {
   const navigate = useNavigate();
@@ -44,15 +45,6 @@ export default function Create() {
   const updatePrintJob = (property, value) => {
     console.log(property, value);
     setPrintJob((prevState) => ({ ...prevState, [property]: value }));
-  };
-
-  const getDate = () => {
-    const date = new Date();
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-    const year = date.getFullYear();
-
-    return `${day}/${month}/${year}`;
   };
 
   const onJobSubmit = () => {

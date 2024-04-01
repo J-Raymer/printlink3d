@@ -5,11 +5,13 @@ import JobCardOrderPage from "../components/jobCardOrderPage"
 import { getThumbnail, getFile } from "../backend"
 import { BidSelection, BidStatus } from "../components/bids"
 import { firebaseDb } from "../firebase/firebase"
+import RatingModal from "../components/ratingModal";
 import { ChatRoom } from "../components/chat"
+import { getDate } from "../utils";
 
-
-function OrderStatus({ history, jobId, isPrinter }) {
+function OrderStatus({ history, jobId, isPrinter, customerUid }) {
   const [editState, setEditState] = useState(false);
+  const [ratingModalVisible, setRatingModalVisible] = useState(false);
 
   function CompleteItem({ state, date }) {
     const [showInfo, setShowInfo] = useState(false);
@@ -40,19 +42,14 @@ function OrderStatus({ history, jobId, isPrinter }) {
     )
   }
 
-  const getDate = () => {
-    const date = new Date();
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-    const year = date.getFullYear();
-
-    return `${day}/${month}/${year}`;
-  }
-
   const ModifyStatus = (state) => {
+    if (state === "Exchanged") {
+      setRatingModalVisible(true);
+    }
+    
     var updatedHistory = history
     updatedHistory[state] = getDate();
-
+    
     const docRef = doc(firebaseDb, `Jobs/${jobId}`);
     updateDoc(docRef, { History: updatedHistory })
       .then(() => setEditState(false));
@@ -96,6 +93,9 @@ function OrderStatus({ history, jobId, isPrinter }) {
     )
   }
 
+  const onRatingModalClose = () => {
+    setRatingModalVisible(false);
+  }
 
   const states = [
     'Submitted',
@@ -111,6 +111,7 @@ function OrderStatus({ history, jobId, isPrinter }) {
   const isModifiable = (isPrinter && (history["Accepted"] !== null))
 
   return (
+    <>
     <div className="flex flex-col">
       {(isModifiable) ? (<div className="flex justify-end mr-3">
         <button className="text-blue-500 text-sm hover:underline focus:outline-none" onClick={() => { setEditState(!editState) }}>
@@ -124,7 +125,15 @@ function OrderStatus({ history, jobId, isPrinter }) {
           ((editState) ? <ModifiableItem state={step.state} /> : <IncompleteItem state={step.state} />)))}
       </div>
     </div>
-
+    {
+      ratingModalVisible &&
+      <RatingModal
+        onClose={() => onRatingModalClose()}
+        isModalVisible={ratingModalVisible}
+        isCustomer={false}
+        targetUserUid={customerUid}/>
+    }
+    </>
   )
 }
 
@@ -171,6 +180,7 @@ export default function OrderPage({ isPrinter = false }) {
           history: (data.History) ? data.History : fakeHistory,
           quantity: data.Quantity,
           color: data.Color,
+          CustomerUid: data.CustomerUid,
         });
 
         setShowBids(data.AcceptedBid == null)
@@ -210,7 +220,7 @@ export default function OrderPage({ isPrinter = false }) {
                   <div className="text-lg font-semibold">
                     Status
                   </div>
-                  <OrderStatus history={jobData.history} jobId={Id} isPrinter={isPrinter} />
+                  <OrderStatus history={jobData.history} jobId={Id} customerUid={jobData.CustomerUid} isPrinter={isPrinter} />
                 </div>
               </div>
               <div className="w-1/3">
@@ -250,8 +260,6 @@ export default function OrderPage({ isPrinter = false }) {
           )
         }
       </div>
-
     </div>
-
   )
 }
