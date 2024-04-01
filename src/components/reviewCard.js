@@ -1,4 +1,5 @@
 import { getFormattedDate } from "../utils";
+import "../app.css";
 
 export default function ReviewCard({ review }) {
   const renderStars = () => {
@@ -39,7 +40,7 @@ export default function ReviewCard({ review }) {
   }
 
   return (
-    <div className="flex flex-col p-4 border-2 border-gray-200 rounded-lg mb-4">
+    <div className="flex flex-col p-4 border-2 border-brand-blue rounded-lg mb-4">
       <div className="flex items-center">
         {renderStars()}
         <p className="ml-2">{getFormattedDate(review.date)}</p>
