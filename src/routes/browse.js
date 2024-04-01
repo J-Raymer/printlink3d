@@ -168,7 +168,7 @@ export default function Browse() {
       {!userContext.userLoggedIn && <Navigate to={"/login"} replace={true} />}
 
       <MultiStepForm
-        submitText="Accept Job"
+        showSubmit={false}
         showNext={selectedJob !== null}
         validDetails={true}
       >
