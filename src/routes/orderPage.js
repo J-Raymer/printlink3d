@@ -6,7 +6,7 @@ import { getThumbnail, getFile } from "../backend"
 import { BidSelection, BidStatus } from "../components/bids"
 import { firebaseDb } from "../firebase/firebase"
 import { ChatRoom } from "../components/chat"
-
+import { getDate } from "../utils";
 
 function OrderStatus({ history, jobId, isPrinter, customerUid }) {
   const [editState, setEditState] = useState(false);
