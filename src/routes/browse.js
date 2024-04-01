@@ -26,6 +26,7 @@ export default function Browse() {
     "colors": availableColors,
     "bid_order": 0,
   });
+  const [bidIsValid, setBidIsValid] = useState(null);
   
   useEffect(() => {
     async function fetchColors() {
@@ -80,7 +81,7 @@ export default function Browse() {
             history: data.History,
           });
         }));
-        
+        console.log(fetchedJobs);
         setJobs(fetchedJobs);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -153,6 +154,20 @@ export default function Browse() {
     );
   }
 
+  const onBidChanged = (e) => {
+    if (e.target.value == "") {
+      setBidIsValid(false);
+      return
+    }
+    if (!isNaN(+e.target.value)) {
+      if (Number(+e.target.value) < 0) {
+        setBidIsValid(false);
+        return;
+      }
+      setBidIsValid(true);
+    }
+  }
+
   // Map-Related Constants
   const [selectedLocation, setSelectedLocation] = useState({
     lat: 48.4284,
@@ -168,9 +183,9 @@ export default function Browse() {
       {!userContext.userLoggedIn && <Navigate to={"/login"} replace={true} />}
 
       <MultiStepForm
-        submitText="Accept Job"
+        submitText="Submit Bid"
         showNext={selectedJob !== null}
-        validDetails={true}
+        validDetails={bidIsValid}
         handleSubmit={onSubmit}
       >
         <MultiStepFormPage title="Select Job">
@@ -241,28 +256,65 @@ export default function Browse() {
         </MultiStepFormPage>
         <MultiStepFormPage title="Confirm">
           {selectedJob && (
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <img
-                className="h-96 w-full object-cover md:w-96"
-                src={selectedJob.thumbnail}
-                alt={selectedJob.fileName}
-              />
-              <div className="ml-5">
-                <p><strong>File Name:</strong> {selectedJob.fileName}</p>
-                <br />
-                <p><strong>Infill:</strong> {selectedJob.infill}</p>
-                <br />
-                <p><strong>Material:</strong> {selectedJob.material}</p>
-                <br />
-                <p><strong>Color:</strong> {selectedJob.color}</p>
-                <br />
-                <p><strong>Layer Height:</strong> {selectedJob.layerHeight}</p>
-                <br />
-                <p><strong>Quantity:</strong> {selectedJob.quantity}</p>
-                <br />
-                <p><strong>Completion Date:</strong> {selectedJob.completionDate !== "" ? selectedJob.completionDate : "None"}</p>
-                <br />
-                <p><strong>Comment:</strong> {selectedJob.comment !== "" ? selectedJob.comment : "None"}</p>
+            <div className="flex flex-col h-full gap-5">
+              <div className="flex flex-row gap-5 h-[50%]">
+                <img
+                  className="object-cover rounded"
+                  src={selectedJob.thumbnail}
+                  alt={selectedJob.fileName}
+                />
+                <div className="p-6 flex-grow rounded border border-gray-300">
+                  <h2 className="text-3xl font-bold">Job Parameters</h2>
+                  <p className="text-gray-400 text-l font-bold">Please ensure your printer can handle the job specifications listed below</p>
+
+                  <table className="browse-table text-l mt-3">
+                    <tr>
+                      <td className="w-[160px]">File Name: </td>
+                      <td>{selectedJob.fileName}</td>
+                    </tr>
+                    <tr>
+                      <td>Infill:</td>
+                      <td>{selectedJob.infill}</td>
+                    </tr>
+                    <tr>
+                      <td>Material:</td>
+                      <td>{selectedJob.material}</td>
+                    </tr>
+                    <tr>
+                      <td>Colour:</td>
+                      <td>{selectedJob.color}</td>
+                    </tr>
+                    <tr>
+                      <td>Layer Height:</td>
+                      <td>{selectedJob.layerHeight}</td>
+                    </tr>
+                    <tr>
+                      <td>Quantity:</td>
+                      <td>{selectedJob.quantity}</td>
+                    </tr>
+                    <tr>
+                      <td>Completion Date:</td>
+                      <td>{selectedJob.completionDate !== "" ? selectedJob.completionDate : "None"}</td>
+                    </tr>
+                    <tr>
+                      <td>Comment:</td>
+                      <td>{selectedJob.comment !== "" ? selectedJob.comment : "None"}</td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+              <div className="flex flex-row gap-5 h-[50%] w-full">
+                <div className="w-[50%] rounded border border-gray-300 p-6">
+                  <h2 className="text-3xl font-bold">Customer Reviews</h2>
+                  <p>{selectedJob.Name}</p>
+                </div>
+                <div className="w-[50%] rounded border border-gray-300 p-6">
+                  <h2 className="text-3xl font-bold">Place Your Bid</h2>
+                  <input type="number" step=".01" min="0" className="p-2 text-xl w-full border border-gray-500 rounded mt-4" placeholder="Example: 123.45" onChange={onBidChanged}/>
+                  { (!bidIsValid && bidIsValid !== null) && <p className="text-red-600">Your bid must be numeric, positive, and non-empty. ie: 12.34</p> }
+                  <p className="text-xl font-bold mt-6">Current Bid Range: </p>
+                  <p className="fg-brand-blue text-4xl font-bold mt-1">$12.32 - $56.32</p>
+                </div>
               </div>
             </div>
           )}
