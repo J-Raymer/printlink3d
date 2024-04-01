@@ -5,6 +5,7 @@ import JobCardOrderPage from "../components/jobCardOrderPage"
 import { getThumbnail, getFile } from "../backend"
 import { BidSelection, BidStatus } from "../components/bids"
 import { firebaseDb } from "../firebase/firebase"
+import RatingModal from "../components/ratingModal";
 import { ChatRoom } from "../components/chat"
 import { getDate } from "../utils";
 
@@ -110,6 +111,7 @@ function OrderStatus({ history, jobId, isPrinter, customerUid }) {
   const isModifiable = (isPrinter && (history["Accepted"] !== null))
 
   return (
+    <>
     <div className="flex flex-col">
       {(isModifiable) ? (<div className="flex justify-end mr-3">
         <button className="text-blue-500 text-sm hover:underline focus:outline-none" onClick={() => { setEditState(!editState) }}>
@@ -123,7 +125,15 @@ function OrderStatus({ history, jobId, isPrinter, customerUid }) {
           ((editState) ? <ModifiableItem state={step.state} /> : <IncompleteItem state={step.state} />)))}
       </div>
     </div>
-
+    {
+      ratingModalVisible &&
+      <RatingModal
+        onClose={() => onRatingModalClose()}
+        isModalVisible={ratingModalVisible}
+        isCustomer={false}
+        targetUserUid={customerUid}/>
+    }
+    </>
   )
 }
 
