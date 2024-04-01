@@ -154,7 +154,7 @@ export default function OrderPage({ isPrinter = false }) {
 
         try {
           thumbnail = await getThumbnail(Id);
-          file = await getFile(Id);
+          file = await getFile(data.JobName, Id);
         } catch (error) {
           console.error("Error fetching thumbnail: ", error)
           thumbnail = null;

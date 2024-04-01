@@ -92,7 +92,7 @@ export default function Create() {
         uploadThumbnail(printJob.thumbnail, Id)
         .then(() => {
           // upload stl file. On completion, make listing available on jobs page
-          uploadStl(printJob.file, Id)
+          uploadStl(printJob.file, printJob.jobName, Id)
           .then(() => {
             const docRef = doc(firebaseDb, `Jobs/${Id}`);
             updateDoc(docRef, {UploadedFile: true})

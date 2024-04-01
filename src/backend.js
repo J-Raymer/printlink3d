@@ -146,9 +146,9 @@ export async function getThumbnail(jobId) {
   }) 
 }
 
-export async function getFile(jobId) {
+export async function getFile(jobName, jobId) {
   try {
-    const fileRef = ref(firebaseStorage, `print-files/${jobId}.stl`);
+    const fileRef = ref(firebaseStorage, `print-files/${jobName + "_" + jobId}.stl`);
     const downloadURL = await getDownloadURL(fileRef);
     return downloadURL;
   } catch (error) {
@@ -164,7 +164,7 @@ export async function uploadThumbnail(thumbnail, id) {
   uploadBytes(storageRef, thumbnailBlob);
 };
 
-export async function uploadStl(file, id) {
-  var storageRef = ref(firebaseStorage, `print-files/${id}.stl`);
+export async function uploadStl(file, jobName, jobId) {
+  var storageRef = ref(firebaseStorage, `print-files/${jobName + "_" + jobId}.stl`);
   uploadBytes(storageRef, file);
 }
