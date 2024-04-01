@@ -59,27 +59,31 @@ function BidStats( {jobId} ) {
     return (
         <div>
             {(showStats) ? (
-                <div>
-                    <div className="text-lg font-semibold">
-                    Current Bid Count:
+                <div >
+                    <div className="m-2 flex gap-3">
+                        <div className="text-lg font-semibold">
+                        Current Bid Count:
+                        </div>
+                        <div className="text-lg text-blue-500 font-semibold px-3">
+                            {stats.count}
+                        </div>
                     </div>
-                    <div className="text-lg text-blue-500 font-semibold px-3">
-                        {stats.count}
-                    </div>
-                    <div className="text-lg font-semibold">
-                    Current Bid Range:
-                    </div>
-                    <div className="text-lg text-blue-500 font-semibold px-3">
-                        {(stats.count === 1) ? (
-                            <div>
-                                ${stats.low}
-                            </div>
-                        ) : (
-                            <div>
-                                ${stats.low} - ${stats.high}
-                            </div>
-                        )
-                        }
+                    <div className="m-2 flex gap-3">
+                        <div className="text-lg font-semibold">
+                        Current Bid Range:
+                        </div>
+                        <div className="text-lg text-blue-500 font-semibold px-3">
+                            {(stats.count === 1) ? (
+                                <div>
+                                    ${stats.low}
+                                </div>
+                            ) : (
+                                <div>
+                                    ${stats.low} - ${stats.high} CAD
+                                </div>
+                            )
+                            }
+                        </div>
                     </div>
                 </div>
             ) : (
@@ -331,11 +335,16 @@ export function BidStatus ({jobId}) {
     }
 
     return (
-      <div>
-        <div className="mt-2 p-3">
+      <div >
+        <div className="border border-2 rounded-md mt-2 p-3">
             <div className="flex justify-between">
-                <div className="text-lg font-semibold">
-                    My Bid:
+                <div className="flex gap-3">
+                    <div className="text-lg font-semibold">
+                        My Bid:
+                    </div>
+                    <div className="text-lg text-blue-500 font-semibold ">
+                        ${latestBid.amount} CAD
+                    </div>
                 </div>
                 <div className="mr-3">
                     <button className="text-blue-500 text-sm hover:underline focus:outline-none" onClick={() => { setEditState(!editState) }}>
@@ -344,23 +353,6 @@ export function BidStatus ({jobId}) {
                 </div>
             </div>
             <div>
-                <div className="m-2 flex gap-2 justify-between mr-4">
-                    <div className="text-lg text-blue-500 font-semibold py-2 px-4">
-                        ${latestBid.amount} CAD
-                    </div>
-                    {(editState) ? (
-                        <div>
-                            <div className=" bg-brand-red border border-brand-red text-white font-bold py-2 px-4 rounded-md">
-                                <button className="" 
-                                        onClick={() => deleteBid()}>
-                                            Delete Bid
-                                </button>
-                            </div>
-                        </div>
-                    ) : (
-                        <></>
-                    )}
-                </div>
                 <div>
                     {(editState) ? (
                         <>
@@ -387,6 +379,20 @@ export function BidStatus ({jobId}) {
                                 </div>
                             </div>
                         </>
+                    ) : (
+                        <></>
+                    )}
+                </div>
+                <div >
+                    {(editState) ? (
+                        <div className="m-2 flex gap-2 justify-end mr-4">
+                            <div className=" bg-brand-red border border-brand-red text-white font-bold py-2 px-4 rounded-md">
+                                <button className="" 
+                                        onClick={() => deleteBid()}>
+                                            Delete Bid
+                                </button>
+                            </div>
+                        </div>
                     ) : (
                         <></>
                     )}

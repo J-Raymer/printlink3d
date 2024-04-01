@@ -164,7 +164,7 @@ export function BidJobCard ({ job, isPrinter, onSelectJob}) {
                 <span className="font-semibold mt-2">Your Bid: </span>
                 {(latestBid !== null) ? (
                   <span className="font-normal">
-                    $ {latestBid.amount}
+                    ${latestBid.amount}
                   </span>
                 ) : (
                   <span className="font-normal">
@@ -176,7 +176,7 @@ export function BidJobCard ({ job, isPrinter, onSelectJob}) {
                 <span className="font-semibold mt-2">Lowest Bid: </span>
                 {(bidStats !== null) ? (
                   <span className="font-normal">
-                    $ {bidStats.low}
+                    ${bidStats.low}
                   </span>
                 ) : (
                   <span className="font-normal">

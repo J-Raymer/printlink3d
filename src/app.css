@@ -65,6 +65,10 @@ nav h2 {
   background-color: var(--p3d-brand-red);
 }
 
+.border-brand-red {
+  border-color: var(--p3d-brand-red);
+}
+
 .cta-button {
   position: relative;
   height: 40vh;
