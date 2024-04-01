@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { doc, updateDoc } from "firebase/firestore"
 import { useNavigate, Navigate } from "react-router-dom";
 import MultiStepForm from "../components/multistepform";
 import MultiStepFormPage from "../components/multistepformpage";
@@ -6,7 +7,6 @@ import Configure from "./configure";
 import Upload from "./upload";
 import { addJob, uploadThumbnail, uploadStl } from "../backend";
 import { firebaseDb } from "../firebase/firebase";
-import { doc, updateDoc, setDoc, collection } from "firebase/firestore"
 import { useAuth } from "../contexts/authContext/index"
 
 export default function Create() {

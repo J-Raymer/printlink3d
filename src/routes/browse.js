@@ -2,7 +2,7 @@ import JobCardList from "../components/jobCardList";
 import React, { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { firebaseDb } from "../firebase/firebase";
-import { collection, doc, onSnapshot, updateDoc, query, where, addDoc, Timestamp, arrayUnion } from "firebase/firestore";
+import { collection, onSnapshot, query, where, arrayUnion } from "firebase/firestore";
 import Selector from "../components/selector";
 import MultiStepForm from "../components/multistepform";
 import MultiStepFormPage from "../components/multistepformpage";
@@ -28,6 +28,7 @@ export default function Browse() {
     "bid_order": 0,
   });
   const userContext = useAuth();
+  const uid = userContext.currUser.uid;
   const navigate = useNavigate();
   
   useEffect(() => {
@@ -58,7 +59,7 @@ export default function Browse() {
         await Promise.all(snapshot.docs.map(async (doc) => {
           const data = doc.data();
 
-          if ((data.BidderUid !== undefined) && (! data.BidderUid.includes(userContext.currUser.uid))) {
+          if ((data.BidderUid !== undefined) && (! data.BidderUid.includes(uid))) {
             let thumbnail = null;
 
             try {
@@ -100,14 +101,13 @@ export default function Browse() {
     return () => {
       unsubscribe();
     };
-  }, []);
+  }, [uid]);
 
   const onSelectJob = (job) => {
     setSelectedJob(job);
   };
 
   const onUnselectJob = () => {
-    //setCurrentBid(null);
     setSelectedJob(null);
   };
 
@@ -132,7 +132,7 @@ export default function Browse() {
     await addBid(jobId, bidDetails);
     updateJob(jobId, { BidderUid: arrayUnion(uid) })
       .then(() => { navigate(`/Jobs/${selectedJob.doc}`) });
-  }
+  };
 
   const renderColorSelector = () => {
     return (

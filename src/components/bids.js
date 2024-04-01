@@ -1,48 +1,46 @@
 import { useState, useEffect } from "react";
-import { Timestamp, arrayRemove } from "firebase/firestore";
+import { Timestamp, arrayRemove, collection, doc, updateDoc, addDoc } from "firebase/firestore";
 import CurrencyInput from "react-currency-input-field";
 import { useAuth } from "../contexts/authContext";
-import { addBid, bidListener, getActiveBids, updateJob, updateBid } from "../backend";
-
-import { collection, query, where, orderBy, onSnapshot, doc, updateDoc, addDoc } from "firebase/firestore";
+import { bidListener, updateJob } from "../backend";
 import { firebaseDb } from "../firebase/firebase";
 import { useNavigate } from "react-router-dom";
 
 export function GetBidStats(jobId, setProp) {
-    const updateStats = (bidsSnapshot) => {
-        const bids = []
-      
-        bidsSnapshot.docs.forEach((doc) => {
-            const data = doc.data();
-            const bid = {
-                id: doc.id,
-                uid: data.PrinterUid,
-                amount: Number(data.Amount),
-                timestamp: data.Timestamp
-            }
-            bids.push(bid);
-        });
-
-        if (bids.length > 0) {
-            const amounts = bids.map((bid) => bid.amount);
-
-            const stats = {
-                high: Math.max(...amounts).toFixed(2),
-                low: Math.min(...amounts).toFixed(2),
-                count: amounts.length,
-                history: []
-            }
-            setProp(stats);
-        }
-    }
-
     useEffect(() => {
+        const updateStats = (bidsSnapshot) => {
+            const bids = []
+          
+            bidsSnapshot.docs.forEach((doc) => {
+                const data = doc.data();
+                const bid = {
+                    id: doc.id,
+                    uid: data.PrinterUid,
+                    amount: Number(data.Amount),
+                    timestamp: data.Timestamp
+                }
+                bids.push(bid);
+            });
+    
+            if (bids.length > 0) {
+                const amounts = bids.map((bid) => bid.amount);
+    
+                const stats = {
+                    high: Math.max(...amounts).toFixed(2),
+                    low: Math.min(...amounts).toFixed(2),
+                    count: amounts.length,
+                    history: []
+                }
+                setProp(stats);
+            }
+        }
+
         const unsubscribe = bidListener(jobId, updateStats);
 
         return () => {
             unsubscribe();
         };
-    }, [jobId]);
+    }, [jobId, setProp]);
 }
 
 function BidStats( {jobId} ) {
@@ -112,8 +110,7 @@ export function BidSubmission({ jobId, callback }) {
                 PrinterUid: uid,
                 Amount: amount,      
                 Timestamp: Timestamp.now(),
-                Active: true,
-                PreviousBid: null
+                Active: true
             }
               
             callback(bidDetails);
@@ -153,30 +150,6 @@ export function BidSubmission({ jobId, callback }) {
         </div>
     )
 }
-
-export function BidCard( { bid, onAccept}) {
-    const bidder = bid.uid;
-    const amount = bid.amount;
-  
-    return (
-      <div className="border border-2 mt-2 p-3 rounded-md w-96">
-        <div className="text-lg font-semibold"> 
-            User {bidder.substring(0, 10)}...
-        </div>
-        <div className="m-2 flex gap-2 justify-between">
-            <div className="py-2 px-4 text-lg font-semibold">
-                Bid: ${amount} CAD
-            </div>
-            <div className=" bg-brand-blue border border-brand-blue text-white font-bold py-2 px-4 rounded-md">
-                <button className="" 
-                        onClick={() => {onAccept()}}>
-                            Accept Bid
-                </button>
-            </div>
-        </div>
-      </div>
-    )
-  }
 
 export function OrderBidCard( { bid, onAccept}) {
     const bidder = bid.uid;
@@ -229,7 +202,7 @@ export function BidSelection( { jobId, history, onUpdate} ) {
         };
     }, [jobId]);
     
-    //TODO move to utils file
+    //TODO move history update to backend
     const getDate = () => {
       const date = new Date();
       const day = String(date.getDate()).padStart(2, '0');
@@ -264,9 +237,10 @@ export function BidSelection( { jobId, history, onUpdate} ) {
 
 
 export function BidStatus ({jobId}) {
-    const [latestBid, setLatestBid] = useState([]);
-    const [newBid, setNewBid] = useState([]);
+    const [latestBid, setLatestBid] = useState(null);
+    const [newBid, setNewBid] = useState(null);
     const [editState, setEditState] = useState(false);
+    const [dataLoading, setDataLoading] = useState(true);
     
     const navigate = useNavigate();
     const userContext = useAuth();
@@ -284,6 +258,7 @@ export function BidStatus ({jobId}) {
         
             if (data.Active) {
                 setLatestBid(bid)
+                setDataLoading(false);
             }
         });
     }
@@ -294,7 +269,7 @@ export function BidStatus ({jobId}) {
         return () => {
             unsubscribe(); // Cleanup function to unsubscribe from real-time updates when the component unmounts
         };
-    }, [jobId]);
+    }, [jobId, uid]);
   
     const handleBidChange = (value) => {
         setNewBid(value);
@@ -335,71 +310,76 @@ export function BidStatus ({jobId}) {
     }
 
     return (
-      <div >
-        <div className="border border-2 rounded-md mt-2 p-3">
-            <div className="flex justify-between">
-                <div className="flex gap-3">
-                    <div className="text-lg font-semibold">
-                        My Bid:
-                    </div>
-                    <div className="text-lg text-blue-500 font-semibold ">
-                        ${latestBid.amount} CAD
-                    </div>
-                </div>
-                <div className="mr-3">
-                    <button className="text-blue-500 text-sm hover:underline focus:outline-none" onClick={() => { setEditState(!editState) }}>
-                        {(editState) ? ("Cancel") : ("Edit Bid")}
-                    </button>
-                </div>
-            </div>
-            <div>
-                <div>
-                    {(editState) ? (
-                        <>
-                            <div className="m-2 flex gap-2 justify-between mr-4 ">
-                                <div className="border border-2 py-2 px-4 rounded-md">
-                                    <div className="flex gap-1">
-                                        <CurrencyInput
-                                        placeholder="Update your bid"
-                                        allowNegativeValue={false}
-                                        value={newBid}
-                                        prefix="$ "
-                                        step={1}
-                                        onValueChange={handleBidChange} />
-                                        <div>
-                                            CAD
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className=" bg-brand-blue border border-brand-blue text-white font-bold py-2 px-4 rounded-md">
-                                    <button className="" 
-                                            onClick={() => onBidUpdate(newBid)}>
-                                                Update Bid
-                                    </button>
-                                </div>
+        <div>
+        {(dataLoading === false) ? (
+            <div >
+                <div className="border border-2 rounded-md mt-2 p-3">
+                    <div className="flex justify-between">
+                        <div className="flex gap-3">
+                            <div className="text-lg font-semibold">
+                                My Bid:
                             </div>
-                        </>
-                    ) : (
-                        <></>
-                    )}
-                </div>
-                <div >
-                    {(editState) ? (
-                        <div className="m-2 flex gap-2 justify-end mr-4">
-                            <div className=" bg-brand-red border border-brand-red text-white font-bold py-2 px-4 rounded-md">
-                                <button className="" 
-                                        onClick={() => deleteBid()}>
-                                            Delete Bid
-                                </button>
+                            <div className="text-lg text-blue-500 font-semibold ">
+                                ${latestBid.amount} CAD
                             </div>
                         </div>
-                    ) : (
-                        <></>
-                    )}
+                        <div className="mr-3">
+                            <button className="text-blue-500 text-sm hover:underline focus:outline-none" onClick={() => { setEditState(!editState) }}>
+                                {(editState) ? ("Cancel") : ("Edit Bid")}
+                            </button>
+                        </div>
+                    </div>
+                    <div>
+                        <div>
+                            {(editState) ? (
+                                <>
+                                    <div className="m-2 flex gap-2 justify-between mr-4 ">
+                                        <div className="border border-2 py-2 px-4 rounded-md">
+                                            <div className="flex gap-1">
+                                                <CurrencyInput
+                                                placeholder="Update your bid"
+                                                allowNegativeValue={false}
+                                                value={newBid}
+                                                prefix="$ "
+                                                step={1}
+                                                onValueChange={handleBidChange} />
+                                                <div>
+                                                    CAD
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className=" bg-brand-blue border border-brand-blue text-white font-bold py-2 px-4 rounded-md">
+                                            <button className="" 
+                                                    onClick={() => onBidUpdate(newBid)}>
+                                                        Update Bid
+                                            </button>
+                                        </div>
+                                    </div>
+                                </>
+                            ) : (
+                                <></>
+                            )}
+                        </div>
+                        <div >
+                            {(editState) ? (
+                                <div className="m-2 flex gap-2 justify-end mr-4">
+                                    <div className=" bg-brand-red border border-brand-red text-white font-bold py-2 px-4 rounded-md">
+                                        <button className="" 
+                                                onClick={() => deleteBid()}>
+                                                    Delete Bid
+                                        </button>
+                                    </div>
+                                </div>
+                            ) : (
+                                <></>
+                            )}
+                        </div>
+                    </div>
                 </div>
+                <BidStats jobId={jobId} />
             </div>
+        ) : (<></>)
+        }
         </div>
-        <BidStats jobId={jobId} />
-      </div>
     )
   }

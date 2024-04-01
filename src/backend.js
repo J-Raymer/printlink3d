@@ -10,10 +10,12 @@ export async function addJob(db, DocData) {
 
 export async function addCustomer(db, DocData) {
   const docRef = await addDoc(collection(db, "Customers"), DocData);
+  return docRef
 }
 
 export async function addPrinter(db, DocData) {
   const docRef = await addDoc(collection(db, "Printers"), DocData);
+  return docRef
 }
 
 export async function getAllJobs(db) {
@@ -78,8 +80,6 @@ export async function addBid(jobId, bid) {
 }
 
 export function updateBid(jobId, bidId, update) {
-  console.log("update bid: ", bidId, update);
-
   const bidRef = doc(firebaseDb, `Jobs/${jobId}/BidHistory/${bidId}`);
   return updateDoc(bidRef, update);
 }
@@ -96,7 +96,7 @@ export async function getActiveBids(jobId) {
       const bid = {
           id: doc.id,
           uid: data.PrinterUid,
-          amount: Number(data.Amount),
+          amount: Number(data.Amount).toFixed(2),
           timestamp: data.Timestamp
       }
       bids.push(bid);
@@ -118,10 +118,6 @@ export function bidListener(jobId, snapshotCallback, uid=null) {
 export function updateJob(jobId, update) {
   const jobRef = doc(firebaseDb, `Jobs/${jobId}`);
   return updateDoc(jobRef, update);
-}
-
-export function updateHistory(jobId) {
-  //see modify status function in order page
 }
 
 export async function getThumbnail(jobId) {

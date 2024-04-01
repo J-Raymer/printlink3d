@@ -12,11 +12,11 @@ export default function Orders({isPrinter=false}) {
     const [completeOrders, setCompleteOrders] = useState([]);
     const navigate = useNavigate();
     const userContext = useAuth();
+    const uid = userContext.currUser.uid;
     const [dataLoading, setDataLoading] = useState(true);
     
     useEffect(() => {
       setDataLoading(true);
-      const uid = userContext.currUser.uid;
 
       const jobRef = collection(firebaseDb, 'Jobs');
       const jobQuery = (isPrinter) ? 
@@ -44,10 +44,6 @@ export default function Orders({isPrinter=false}) {
               thumbnail = null;
             }
 
-            if (isPrinter && (data.AcceptedBid !== undefined) && (data.PrinterUid !== uid)) {              
-              console.error("Shouldn't have this job: ", data)
-            }
-
             const acceptedBid = (data.AcceptedBid !== undefined) ? data.AcceptedBid: true;
             const completeOrder = (data.Complete !== undefined) ? data.Complete : true;       
 
@@ -59,7 +55,6 @@ export default function Orders({isPrinter=false}) {
               material: data.Material,
               distance: data.Radius,
               fileName: data.FileName,
-              quantity: data.Quantity,
               color: data.Color,
             };
             
@@ -84,7 +79,7 @@ export default function Orders({isPrinter=false}) {
       return () => {
         unsubscribe();
       };
-    }, [isPrinter]);
+    }, [isPrinter, uid]);
 
     return (
         <div >

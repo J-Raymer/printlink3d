@@ -101,7 +101,7 @@ export function EmptyJobCard({
 }
 
 export function BidJobCard ({ job, isPrinter, onSelectJob}) {
-  function image () {
+  function CardImage () {
     return (
       <div className="md:flex-shrink-0">
           <div className="h-48 w-full object-cover md:w-48">
@@ -120,7 +120,7 @@ export function BidJobCard ({ job, isPrinter, onSelectJob}) {
     );
   }
 
-  function Content () {
+  function CardContent () {
     const [bidStats, setBidStats] = useState(null);
     const [latestBid, setLatestBid] = useState([]);
   
@@ -149,7 +149,7 @@ export function BidJobCard ({ job, isPrinter, onSelectJob}) {
         return () => {
             unsubscribe(); // Cleanup function to unsubscribe from real-time updates when the component unmounts
         };
-    }, [job.id]);
+    }, [uid]);
 
     GetBidStats(job.id, setBidStats);
 
@@ -226,6 +226,6 @@ export function BidJobCard ({ job, isPrinter, onSelectJob}) {
   }
 
   return (
-    <EmptyJobCard ImgComponent={image} ContentComponent={Content} onSelectJob={onSelectJob} />
+    <EmptyJobCard ImgComponent={CardImage} ContentComponent={CardContent} onSelectJob={onSelectJob} />
   )
 }
