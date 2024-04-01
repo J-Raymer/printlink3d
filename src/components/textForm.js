@@ -10,6 +10,8 @@ export default function TextForm({
   value,
   width = 10,
   maxLength,
+  onKeyDown,
+  onBlur,
 }) {
   const [currentLength, setCurrentLength] = useState(value.length);
 
@@ -32,6 +34,8 @@ export default function TextForm({
         max={max}
         maxLength={maxLength}
         step={step}
+        onKeyDown={onKeyDown}
+        onBlur={onBlur}
       />
       {maxLength && (
         <p className="text-sm text-gray-400">{`${currentLength}/${maxLength} characters`}</p>
