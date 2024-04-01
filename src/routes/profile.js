@@ -2,7 +2,6 @@ import default_pfp from "../images/default_pfp.jpg";
 import pencil_icon from "../images/pencil.png";
 import TextForm from "../components/textForm";
 import { useState, useRef } from "react";
-import MapSearch from "../components/mapSearch";
 import ReviewCard from "../components/reviewCard";
 import { getReviewsForUser } from "../backend";
 import { firebaseDb } from "../firebase/firebase";
@@ -86,7 +85,7 @@ export default function Profile() {
           placeholder="Email"
           onChange={(x) => setEmail(x.target.value)}
         />
-        <MapSearch />
+    
       </div>
       <div className="border-2 border-gray-300 p-2 rounded">
         <p className="text-2xl font-bold">Reviews</p>
