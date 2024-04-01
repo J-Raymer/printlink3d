@@ -1,115 +1,12 @@
 import { useNavigate, useParams } from "react-router-dom"
-import { firebaseDb } from "../firebase/firebase"
-import { addDoc, doc, getDoc, updateDoc } from "firebase/firestore"
+import { doc, getDoc, updateDoc} from "firebase/firestore"
 import { useState, useEffect } from "react"
 import JobCardOrderPage from "../components/jobCardOrderPage"
-import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
-import { useAuth } from "../contexts/authContext"
 import { getThumbnail, getFile } from "../backend"
+import { BidSelection, BidStatus } from "../components/bids"
+import { firebaseDb } from "../firebase/firebase"
+import { ChatRoom } from "../components/chat"
 
-
-function ChatRoom({ jobId }) {
-  const [messages, setMessages] = useState([]);
-  const [newMessage, setNewMessage] = useState('');
-  const userContext = useAuth();
-
-  // Used for displaying user's name after each set of messages
-  const groupByAuthor = () => {
-    return messages.reduce((groups, message, i) => {
-      // If this is the first message or the author is different from the previous message, start a new group
-      if (i === 0 || message.author !== messages[i - 1].author) {
-        groups.push({
-          author: message.author,
-          messages: [message],
-          firstTimestamp: message.timestamp,
-        });
-      } else {
-        // Otherwise, add the message to the last group
-        groups[groups.length - 1].messages.push(message);
-      }
-      return groups;
-    }, []);
-  }
-
-  const handleSendMessage = async () => {
-    const message = {
-      text: newMessage,
-      timestamp: Date.now(),
-      author: userContext.currUser.uid,
-      // TODO fetch username from user context
-      username: "Jasper"
-    };
-    setNewMessage('');
-
-    const docRef = await addDoc(collection(firebaseDb, `Chats/${jobId}/messages/`), message)
-  };
-
-  const checkSubmitMessage = (e) => {
-    if (e.key === 'Enter') {
-      handleSendMessage();
-    }
-  }
-
-  const renderMessages = () => {
-    const groupedMessages = groupByAuthor(messages);
-    const sortedGroups = groupedMessages.sort((a, b) => a.firstTimestamp - b.firstTimestamp);
-
-    return sortedGroups.map(group => (
-      <div key={group.id} className={group.author === userContext.currUser.uid ? "flex justify-end" : "flex justify-start"}>
-        <div style={{ display: 'flex', flexDirection: 'row-reverse', width: 'max-content'}}>
-          <div className="flex flex-col">
-            {group.messages.map(message => (
-              <p key={message.timestamp} className={message.author === userContext.currUser.uid ? "p-2 bg-blue-100 rounded-md mb-1 max-w-max self-end" : "p-2 bg-gray-100 rounded-md mb-1 max-w-max self-start"}>{message.text}</p>
-            ))}
-            <p className={group.author === userContext.currUser.uid ? "text-right text-xs mb-1" : "text-left text-xs mb-1"}>{group.messages[0].username}</p>
-          </div>
-        </div>
-      </div>
-    ))
-  }
-
-  useEffect(() => {
-    const chatRef = collection(firebaseDb, `Chats/${jobId}/messages`);
-    const chatQuery = query(chatRef, orderBy("timestamp"));
-
-    const unsubscribe = onSnapshot(chatQuery, (snapshot) => {
-      const messages = [];
-
-      snapshot.docs.forEach((doc) => {
-        const data = doc.data();
-        messages.push(data);
-      });
-
-      setMessages(messages);
-    })
-
-    return () => {
-      unsubscribe(); // Cleanup function to unsubscribe from real-time updates when the component unmounts
-    };
-  }, [jobId]);
-
-  return (
-    <div className="p-2">
-      <div className="rounded-md bg-gray-50 h-48 overflow-y-scroll flex flex-col-reverse mb-2">
-        <div className="flex flex-col justify-end p-4">
-          {renderMessages()}
-        </div>
-      </div>
-      <div className="flex p-2 border border-2">
-        <input
-          type="text"
-          value={newMessage}
-          onChange={e => setNewMessage(e.target.value)}
-          placeholder="Type your message..."
-          onKeyDown={checkSubmitMessage}
-          className="w-full"
-
-        />
-        <button className="w-24" onClick={handleSendMessage}>Send</button>
-      </div>
-    </div>
-  )
-}
 
 function OrderStatus({ history, jobId, isPrinter }) {
   const [editState, setEditState] = useState(false);
@@ -160,7 +57,7 @@ function OrderStatus({ history, jobId, isPrinter }) {
     updateDoc(docRef, { History: updatedHistory })
       .then(() => setEditState(false));
 
-    if (state == "Exchanged") {
+    if (state === "Exchanged") {
       updateDoc(docRef, { Complete: true });
     }
   };
@@ -211,9 +108,11 @@ function OrderStatus({ history, jobId, isPrinter }) {
     return { state: state, date: history[state] };
   })
 
+  const isModifiable = (isPrinter && (history["Accepted"] !== null))
+
   return (
     <div className="flex flex-col">
-      {(isPrinter) ? (<div className="flex justify-end mr-3">
+      {(isModifiable) ? (<div className="flex justify-end mr-3">
         <button className="text-blue-500 text-sm hover:underline focus:outline-none" onClick={() => { setEditState(!editState) }}>
           {(editState) ? ("Cancel") : ("Edit")}
         </button>
@@ -232,6 +131,7 @@ function OrderStatus({ history, jobId, isPrinter }) {
 export default function OrderPage({ isPrinter = false }) {
   const Id = useParams().Id;
   const [jobData, setJobData] = useState([]);
+  const [showBids, setShowBids] = useState(false);
   const [dataLoading, setDataLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -250,28 +150,30 @@ export default function OrderPage({ isPrinter = false }) {
         let thumbnail = null;
         let file = null;
 
+        const data = snapshot.data();
+
         try {
           thumbnail = await getThumbnail(Id);
-          file = await getFile(Id);
+          file = await getFile(data.JobName, Id);
         } catch (error) {
           console.error("Error fetching thumbnail: ", error)
           thumbnail = null;
           file = null;
         }
 
-        const data = snapshot.data();
         setJobData({
           thumbnail: thumbnail,
           infill: data.Infill,
           material: data.Material,
           distance: data.Radius,
           file: file,
-          fileName: data.FileName,
+          jobName: data.JobName,
           history: (data.History) ? data.History : fakeHistory,
           quantity: data.Quantity,
           color: data.Color,
         });
 
+        setShowBids(data.AcceptedBid == null)
         setDataLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -279,7 +181,6 @@ export default function OrderPage({ isPrinter = false }) {
     };
 
     fetchData();
-
     return () => {
     };
   }, [Id]);
@@ -314,10 +215,35 @@ export default function OrderPage({ isPrinter = false }) {
               </div>
               <div className="w-1/3">
                 <div className="border border-2 mt-2 p-2 rounded-md">
-                  <div className="text-lg font-semibold">
-                    Chat
-                  </div>
-                  <ChatRoom jobId={Id} />
+                  {(showBids) ?
+                    (
+                    <>
+                      {(isPrinter) ?
+                        (
+                          <>
+                            <div className="text-lg font-semibold">
+                            Bid Status
+                            </div>
+                            <BidStatus jobId={Id}/>
+                          </>
+                        ) : (
+                          <>
+                            <div className="text-lg font-semibold">
+                            Offered Bids
+                            </div>
+                            <BidSelection jobId={Id} history={jobData.history} onUpdate={() => setShowBids(false)}/>
+                          </>
+                        )
+                      }
+                    </>
+                    ) : (
+                    <>
+                      <div className="text-lg font-semibold">
+                      Chat
+                      </div>
+                      <ChatRoom jobId={Id} />
+                    </>
+                  )}
                 </div>
               </div>
             </div>

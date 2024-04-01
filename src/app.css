@@ -3,6 +3,7 @@
 :root {
   --p3d-brand-blue: #3176FF;
   --p3d-brand-purple: #E90EF8; 
+  --p3d-brand-red: #c22121;
 }
 
 html {
@@ -58,6 +59,14 @@ nav h2 {
 
 .bg-brand-purple {
   background-color: var(--p3d-brand-purple);
+}
+
+.bg-brand-red {
+  background-color: var(--p3d-brand-red);
+}
+
+.border-brand-red {
+  border-color: var(--p3d-brand-red);
 }
 
 .cta-button {

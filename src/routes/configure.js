@@ -4,6 +4,7 @@ import TextForm from "../components/textForm";
 import { useEffect, useState, useRef } from "react";
 import { firebaseDb } from "../firebase/firebase";
 import { getMaterials } from "../backend";
+import { MAX_JOB_NAME_LENGTH } from "../constants";
 import GooglePlacesAutocomplete, { geocodeByPlaceId, getLatLng } from 'react-google-places-autocomplete';
 import { GoogleMap, LoadScript, Marker, Circle } from '@react-google-maps/api';
 const libraries = ['places'];
@@ -113,6 +114,7 @@ function MaterialSelector({ init, materials, changeMaterial }) {
 export default function Configure({ printJob, changePrintJob }) {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [materials, setMaterials] = useState([]);
+  const [quantity, setQuantity] = useState(printJob.quantity);
 
   useEffect(() => {
     async function fetchMaterials() {
@@ -121,27 +123,20 @@ export default function Configure({ printJob, changePrintJob }) {
     fetchMaterials();
   }, []);
 
-  const changeQuantity = (e) => {
-    const newQuantity = e.target.value;
-    changePrintJob(newQuantity, "quantity");
-  };
-  const changeMaterial = (x) => changePrintJob(x, "material");
-  const changeColor = (x) => changePrintJob(x, "color");
-  const changeCompletionDate = (e) => {
-    const newCompletionDate = e.target.value;
-    changePrintJob(newCompletionDate, "completionDate");
-  };
-  const changeComment = (e) => {
-    const newComment = e.target.value;
-    changePrintJob(newComment, "comment");
-  };
-  const changeInfill = (x) => changePrintJob(x, "infill");
-  const changeLayerHeight = (x) => changePrintJob(x, "layerHeight");
-  const changeRadius = (x) => {
-    changePrintJob("radius", x);
+  const changeQuantity = (x) => {
+    const q = (x.target.value === "0") ? 1 : x.target.value;
+    changePrintJob("quantity", q)
   }
-  const changelatitude = (x) => changePrintJob("latitude", x);
+  const changeMaterial = (x) => changePrintJob("material", x);
+  const changeColor = (x) => changePrintJob("color", x);
+  const changeCompletionDate = (x) => changePrintJob("completionDate", x.target.value);
+  const changeComment = (x) => changePrintJob("comment", x.target.value);
+  const changeInfill = (x) => changePrintJob("infill", x);
+  const changeLayerHeight = (x) => changePrintJob("layerHeight", x);
+  const changeRadius = (x) => changePrintJob("radius", x);
+  const changeLatitude = (x) => changePrintJob("latitude", x);
   const changeLongitude = (x) => changePrintJob("longitude", x);
+  const changeJobName = (x) => changePrintJob("jobName", x.target.value);
 
   // Map-Related Constants
   const [circleKey, setCircleKey] = useState(0);
@@ -177,13 +172,38 @@ export default function Configure({ printJob, changePrintJob }) {
           <div className="bg-white p-4">
             <div className="flex-col">
               <StyledLine
+                title="Job Name"
+                inputComponent={
+                  <TextForm
+                    type="text"
+                    value={printJob.jobName}
+                    onChange={changeJobName}
+                    width={30}
+                    maxLength={MAX_JOB_NAME_LENGTH}
+                  />
+                }
+              />
+              <StyledLine
                 title="Quantity"
                 inputComponent={
                   <TextForm
                     type="number"
                     min="1"
+                    max="999"
                     value={printJob.quantity}
                     onChange={changeQuantity}
+                    onKeyDown={(e) => {
+                      if (!/[0-9]/.test(e.key) && e.keyCode !== 8) {
+                        e.preventDefault();
+                      } else if (e.target.value.length >= 3 && e.keyCode !== 8) {
+                        e.preventDefault();
+                      }
+                    }}
+                    onBlur={(e) => {
+                      if (e.target.value === "" || Number(e.target.value) < 1) {
+                        setQuantity(1);
+                      }
+                    }}
                   />
                 }
               />
@@ -368,7 +388,7 @@ export default function Configure({ printJob, changePrintJob }) {
                             .then(results => getLatLng(results[0]))
                             .then(({ lat, lng }) => {
                               setSelectedLocation({ lat, lng });
-                              changelatitude(lat);
+                              changeLatitude(lat);
                               changeLongitude(lng);
                             });
                         },
