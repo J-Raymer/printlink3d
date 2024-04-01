@@ -27,7 +27,7 @@ export default function JobCardList({ jobs, filters, selectedJob, onSelectJob, o
         if ((filters["materials"].includes(job.material) || job.material == "Plastic") &&
             (filters["colors"].includes(job.color) || job.color == "No Preference") &&
             //Filter for intersecting locations
-            ( haversine(filters["latitude"], filters["longitude"], job.jobLat, job.jobLng) <= (filters["radius"] + job.jobRadius) ) ){
+            ( haversine(filters["latitude"], filters["longitude"], job.lat, job.lng) <= (filters["radius"] + job.radius) ) ){
           return ( <JobCard
             key={"jobcard-"+i}
             job={job}
