@@ -62,7 +62,7 @@ export default function Create() {
       BidderUid: [],
       FileName: printJob.file.name,
       JobName: printJob.jobName,
-      Quantity: printJob.quantity,
+      Quantity: (printJob.quantity === "") ? "1" : printJob.quantity,
       Material: printJob.material,
       Color: printJob.color,
       CompletionDate: printJob.completionDate,
@@ -92,7 +92,7 @@ export default function Create() {
         uploadThumbnail(printJob.thumbnail, Id)
         .then(() => {
           // upload stl file. On completion, make listing available on jobs page
-          uploadStl(printJob.file, printJob.jobName, Id)
+          uploadStl(printJob.file, Id)
           .then(() => {
             const docRef = doc(firebaseDb, `Jobs/${Id}`);
             updateDoc(docRef, {UploadedFile: true})

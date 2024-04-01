@@ -70,12 +70,12 @@ export default function Browse() {
             }
   
             fetchedJobs.push({
+              jobName: data.JobName,
               thumbnail: thumbnail,
               doc: doc.id,
               infill: data.Infill,
               material: data.Material,
               distance: data.Radius,
-              fileName: data.FileName,
               file: data.File,
               name: data.Name,
               email: data.Email,

@@ -123,7 +123,10 @@ export default function Configure({ printJob, changePrintJob }) {
     fetchMaterials();
   }, []);
 
-  const changeQuantity = (x) => changePrintJob("quantity", x.target.value);
+  const changeQuantity = (x) => {
+    const q = (x.target.value === "0") ? 1 : x.target.value;
+    changePrintJob("quantity", q)
+  }
   const changeMaterial = (x) => changePrintJob("material", x);
   const changeColor = (x) => changePrintJob("color", x);
   const changeCompletionDate = (x) => changePrintJob("completionDate", x.target.value);
@@ -133,6 +136,7 @@ export default function Configure({ printJob, changePrintJob }) {
   const changeRadius = (x) => changePrintJob("radius", x);
   const changeLatitude = (x) => changePrintJob("latitude", x);
   const changeLongitude = (x) => changePrintJob("longitude", x);
+  const changeJobName = (x) => changePrintJob("jobName", x.target.value);
 
   // Map-Related Constants
   const [circleKey, setCircleKey] = useState(0);
@@ -186,7 +190,7 @@ export default function Configure({ printJob, changePrintJob }) {
                     type="number"
                     min="1"
                     max="999"
-                    value={quantity}
+                    value={printJob.quantity}
                     onChange={changeQuantity}
                     onKeyDown={(e) => {
                       if (!/[0-9]/.test(e.key) && e.keyCode !== 8) {
