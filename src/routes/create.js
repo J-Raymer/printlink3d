@@ -7,7 +7,6 @@ import Configure from "./configure";
 import Upload from "./upload";
 import { addJob, uploadThumbnail, uploadStl } from "../backend";
 import { firebaseDb } from "../firebase/firebase";
-import { doc, updateDoc } from "firebase/firestore"
 import { useAuth } from "../contexts/authContext/index";
 import { getDate } from "../utils";
 
