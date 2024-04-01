@@ -22,9 +22,9 @@ export default function Browse() {
     lat: 48.4284,
     lng: -123.3656,
   });
-  const [radius, setRadius] = useState(0);
+  const [radius, setRadius] = useState(50);
   const [search_value, setSearchValue] = useState(null);
-  const apiKey = 'AIzaSyBN9FNice6SVThI5Yo_MmQS9Or-votMad8';
+  const apiKey = 'AIzaSyCe8pXdsTx4MXjIr0JSF10N08Y3oMxoFk8';
   // Other Constants
   const [availableColors, setAvailableColors] = useState([]);
   const [availableMaterials, setAvailableMaterials] = useState([]);
