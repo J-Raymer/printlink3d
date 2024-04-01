@@ -18,7 +18,6 @@ export async function getReviewsForUser(db, targetUserUid) {
   const q = query(docRef, where("targetUserUid", "==", targetUserUid));
   const querySnapshot = await getDocs(q);
   const ratings = querySnapshot.docs.map(doc => doc.data());
-  console.log(ratings);
   return ratings;
 }
 
