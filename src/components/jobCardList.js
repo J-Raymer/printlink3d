@@ -15,6 +15,7 @@ export default function JobCardList({ jobs, filters, selectedJob, onSelectJob, o
             onSelectJob={onSelectJob}
             onUnselectJob={onUnselectJob}
             img={job.thumbnail}
+            showBidStats={true}
           />);
         }})
       }
