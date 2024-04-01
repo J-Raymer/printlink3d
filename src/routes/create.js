@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { doc, updateDoc } from "firebase/firestore"
 import { useNavigate, Navigate } from "react-router-dom";
 import MultiStepForm from "../components/multistepform";
 import MultiStepFormPage from "../components/multistepformpage";
@@ -6,7 +7,6 @@ import Configure from "./configure";
 import Upload from "./upload";
 import { addJob, uploadThumbnail, uploadStl } from "../backend";
 import { firebaseDb } from "../firebase/firebase";
-import { doc, updateDoc } from "firebase/firestore"
 import { useAuth } from "../contexts/authContext/index"
 
 export default function Create() {
@@ -44,6 +44,7 @@ export default function Create() {
     const db_entry = {
       CustomerUid: userContext.currUser.uid,
       PrinterUid: null,
+      BidderUid: [],
       FileName: printJob.file.name,
       Quantity: printJob.quantity,
       Material: printJob.material,
@@ -59,10 +60,12 @@ export default function Create() {
         'Exchanged': null,
       },
       UploadedFile: false,
+      AcceptedBid: null,
       Complete: false,
-      Radius: printJob.radius,
-      Latitude: printJob.latitude,
-      Longitude: printJob.longitude,
+      //Broken when merging main
+      //Radius: printJob.radius,
+      //Latitude: printJob.latitude,
+      //Longitude: printJob.longitude,
     };
 
     addJob(firebaseDb, db_entry)

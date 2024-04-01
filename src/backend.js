@@ -1,6 +1,7 @@
-import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
+import { addDoc, collection, getDocs, query, where, orderBy, onSnapshot, updateDoc, doc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { firebaseStorage } from "./firebase/firebase";
+import { firebaseDb } from "./firebase/firebase";
 
 export async function addJob(db, DocData) {
   const docRef = await addDoc(collection(db, "Jobs"), DocData);
@@ -9,10 +10,12 @@ export async function addJob(db, DocData) {
 
 export async function addCustomer(db, DocData) {
   const docRef = await addDoc(collection(db, "Customers"), DocData);
+  return docRef
 }
 
 export async function addPrinter(db, DocData) {
   const docRef = await addDoc(collection(db, "Printers"), DocData);
+  return docRef
 }
 
 export async function getAllJobs(db) {
@@ -69,6 +72,52 @@ export async function getColors(db) {
   const querySnapshot = await getDocs(docRef);
   const colors = querySnapshot.docs.map(doc => doc.data().Color);
   return colors;
+}
+
+export async function addBid(jobId, bid) {
+  const bidHistoryRef = collection(firebaseDb, `Jobs/${jobId}/BidHistory`);
+  return addDoc(bidHistoryRef, bid);
+}
+
+export function updateBid(jobId, bidId, update) {
+  const bidRef = doc(firebaseDb, `Jobs/${jobId}/BidHistory/${bidId}`);
+  return updateDoc(bidRef, update);
+}
+
+export async function getActiveBids(jobId) {
+  const bidHistoryRef = collection(firebaseDb, `Jobs/${jobId}/BidHistory`);
+  const bidsQuery = query(bidHistoryRef, where("Active", "==", true), orderBy("Timestamp", "desc"));
+      
+  const bidsSnapshot = await getDocs(bidsQuery);
+  const bids = []
+      
+  bidsSnapshot.docs.forEach((doc) => {
+      const data = doc.data();
+      const bid = {
+          id: doc.id,
+          uid: data.PrinterUid,
+          amount: Number(data.Amount).toFixed(2),
+          timestamp: data.Timestamp
+      }
+      bids.push(bid);
+  });
+
+  return bids;
+}
+
+export function bidListener(jobId, snapshotCallback, uid=null) {
+  const bidHistoryRef = collection(firebaseDb, `Jobs/${jobId}/BidHistory`);
+  let bidsQuery = null;
+  (uid === null) ? 
+    bidsQuery = query(bidHistoryRef, where("Active", "==", true), orderBy("Timestamp", "desc")) :
+    bidsQuery = query(bidHistoryRef, where("Active", "==", true), where("PrinterUid", "==", uid));
+  const unsubscribe = onSnapshot(bidsQuery, (snapshot) => {snapshotCallback(snapshot)});
+  return unsubscribe;
+}
+
+export function updateJob(jobId, update) {
+  const jobRef = doc(firebaseDb, `Jobs/${jobId}`);
+  return updateDoc(jobRef, update);
 }
 
 export async function getThumbnail(jobId) {
