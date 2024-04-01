@@ -2,16 +2,17 @@ import JobCardList from "../components/jobCardList";
 import React, { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { firebaseDb } from "../firebase/firebase";
-import { collection, doc, onSnapshot, updateDoc, query, where } from "firebase/firestore";
+import { collection, onSnapshot, query, where, arrayUnion } from "firebase/firestore";
 import Selector from "../components/selector";
 import MultiStepForm from "../components/multistepform";
 import MultiStepFormPage from "../components/multistepformpage";
 import { useAuth } from "../contexts/authContext";
 import { useNavigate } from "react-router-dom";
-import { getThumbnail, getColors, getMaterials } from "../backend";
+import { getThumbnail, getColors, getMaterials, updateJob, addBid } from "../backend";
 import GooglePlacesAutocomplete, { geocodeByPlaceId, getLatLng} from 'react-google-places-autocomplete';
 import TextForm from "../components/textForm";
 import { LoadScript } from '@react-google-maps/api';
+import { BidSubmission } from "../components/bids";
 const libraries = ['places'];
 
 
@@ -27,6 +28,9 @@ export default function Browse() {
     "bid_order": 0,
   });
   const [bidIsValid, setBidIsValid] = useState(null);
+  const userContext = useAuth();
+  const uid = userContext.currUser.uid;
+  const navigate = useNavigate();
   
   useEffect(() => {
     async function fetchColors() {
@@ -46,7 +50,8 @@ export default function Browse() {
 
   useEffect(() => {
     const jobRef = collection(firebaseDb, 'Jobs');
-    const jobQuery = query(jobRef, where("PrinterUid", "==", null), where("UploadedFile", "==", true));
+    const jobQuery = query(jobRef, where("PrinterUid", "==", null), 
+                                  where("UploadedFile", "==", true));
     
     const unsubscribe = onSnapshot(jobQuery, async (snapshot) => {
       try {
@@ -54,32 +59,38 @@ export default function Browse() {
   
         await Promise.all(snapshot.docs.map(async (doc) => {
           const data = doc.data();
-          let thumbnail = null;
-          
-          try {
-            thumbnail = await getThumbnail(doc.id);
-          } catch (error) {
-            console.error("Error fetching thumbnail: ", error)
-            thumbnail = null;
-          }
 
-          fetchedJobs.push({
-            thumbnail: thumbnail,
-            doc: doc.id,
-            infill: data.Infill,
-            material: data.Material,
-            distance: data.Radius,
-            fileName: data.FileName,
-            file: data.File,
-            name: data.Name,
-            email: data.Email,
-            color: data.Color,
-            layerHeight: data.LayerHeight,
-            quantity: data.Quantity,
-            comment: data.Comment,
-            completionDate: data.CompletionDate,
-            history: data.History,
-          });
+          if ((data.BidderUid !== undefined) && (! data.BidderUid.includes(uid))) {
+            let thumbnail = null;
+
+            try {
+              thumbnail = await getThumbnail(doc.id);
+            } catch (error) {
+              console.error("Error fetching thumbnail: ", error)
+              thumbnail = null;
+            }
+  
+            fetchedJobs.push({
+              jobName: data.JobName,
+              thumbnail: thumbnail,
+              doc: doc.id,
+              infill: data.Infill,
+              material: data.Material,
+              distance: data.Radius,
+              file: data.File,
+              name: data.Name,
+              email: data.Email,
+              color: data.Color,
+              layerHeight: data.LayerHeight,
+              quantity: data.Quantity,
+              comment: data.Comment,
+              completionDate: data.CompletionDate,
+              bidHistory: data.BidHistory,
+              history: data.History,
+            });
+          } else {
+            console.log("Not parsing: ", doc);
+          }     
         }));
         console.log(fetchedJobs);
         setJobs(fetchedJobs);
@@ -91,10 +102,7 @@ export default function Browse() {
     return () => {
       unsubscribe();
     };
-  }, []);
-
-  const userContext = useAuth();
-  const navigate = useNavigate();
+  }, [uid]);
 
   const onSelectJob = (job) => {
     setSelectedJob(job);
@@ -117,21 +125,13 @@ export default function Browse() {
   const isFilterSelected = (category, label) => {
     return filters[category].includes(label);
   }
-  const getDate = () => {
-    const date = new Date();
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-    const year = date.getFullYear();
 
-    return `${day}/${month}/${year}`;
-  }
+  const onBidSubmit = async (bidDetails) => {
+    const jobId = selectedJob.doc;
+    const uid = userContext.currUser.uid;
 
-  const onSubmit = () => {
-    var updatedHistory = selectedJob.history;
-    updatedHistory["Accepted"] = getDate();
-
-    const docRef = doc(firebaseDb, `Jobs/${selectedJob.doc}`);
-    updateDoc(docRef, { PrinterUid: userContext.currUser.uid, History: updatedHistory })
+    await addBid(jobId, bidDetails);
+    updateJob(jobId, { BidderUid: arrayUnion(uid) })
       .then(() => { navigate(`/Jobs/${selectedJob.doc}`) });
   };
 
@@ -183,10 +183,9 @@ export default function Browse() {
       {!userContext.userLoggedIn && <Navigate to={"/login"} replace={true} />}
 
       <MultiStepForm
-        submitText="Submit Bid"
+        showSubmit={false}
         showNext={selectedJob !== null}
-        validDetails={bidIsValid}
-        handleSubmit={onSubmit}
+        validDetails={true}
       >
         <MultiStepFormPage title="Select Job">
           <div className="flex h-full">
@@ -314,6 +313,7 @@ export default function Browse() {
                   { (!bidIsValid && bidIsValid !== null) && <p className="text-red-600">Your bid must be numeric, positive, and non-empty. ie: 12.34</p> }
                   <p className="text-xl font-bold mt-6">Current Bid Range: </p>
                   <p className="fg-brand-blue text-4xl font-bold mt-1">$12.32 - $56.32</p>
+                  <BidSubmission jobId={selectedJob.doc} callback={onBidSubmit}/>
                 </div>
               </div>
             </div>
