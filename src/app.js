@@ -12,7 +12,6 @@ import Register from "./routes/register.js";
 import Login from "./routes/login.js";
 import { AuthProvider, useAuth } from "./contexts/authContext/index.jsx";
 
-console.log(process.env);
 function Layout() {
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const [delayHandler, setDelayHandler] = useState(null);
