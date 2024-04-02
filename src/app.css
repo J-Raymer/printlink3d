@@ -133,6 +133,20 @@ nav h2 {
             mask-composite: exclude;
 }
 
+.brand-tab-selected-customer {
+  background: var(--p3d-brand-blue);
+  border-color: #aaa;
+  color: white;
+  border-radius: 5px 5px 0 0;
+}
+
+.brand-tab-selected-printer {
+  background: var(--p3d-brand-purple);
+  border-color: #aaa;
+  color: white;
+  border-radius: 5px 5px 0 0;
+}
+
 @media screen(sm) {
   .cta-button {
     height: 40vw;
