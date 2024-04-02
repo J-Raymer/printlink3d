@@ -1,26 +1,32 @@
 name: Deploy to GitHub Pages
+
 on:
   push:
     branches:
-      - master
+      - main
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v1
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install dependencies
+        run: npm install
 
       - name: Build
-        run: |
-          npm install
-          npm run-script build
-        env:
-          REACT_APP_FIREBASE_KEY: ${{ secrets.REACT_APP_FIREBASE_KEY }}
-          REACT_APP_GOOGLE_KEY: ${{ secrets.REACT_APP_GOOGLE_KEY }}
+        run: npm run build
 
-      - name: Deploy
-        uses: J-Raymer/github-pages-deploy-action@4.0.0
+      - name: Deploy to GitHub Pages
+        uses: J-Raymer/github-pages-deploy-action@releases/v3
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BRANCH: gh-pages
-          FOLDER: dist
+          BRANCH: gh-pages # Change this if you're deploying to a different branch
+          FOLDER: build # Change this to the directory containing your build files
