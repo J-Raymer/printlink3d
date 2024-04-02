@@ -12,6 +12,7 @@
     "@vis.gl/react-google-maps": "^0.7.1",
     "dotenv": "^16.4.5",
     "firebase": "^10.8.0",
+    "gh-pages": "^6.1.1",
     "react": "^18.2.0",
     "react-currency-input-field": "^3.8.0",
     "react-dom": "^18.2.0",
