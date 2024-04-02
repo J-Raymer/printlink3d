@@ -371,25 +371,3 @@ export function BidStatus ({jobId}) {
         </div>
     )
   }
-/*
-
-                    <p className="text-xl font-bold mt-6">Current Bid Range: </p>
-                    <p className="fg-brand-blue text-4xl font-bold mt-1">$12.32 - $56.32</p>
-
-
-                        <div className="text-lg font-semibold">
-                        Current Bid Range:
-                        </div>
-                        <div className="text-lg text-blue-500 font-semibold px-3">
-                            {(stats.count === 1) ? (
-                                <div>
-                                    ${stats.low}
-                                </div>
-                            ) : (
-                                <div>
-                                    ${stats.low} - ${stats.high} CAD
-                                </div>
-                            )
-                            }
-                        </div>
-                    */

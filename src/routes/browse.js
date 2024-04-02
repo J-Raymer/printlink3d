@@ -94,7 +94,6 @@ export default function Browse() {
             console.log("Not parsing: ", doc);
           }     
         }));
-        console.log(fetchedJobs);
         setJobs(fetchedJobs);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -321,8 +320,3 @@ export default function Browse() {
     </div>
   );
 }
-
-/*
-
-                  { (!bidIsValid && bidIsValid !== null) && <p className="text-red-600">Your bid must be numeric, positive, and non-empty. ie: 12.34</p> }
-                  */
