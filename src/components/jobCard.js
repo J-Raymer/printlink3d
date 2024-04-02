@@ -17,9 +17,11 @@ export default function JobCard({
     !isSelected ? onSelectJob(job) : onUnselectJob();
   };
 
-  if (showBidStats) {
-    GetBidStats(job.doc, setBidStats);
-  }
+  useEffect(() => {
+    if (showBidStats) {
+      GetBidStats(job.doc, setBidStats);
+    }
+  }, []);
 
   return (
     <div
@@ -145,13 +147,12 @@ export function BidJobCard ({ job, isPrinter, onSelectJob}) {
     
     useEffect(() => {
         const unsubscribe = bidListener(job.id, updateBidCallback, uid);
-  
+        GetBidStats(job.id, setBidStats);
+
         return () => {
             unsubscribe(); // Cleanup function to unsubscribe from real-time updates when the component unmounts
         };
     }, [uid]);
-
-    GetBidStats(job.id, setBidStats);
 
     return (
       <div className="pl-5 pt-5 text-gray-600">
@@ -195,7 +196,7 @@ export function BidJobCard ({ job, isPrinter, onSelectJob}) {
                   </span>
                 ) : (
                   <span className="font-normal">
-                    
+                    0
                   </span>
                 )}
               </p>
