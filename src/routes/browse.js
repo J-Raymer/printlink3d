@@ -13,6 +13,7 @@ import GooglePlacesAutocomplete, { geocodeByPlaceId, getLatLng} from 'react-goog
 import TextForm from "../components/textForm";
 import { LoadScript } from '@react-google-maps/api';
 import { BidSubmission } from "../components/bids";
+import { ReviewCard } from "../components/reviewCard";
 const libraries = ['places'];
 
 
@@ -87,6 +88,7 @@ export default function Browse() {
               completionDate: data.CompletionDate,
               bidHistory: data.BidHistory,
               history: data.History,
+              cuid: data.CustomerUid,
             });
           } else {
             console.log("Not parsing: ", doc);
@@ -175,7 +177,7 @@ export default function Browse() {
   });
   const [radius, setRadius] = useState(0);
   const [search_value, setSearchValue] = useState(null);
-  const apiKey = 'AIzaSyBN9FNice6SVThI5Yo_MmQS9Or-votMad8';
+  const apiKey = 'AIzaSyBeu0giaCGz9vMeTn1HBRtTRlWQuVZwpZs';
 
 
   return (
@@ -305,14 +307,9 @@ export default function Browse() {
               <div className="flex flex-row gap-5 h-[50%] w-full">
                 <div className="w-[50%] rounded border border-gray-300 p-6">
                   <h2 className="text-3xl font-bold">Customer Reviews</h2>
-                  <p>{selectedJob.Name}</p>
+                  <ReviewCard userId={selectedJob.cuid}/>
                 </div>
                 <div className="w-[50%] rounded border border-gray-300 p-6">
-                  <h2 className="text-3xl font-bold">Place Your Bid</h2>
-                  <input type="number" step=".01" min="0" className="p-2 text-xl w-full border border-gray-500 rounded mt-4" placeholder="Example: 123.45" onChange={onBidChanged}/>
-                  { (!bidIsValid && bidIsValid !== null) && <p className="text-red-600">Your bid must be numeric, positive, and non-empty. ie: 12.34</p> }
-                  <p className="text-xl font-bold mt-6">Current Bid Range: </p>
-                  <p className="fg-brand-blue text-4xl font-bold mt-1">$12.32 - $56.32</p>
                   <BidSubmission jobId={selectedJob.doc} callback={onBidSubmit}/>
                 </div>
               </div>
@@ -324,3 +321,8 @@ export default function Browse() {
     </div>
   );
 }
+
+/*
+
+                  { (!bidIsValid && bidIsValid !== null) && <p className="text-red-600">Your bid must be numeric, positive, and non-empty. ie: 12.34</p> }
+                  */

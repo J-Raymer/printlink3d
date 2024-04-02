@@ -47,28 +47,28 @@ export default function JobCard({
         <div className="uppercase tracking-wide text-sm text-indigo-500 font-semibold">
           {job.jobName}
         </div>
-        <p className="mt-2">
+        <p className="mt-1">
           <span className="font-semibold mt-2">Material: </span>
           <span className="font-normal">{job.material}</span>
         </p>
-        <p className="mt-2">
+        <p className="mt-1">
           <span className="font-semibold">Infill: </span>
           <span className="font-normal">{job.infill}</span>
         </p>
-        <p className="mt-2">
+        <p className="mt-1">
           <span className="font-semibold">Color: </span>
           <span className="font-normal">{job.color}</span>
         </p>
-        <p className="mt-2">
+        <p className="mt-1">
           <span className="font-semibold">Quantity: </span>
           <span className="font-normal">{job.quantity}</span>
         </p>
         {(showBidStats) ? (  
-          <p className="mt-2">
-            <span className="font-semibold">Lowest Bid: </span>
+          <p className="mt-1">
+            <span className="font-semibold">Bid Range: </span>
             {(bidStats !== null) ? (
               <span className="font-normal">
-                ${bidStats.low} CAD
+                ${bidStats.low} : ${bidStats.high} CAD
               </span>
             ) : (
               <span className="font-normal">

@@ -57,31 +57,24 @@ function BidStats( {jobId} ) {
     return (
         <div>
             {(showStats) ? (
-                <div >
+                <div className="flex flex-col">
                     <div className="m-2 flex gap-3">
-                        <div className="text-lg font-semibold">
-                        Current Bid Count:
-                        </div>
-                        <div className="text-lg text-blue-500 font-semibold px-3">
+                        <p className="text-lg text-blue-500 font-semibold">
                             {stats.count}
-                        </div>
+                        </p>
+                        { stats.count === 1 ?
+                        <p className="text-lg">person has placed a bid.</p>
+                        :
+                        <p className="text-lg">people have placed bids.</p>
+                        }
                     </div>
-                    <div className="m-2 flex gap-3">
-                        <div className="text-lg font-semibold">
-                        Current Bid Range:
-                        </div>
-                        <div className="text-lg text-blue-500 font-semibold px-3">
-                            {(stats.count === 1) ? (
-                                <div>
-                                    ${stats.low}
-                                </div>
-                            ) : (
-                                <div>
-                                    ${stats.low} - ${stats.high} CAD
-                                </div>
-                            )
-                            }
-                        </div>
+                    <div className="m-2 flex gap-3 flex-col">
+                        <p className="text-xl font-bold mt-6">Current Bid Range: </p>
+                        { stats.count === 1 ?
+                        <p className="fg-brand-blue text-4xl font-bold mt-1">${stats.low} CAD</p>
+                        :
+                        <p className="fg-brand-blue text-4xl font-bold mt-1">${stats.low} - ${stats.high} CAD</p>
+                        }
                     </div>
                 </div>
             ) : (
@@ -119,34 +112,30 @@ export function BidSubmission({ jobId, callback }) {
 
     return (
         <div>
-            <div className="border border-2 mt-2 p-3 rounded-md">
-                <div className="text-lg font-semibold">
-                    My Bid:
-                </div>
-                <div className="m-2 flex gap-2">
-                  <div className="border border-2 py-2 px-4 rounded-md">
-                    <div className="flex gap-1">
-                        <CurrencyInput
-                        placeholder="Enter your bid"
-                        allowNegativeValue={false}
-                        value={currentBid}
-                        prefix="$ "
-                        step={1}
-                        onValueChange={handleBidChange} />
-                        <div>
-                            CAD
-                        </div>
-                    </div>
+          <h2 className="text-3xl font-bold">Place Your Bid</h2>
+          <div className="my-2 flex gap-2">
+            <div className="border border-2 py-2 px-4 rounded-md flex-grow">
+              <div className="flex gap-1">
+                  <CurrencyInput
+                  className="w-full"
+                  placeholder="Enter your bid"
+                  allowNegativeValue={false}
+                  value={currentBid}
+                  prefix="$ "
+                  step={1}
+                  onValueChange={handleBidChange} />
+                  <div>
+                      CAD
                   </div>
-                  <div className=" bg-brand-blue border border-brand-blue text-white font-bold py-2 px-4 rounded-md">
-                    <button className="" 
-                            onClick={onSubmission}>
-                                Place Bid
-                    </button>
-                  </div>
-                </div>
-                <BidStats jobId={jobId}/>                
-            </div>            
+              </div>
+            </div>
+            { currentBid == null ?
+            <button className="bg-gray-200 border border-gray-400 text-gray-700 opacity-50 cursor-not-allowed font-bold py-2 px-4 rounded-md">Place Bid</button>
+            :
+            <button className="bg-brand-blue border border-brand-blue text-white font-bold py-2 px-4 rounded-md" onClick={onSubmission}>Place Bid</button>
+            }
+          </div>
+          <BidStats jobId={jobId}/>                
         </div>
     )
 }
@@ -383,3 +372,25 @@ export function BidStatus ({jobId}) {
         </div>
     )
   }
+/*
+
+                    <p className="text-xl font-bold mt-6">Current Bid Range: </p>
+                    <p className="fg-brand-blue text-4xl font-bold mt-1">$12.32 - $56.32</p>
+
+
+                        <div className="text-lg font-semibold">
+                        Current Bid Range:
+                        </div>
+                        <div className="text-lg text-blue-500 font-semibold px-3">
+                            {(stats.count === 1) ? (
+                                <div>
+                                    ${stats.low}
+                                </div>
+                            ) : (
+                                <div>
+                                    ${stats.low} - ${stats.high} CAD
+                                </div>
+                            )
+                            }
+                        </div>
+                    */
