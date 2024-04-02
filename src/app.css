@@ -90,6 +90,29 @@ nav h2 {
   text-align: center;
 }
 
+.browse-table tr td {
+  padding-top: 8px;
+}
+
+.stars {
+  position: relative;
+  display: inline-block;
+}
+
+.bg {
+  opacity: 0.35;
+  filter: grayscale(1);
+}
+
+.stars::after {
+  content: '⭐⭐⭐⭐⭐';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(100% * var(--rating));
+  overflow: hidden;
+}
+
 .full-screen {
   /* 
    * 2.5rem -> title height

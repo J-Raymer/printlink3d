@@ -28,6 +28,7 @@ import GooglePlacesAutocomplete, {
 import TextForm from "../components/textForm";
 import { LoadScript } from "@react-google-maps/api";
 import { BidSubmission } from "../components/bids";
+import { RatingStatsCard } from "../components/ratingStatsCard";
 const libraries = ["places"];
 
 export default function Browse() {
@@ -52,6 +53,7 @@ export default function Browse() {
     longitude: selectedLocation.lng,
     bid_order: 0,
   });
+  const [bidIsValid, setBidIsValid] = useState(null);
   const userContext = useAuth();
   const uid = userContext.currUser.uid;
   const navigate = useNavigate();
@@ -118,6 +120,7 @@ export default function Browse() {
                 radius: data.Radius,
                 lat: data.Latitude,
                 lng: data.Longitude,
+                cuid: data.CustomerUid,
               });
             } else {
               console.log("Not parsing: ", doc);
@@ -186,6 +189,20 @@ export default function Browse() {
         ))}
       </div>
     );
+  };
+
+  const onBidChanged = (e) => {
+    if (e.target.value == "") {
+      setBidIsValid(false);
+      return;
+    }
+    if (!isNaN(+e.target.value)) {
+      if (Number(+e.target.value) < 0) {
+        setBidIsValid(false);
+        return;
+      }
+      setBidIsValid(true);
+    }
   };
 
   return (
@@ -303,53 +320,75 @@ export default function Browse() {
         </MultiStepFormPage>
         <MultiStepFormPage title="Confirm">
           {selectedJob && (
-            <div>
-              <div style={{ display: "flex", alignItems: "center" }}>
+            <div className="flex flex-col h-full gap-5">
+              <div className="flex flex-row gap-5 h-[50%]">
                 <img
-                  className="h-96 w-full object-cover md:w-96"
+                  className="object-cover rounded"
                   src={selectedJob.thumbnail}
                   alt={selectedJob.fileName}
                 />
-                <div className="ml-5">
-                  <p>
-                    <strong>File Name:</strong> {selectedJob.fileName}
+                <div className="p-6 flex-grow rounded border border-gray-300">
+                  <h2 className="text-3xl font-bold">Job Parameters</h2>
+                  <p className="text-gray-400 text-l font-bold">
+                    Please ensure your printer can handle the job specifications
+                    listed below
                   </p>
-                  <br />
-                  <p>
-                    <strong>Infill:</strong> {selectedJob.infill}
-                  </p>
-                  <br />
-                  <p>
-                    <strong>Material:</strong> {selectedJob.material}
-                  </p>
-                  <br />
-                  <p>
-                    <strong>Color:</strong> {selectedJob.color}
-                  </p>
-                  <br />
-                  <p>
-                    <strong>Layer Height:</strong> {selectedJob.layerHeight}
-                  </p>
-                  <br />
-                  <p>
-                    <strong>Quantity:</strong> {selectedJob.quantity}
-                  </p>
-                  <br />
-                  <p>
-                    <strong>Completion Date:</strong>{" "}
-                    {selectedJob.completionDate !== ""
-                      ? selectedJob.completionDate
-                      : "None"}
-                  </p>
-                  <br />
-                  <p>
-                    <strong>Comment:</strong>{" "}
-                    {selectedJob.comment !== "" ? selectedJob.comment : "None"}
-                  </p>
+
+                  <table className="browse-table text-l mt-3">
+                    <tr>
+                      <td className="w-[160px]">File Name: </td>
+                      <td>{selectedJob.fileName}</td>
+                    </tr>
+                    <tr>
+                      <td>Infill:</td>
+                      <td>{selectedJob.infill}</td>
+                    </tr>
+                    <tr>
+                      <td>Material:</td>
+                      <td>{selectedJob.material}</td>
+                    </tr>
+                    <tr>
+                      <td>Colour:</td>
+                      <td>{selectedJob.color}</td>
+                    </tr>
+                    <tr>
+                      <td>Layer Height:</td>
+                      <td>{selectedJob.layerHeight}</td>
+                    </tr>
+                    <tr>
+                      <td>Quantity:</td>
+                      <td>{selectedJob.quantity}</td>
+                    </tr>
+                    <tr>
+                      <td>Completion Date:</td>
+                      <td>
+                        {selectedJob.completionDate !== ""
+                          ? selectedJob.completionDate
+                          : "None"}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Comment:</td>
+                      <td>
+                        {selectedJob.comment !== ""
+                          ? selectedJob.comment
+                          : "None"}
+                      </td>
+                    </tr>
+                  </table>
                 </div>
               </div>
-              <div className="flex">
-                <BidSubmission jobId={selectedJob.doc} callback={onBidSubmit} />
+              <div className="flex flex-row gap-5 h-[50%] w-full">
+                <div className="w-[50%] rounded border border-gray-300 p-6">
+                  <h2 className="text-3xl font-bold">Customer Reviews</h2>
+                  <RatingStatsCard userId={selectedJob.cuid} />
+                </div>
+                <div className="w-[50%] rounded border border-gray-300 p-6">
+                  <BidSubmission
+                    jobId={selectedJob.doc}
+                    callback={onBidSubmit}
+                  />
+                </div>
               </div>
             </div>
           )}

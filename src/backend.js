@@ -171,3 +171,32 @@ export async function uploadStl(file, jobName, jobId) {
   var storageRef = ref(firebaseStorage, `print-files/${jobName + "_" + jobId}.stl`);
   uploadBytes(storageRef, file);
 }
+
+export async function getUserRatingStats(userId) {
+  const ratingRef = collection(firebaseDb, `Ratings`);
+  const ratingQuery = query(ratingRef, where("targetUserUid", "==", userId));
+      
+  const ratingSnapshot = await getDocs(ratingQuery);
+
+  const ratingStats = {
+    averageAll: 0,
+    averageCommunication: 0,
+    averageExchange: 0,
+    totalRatings: 0,
+  }
+      
+  ratingSnapshot.docs.forEach((doc) => {
+    const data = doc.data();
+    ratingStats.averageAll += data.averageRating;
+    ratingStats.averageCommunication += data.communicationRating;
+    ratingStats.averageExchange += data.exchangeRating;
+    ratingStats.totalRatings += 1;
+  });
+
+  ratingStats.averageAll /= ratingStats.totalRatings;
+  ratingStats.averageCommunication /= ratingStats.totalRatings;
+  ratingStats.averageExchange /= ratingStats.totalRatings;
+
+
+  return ratingStats;
+}
