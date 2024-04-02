@@ -15,6 +15,13 @@ jobs:
       - name: Checkout 🛎️
         uses: actions/checkout@v4
 
+      - name: Build
+        run: |
+          npm install
+        env:
+          REACT_APP_INSTAGRAM_ACCESS_TOKEN: ${{ secrets.REACT_APP_INSTAGRAM_ACCESS_TOKEN }}
+          REACT_APP_SMTP_SECURE_TOKEN: ${{ secrets.REACT_APP_SMTP_SECURE_TOKEN }}
+
       - name: Deploy with gh-pages
         run: |
           git remote set-url origin https://git:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
