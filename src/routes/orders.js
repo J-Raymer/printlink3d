@@ -95,17 +95,17 @@ return (
                 <Tabs selectedTabClassName={(isPrinter) ? "brand-tab-selected-printer": "brand-tab-selected-customer"}>
                   <TabList className="flex">
                     <Tab className="w-1/3">
-                    <div className="text-xl font-extrabold p-3 text-center">
+                    <div className="text-xl font-extrabold p-3 text-center cursor-default">
                       {(isPrinter) ? (<>Bid Jobs</>) : (<>Listed Orders</>)}
                     </div>
                     </Tab>
                     <Tab className="w-1/3">
-                    <div className="text-xl font-extrabold p-3 text-center">
+                    <div className="text-xl font-extrabold p-3 text-center cursor-default">
                       {(isPrinter) ? (<>Current Jobs</>) : (<>Accepted Orders</>)}
                     </div>
                     </Tab>    
                     <Tab className="w-1/3">
-                    <div className="text-xl font-extrabold p-3 text-center">
+                    <div className="text-xl font-extrabold p-3 text-center cursor-default">
                       {(isPrinter) ? (<>Complete Jobs</>) : (<>Complete Orders</>)}
                     </div>
                     </Tab>                     
