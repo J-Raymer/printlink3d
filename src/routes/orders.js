@@ -84,51 +84,52 @@ export default function Orders({isPrinter=false}) {
       };
     }, [isPrinter, uid]);
     
-    return (  
-        <div >
-            {(dataLoading)?
-              (<></>) :
-              (
-                <div className="flex justify-center my-5">               
-                  <div className="w-1/2">
-                      <Tabs selectedTabClassName={(isPrinter) ? "brand-tab-selected-printer": "brand-tab-selected-customer"}>
-                        <TabList>
-                          <Tab>
-                          <div className="text-xl font-extrabold p-3">
-                            {(isPrinter) ? (<>Bid Jobs</>) : (<>Listed Orders</>)}
-                          </div>
-                          </Tab>
-                          <Tab>
-                          <div className="text-xl font-extrabold p-3">
-                            {(isPrinter) ? (<>Current Jobs</>) : (<>Accepted Orders</>)}
-                          </div>
-                          </Tab>    
-                          <Tab>
-                          <div className="text-xl font-extrabold p-3">
-                            {(isPrinter) ? (<>Complete Jobs</>) : (<>Complete Orders</>)}
-                          </div>
-                          </Tab>                     
-                        </TabList>
-                        <TabPanel>
-                          <div className="grid grid-cols-1 gap-4">
-                            {listedOrders.map((job) => (<BidJobCard job={job} isPrinter={isPrinter} onSelectJob={() => navigate(`/${(isPrinter)? "jobs": "orders"}/${job.id}`)} />))}
-                          </div>
-                        </TabPanel>
-                        <TabPanel>
-                          <div className="grid grid-cols-1 gap-4">
-                          {acceptedOrders.map((job) => (<JobCard job={job} onSelectJob={(job) => navigate(`/${(isPrinter)? "jobs": "orders"}/${job.id}`)} img={job.thumbnail}/>))}  
-                          </div>
-                        </TabPanel>
-                        <TabPanel>
-                          <div className="grid grid-cols-1 gap-4">
-                            {completeOrders.map((job) => (<JobCard job={job} onSelectJob={(job) => navigate(`/${(isPrinter)? "jobs": "orders"}/${job.id}`)} img={job.thumbnail}/>))}
-                          </div>
-                        </TabPanel>
-                      </Tabs>
-                  </div>
-                </div>
-              )
-            }    
-        </div>
-    )
+    // ...
+return (  
+  <div>
+      {(dataLoading)?
+        (<></>) :
+        (
+          <div className="flex justify-center my-5">               
+            <div className="w-1/2 mx-auto">
+                <Tabs selectedTabClassName={(isPrinter) ? "brand-tab-selected-printer": "brand-tab-selected-customer"}>
+                  <TabList className="flex">
+                    <Tab className="w-1/3">
+                    <div className="text-xl font-extrabold p-3 text-center">
+                      {(isPrinter) ? (<>Bid Jobs</>) : (<>Listed Orders</>)}
+                    </div>
+                    </Tab>
+                    <Tab className="w-1/3">
+                    <div className="text-xl font-extrabold p-3 text-center">
+                      {(isPrinter) ? (<>Current Jobs</>) : (<>Accepted Orders</>)}
+                    </div>
+                    </Tab>    
+                    <Tab className="w-1/3">
+                    <div className="text-xl font-extrabold p-3 text-center">
+                      {(isPrinter) ? (<>Complete Jobs</>) : (<>Complete Orders</>)}
+                    </div>
+                    </Tab>                     
+                  </TabList>
+                  <TabPanel>
+                    <div className="grid grid-cols-1 gap-4">
+                      {listedOrders.map((job) => (<BidJobCard job={job} isPrinter={isPrinter} onSelectJob={() => navigate(`/${(isPrinter)? "jobs": "orders"}/${job.id}`)} />))}
+                    </div>
+                  </TabPanel>
+                  <TabPanel>
+                    <div className="grid grid-cols-1 gap-4">
+                    {acceptedOrders.map((job) => (<JobCard job={job} onSelectJob={(job) => navigate(`/${(isPrinter)? "jobs": "orders"}/${job.id}`)} img={job.thumbnail}/>))}  
+                    </div>
+                  </TabPanel>
+                  <TabPanel>
+                    <div className="grid grid-cols-1 gap-4">
+                      {completeOrders.map((job) => (<JobCard job={job} onSelectJob={(job) => navigate(`/${(isPrinter)? "jobs": "orders"}/${job.id}`)} img={job.thumbnail}/>))}
+                    </div>
+                  </TabPanel>
+                </Tabs>
+            </div>
+          </div>
+        )
+      }    
+  </div>
+)
 }
