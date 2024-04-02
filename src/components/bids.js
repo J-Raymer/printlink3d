@@ -2,48 +2,27 @@ import { useState, useEffect } from "react";
 import { Timestamp, arrayRemove, collection, doc, updateDoc, addDoc } from "firebase/firestore";
 import CurrencyInput from "react-currency-input-field";
 import { useAuth } from "../contexts/authContext";
-import { bidListener, updateJob } from "../backend";
+import { bidListener, getActiveBids, updateJob } from "../backend";
 import { firebaseDb } from "../firebase/firebase";
 import { useNavigate } from "react-router-dom";
 
 export function GetBidStats(jobId, setProp) {
-    useEffect(() => {
-        const updateStats = (bidsSnapshot) => {
-            const bids = []
-          
-            bidsSnapshot.docs.forEach((doc) => {
-                const data = doc.data();
-                const bid = {
-                    id: doc.id,
-                    uid: data.PrinterUid,
-                    amount: Number(data.Amount),
-                    timestamp: data.Timestamp
-                }
-                bids.push(bid);
-            });
-    
-            if (bids.length > 0) {
-                const amounts = bids.map((bid) => bid.amount);
-    
-                const stats = {
-                    high: Math.max(...amounts).toFixed(2),
-                    low: Math.min(...amounts).toFixed(2),
-                    count: amounts.length,
-                    history: []
-                }
-                setProp(stats);
+    getActiveBids(jobId).then((bids) => {
+        if (bids.length > 0) {
+            const amounts = bids.map((bid) => bid.amount);
+
+            const stats = {
+                high: Math.max(...amounts).toFixed(2),
+                low: Math.min(...amounts).toFixed(2),
+                count: amounts.length,
+                history: []
             }
+        setProp(stats);
         }
-
-        const unsubscribe = bidListener(jobId, updateStats);
-
-        return () => {
-            unsubscribe();
-        };
-    }, [jobId, setProp]);
+    })
 }
 
-function BidStats( {jobId} ) {
+function BidStats( {jobId, statsReloadTrigger} ) {
     const [showStats, setShowStats] = useState(false);
     const [stats, setStats] = useState(null);
 
@@ -51,8 +30,10 @@ function BidStats( {jobId} ) {
         setStats(stats);
         setShowStats(true);
     }
-
-    GetBidStats(jobId, updateStats)
+    
+    useEffect (() => {
+        GetBidStats(jobId, updateStats);
+    }, [jobId, statsReloadTrigger]);
 
     return (
         <div>
@@ -264,7 +245,7 @@ export function BidStatus ({jobId}) {
     
     useEffect(() => {
         const unsubscribe = bidListener(jobId, updateBidCallback, uid);
-  
+        
         return () => {
             unsubscribe(); // Cleanup function to unsubscribe from real-time updates when the component unmounts
         };
@@ -375,7 +356,7 @@ export function BidStatus ({jobId}) {
                         </div>
                     </div>
                 </div>
-                <BidStats jobId={jobId} />
+                <BidStats jobId={jobId} statsReloadTrigger={latestBid}/>
             </div>
         ) : (<></>)
         }
