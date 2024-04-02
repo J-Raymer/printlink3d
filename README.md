@@ -76,7 +76,8 @@ npm start
 ## Deploy
 To deploy changes to live site (Github Pages: [https://j-raymer/printlink3d](https://j-raymer.github.io/printlink3d)):
 
-- merge main into gh-pages branch locally. The local branch should be the same as main not the same as the remote gh-pages branch.
+- Checkout target branch (main)
+- Update REACT_APP_GOOGLE_KEY with production key
 - Make sure the package.json has the following entries:
   ```
   "homepage": "https://jraymer.github.io/printlink3d",
@@ -98,6 +99,11 @@ npm run deploy
   ```
   npm i gh-pages
   ```
+  If the production environment variable is not getting pushed, try runing:
+  ```
+  npm start
+  ```
+  check updated env variable locally then deploy again.
 
 ## License
 This project is licensed under the Apache version 2.0
