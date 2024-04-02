@@ -1,6 +1,6 @@
 {
   "name": "app",
-  "homepage": "https://jraymer.github.io/printlink3d",
+  "homepage": "https://j-raymer.github.io/printlink3d",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -26,7 +26,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "CI=false react-scripts build",
+    "build": "react-scripts build",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
     "test": "react-scripts test",
