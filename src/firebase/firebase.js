@@ -4,7 +4,7 @@ import { getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAL-MdgOol7KOcEXtyaZ4mvkaLRSvqRsRk",
+  apiKey: process.env.REACT_APP_FIREBASE_KEY,
   authDomain: "printlink3d.firebaseapp.com",
   projectId: "printlink3d",
   storageBucket: "printlink3d.appspot.com",

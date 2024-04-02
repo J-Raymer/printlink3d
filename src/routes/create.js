@@ -70,10 +70,9 @@ export default function Create() {
       UploadedFile: false,
       AcceptedBid: null,
       Complete: false,
-      //Broken when merging main
-      //Radius: printJob.radius,
-      //Latitude: printJob.latitude,
-      //Longitude: printJob.longitude,
+      Radius: printJob.radius,
+      Latitude: printJob.latitude,
+      Longitude: printJob.longitude,
     };
 
     addJob(firebaseDb, db_entry)
