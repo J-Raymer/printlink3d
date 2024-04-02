@@ -1,0 +1,31 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v4
+
+      - name: Build
+        run: |
+          npm install
+          npm run build
+        env:
+          REACT_APP_INSTAGRAM_ACCESS_TOKEN: ${{ secrets.REACT_APP_INSTAGRAM_ACCESS_TOKEN }}
+          REACT_APP_SMTP_SECURE_TOKEN: ${{ secrets.REACT_APP_SMTP_SECURE_TOKEN }}
+
+      - name: Deploy with gh-pages
+        run: |
+          git remote set-url origin https://git:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
+          npx gh-pages -d build -u "github-actions-bot <support+actions@github.com>"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

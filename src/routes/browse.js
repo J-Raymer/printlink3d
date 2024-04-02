@@ -2,42 +2,67 @@ import JobCardList from "../components/jobCardList";
 import React, { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { firebaseDb } from "../firebase/firebase";
-import { collection, onSnapshot, query, where, arrayUnion } from "firebase/firestore";
+import {
+  collection,
+  onSnapshot,
+  query,
+  where,
+  arrayUnion,
+} from "firebase/firestore";
 import Selector from "../components/selector";
 import MultiStepForm from "../components/multistepform";
 import MultiStepFormPage from "../components/multistepformpage";
 import { useAuth } from "../contexts/authContext";
 import { useNavigate } from "react-router-dom";
-import { getThumbnail, getColors, getMaterials, updateJob, addBid } from "../backend";
-import GooglePlacesAutocomplete, { geocodeByPlaceId, getLatLng} from 'react-google-places-autocomplete';
+import {
+  getThumbnail,
+  getColors,
+  getMaterials,
+  updateJob,
+  addBid,
+} from "../backend";
+import GooglePlacesAutocomplete, {
+  geocodeByPlaceId,
+  getLatLng,
+} from "react-google-places-autocomplete";
 import TextForm from "../components/textForm";
-import { LoadScript } from '@react-google-maps/api';
+import { LoadScript } from "@react-google-maps/api";
 import { BidSubmission } from "../components/bids";
 import { RatingStatsCard } from "../components/ratingStatsCard";
-const libraries = ['places'];
-
-
+const libraries = ["places"];
 
 export default function Browse() {
+  // Map-Related Constants
+  const [selectedLocation, setSelectedLocation] = useState({
+    lat: 48.4284,
+    lng: -123.3656,
+  });
+  const [radius, setRadius] = useState(50);
+  const [search_value, setSearchValue] = useState(null);
+  const apiKey = process.env.REACT_APP_GOOGLE_KEY;
+  // Other Constants
   const [availableColors, setAvailableColors] = useState([]);
   const [availableMaterials, setAvailableMaterials] = useState([]);
   const [selectedJob, setSelectedJob] = useState(null);
   const [jobs, setJobs] = useState([]);
   const [filters, setFilters] = useState({
-    "materials": availableMaterials,
-    "colors": availableColors,
-    "bid_order": 0,
+    materials: availableMaterials,
+    colors: availableColors,
+    radius: radius,
+    latitude: selectedLocation.lat,
+    longitude: selectedLocation.lng,
+    bid_order: 0,
   });
   const [bidIsValid, setBidIsValid] = useState(null);
   const userContext = useAuth();
   const uid = userContext.currUser.uid;
   const navigate = useNavigate();
-  
+
   useEffect(() => {
     async function fetchColors() {
       const colors = await getColors(firebaseDb);
       setAvailableColors(colors);
-      setFilters(filters => ({ ...filters, colors: colors }));
+      setFilters((filters) => ({ ...filters, colors: colors }));
     }
     fetchColors();
   }, []);
@@ -50,55 +75,63 @@ export default function Browse() {
   }, []);
 
   useEffect(() => {
-    const jobRef = collection(firebaseDb, 'Jobs');
-    const jobQuery = query(jobRef, where("PrinterUid", "==", null), 
-                                  where("UploadedFile", "==", true));
-    
+    const jobRef = collection(firebaseDb, "Jobs");
+    const jobQuery = query(
+      jobRef,
+      where("PrinterUid", "==", null),
+      where("UploadedFile", "==", true)
+    );
+
     const unsubscribe = onSnapshot(jobQuery, async (snapshot) => {
       try {
         const fetchedJobs = [];
-  
-        await Promise.all(snapshot.docs.map(async (doc) => {
-          const data = doc.data();
 
-          if ((data.BidderUid !== undefined) && (! data.BidderUid.includes(uid))) {
-            let thumbnail = null;
+        await Promise.all(
+          snapshot.docs.map(async (doc) => {
+            const data = doc.data();
 
-            try {
-              thumbnail = await getThumbnail(doc.id);
-            } catch (error) {
-              console.error("Error fetching thumbnail: ", error)
-              thumbnail = null;
+            if (data.BidderUid !== undefined && !data.BidderUid.includes(uid)) {
+              let thumbnail = null;
+
+              try {
+                thumbnail = await getThumbnail(doc.id);
+              } catch (error) {
+                console.error("Error fetching thumbnail: ", error);
+                thumbnail = null;
+              }
+
+              fetchedJobs.push({
+                jobName: data.JobName,
+                thumbnail: thumbnail,
+                doc: doc.id,
+                infill: data.Infill,
+                material: data.Material,
+                distance: data.Radius,
+                file: data.File,
+                name: data.Name,
+                email: data.Email,
+                color: data.Color,
+                layerHeight: data.LayerHeight,
+                quantity: data.Quantity,
+                comment: data.Comment,
+                completionDate: data.CompletionDate,
+                bidHistory: data.BidHistory,
+                history: data.History,
+                radius: data.Radius,
+                lat: data.Latitude,
+                lng: data.Longitude,
+              });
+            } else {
+              console.log("Not parsing: ", doc);
             }
-  
-            fetchedJobs.push({
-              jobName: data.JobName,
-              thumbnail: thumbnail,
-              doc: doc.id,
-              infill: data.Infill,
-              material: data.Material,
-              distance: data.Radius,
-              file: data.File,
-              name: data.Name,
-              email: data.Email,
-              color: data.Color,
-              layerHeight: data.LayerHeight,
-              quantity: data.Quantity,
-              comment: data.Comment,
-              completionDate: data.CompletionDate,
-              bidHistory: data.BidHistory,
-              history: data.History,
-              cuid: data.CustomerUid,
-            });
-          } else {
-            console.log("Not parsing: ", doc);
-          }     
-        }));
+          })
+        );
+
         setJobs(fetchedJobs);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
-    })
+    });
 
     return () => {
       unsubscribe();
@@ -121,19 +154,20 @@ export default function Browse() {
       t.push(label);
     }
     setFilters({ ...filters, [category]: t });
-  }
+  };
 
   const isFilterSelected = (category, label) => {
     return filters[category].includes(label);
-  }
+  };
 
   const onBidSubmit = async (bidDetails) => {
     const jobId = selectedJob.doc;
     const uid = userContext.currUser.uid;
 
     await addBid(jobId, bidDetails);
-    updateJob(jobId, { BidderUid: arrayUnion(uid) })
-      .then(() => { navigate(`/Jobs/${selectedJob.doc}`) });
+    updateJob(jobId, { BidderUid: arrayUnion(uid) }).then(() => {
+      navigate(`/Jobs/${selectedJob.doc}`);
+    });
   };
 
   const renderColorSelector = () => {
@@ -148,17 +182,18 @@ export default function Browse() {
               defaultChecked={isFilterSelected("colors", color)}
               onChange={() => handleCheck("colors", color)}
             />
-            <label htmlFor={`color${index}`}> {color}</label><br />
+            <label htmlFor={`color${index}`}> {color}</label>
+            <br />
           </React.Fragment>
         ))}
       </div>
     );
-  }
+  };
 
   const onBidChanged = (e) => {
     if (e.target.value == "") {
       setBidIsValid(false);
-      return
+      return;
     }
     if (!isNaN(+e.target.value)) {
       if (Number(+e.target.value) < 0) {
@@ -167,17 +202,7 @@ export default function Browse() {
       }
       setBidIsValid(true);
     }
-  }
-
-  // Map-Related Constants
-  const [selectedLocation, setSelectedLocation] = useState({
-    lat: 48.4284,
-    lng: -123.3656,
-  });
-  const [radius, setRadius] = useState(0);
-  const [search_value, setSearchValue] = useState(null);
-  const apiKey = 'AIzaSyBeu0giaCGz9vMeTn1HBRtTRlWQuVZwpZs';
-
+  };
 
   return (
     <div>
@@ -194,12 +219,36 @@ export default function Browse() {
               <h2 className="text-2xl font-bold">Job Filters</h2>
               <div className="mt-3">
                 <h3>Material Type:</h3>
-                <input type="checkbox" id="material1" name="material1" value="PLA" defaultChecked={isFilterSelected("materials", "PLA")} onChange={() => handleCheck("materials", "PLA")} />
-                <label htmlFor="material1"> PLA</label><br />
-                <input type="checkbox" id="material2" name="material2" value="ABS" defaultChecked={isFilterSelected("materials", "ABS")} onChange={() => handleCheck("materials", "ABS")} />
-                <label htmlFor="material2"> ABS</label><br />
-                <input type="checkbox" id="material3" name="material3" value="PETG" defaultChecked={isFilterSelected("materials", "PETG")} onChange={() => handleCheck("materials", "PETG")} />
-                <label htmlFor="material3"> PETG</label><br />
+                <input
+                  type="checkbox"
+                  id="material1"
+                  name="material1"
+                  value="PLA"
+                  defaultChecked={isFilterSelected("materials", "PLA")}
+                  onChange={() => handleCheck("materials", "PLA")}
+                />
+                <label htmlFor="material1"> PLA</label>
+                <br />
+                <input
+                  type="checkbox"
+                  id="material2"
+                  name="material2"
+                  value="ABS"
+                  defaultChecked={isFilterSelected("materials", "ABS")}
+                  onChange={() => handleCheck("materials", "ABS")}
+                />
+                <label htmlFor="material2"> ABS</label>
+                <br />
+                <input
+                  type="checkbox"
+                  id="material3"
+                  name="material3"
+                  value="PETG"
+                  defaultChecked={isFilterSelected("materials", "PETG")}
+                  onChange={() => handleCheck("materials", "PETG")}
+                />
+                <label htmlFor="material3"> PETG</label>
+                <br />
               </div>
               <div className="mt-3">
                 <h3>Colors:</h3>
@@ -207,38 +256,52 @@ export default function Browse() {
               </div>
               <div className="mt-3">
                 <h3>Sort Bid:</h3>
-                <Selector label="Bid" options={["Lowest to highest", "Highest to lowest"]} padding={1} />
+                <Selector
+                  label="Bid"
+                  options={["Lowest to highest", "Highest to lowest"]}
+                  padding={1}
+                />
               </div>
               <div className="mt-3">
-                <h1>Location:</h1> 
-                <LoadScript
-                  googleMapsApiKey={apiKey}
-                  libraries={libraries}
-                >
+                <h1>Location:</h1>
+                <LoadScript googleMapsApiKey={apiKey} libraries={libraries}>
                   <GooglePlacesAutocomplete //package for the google places API autocomplete search bar
-                      selectProps={{
-                          search_value,        
-                          onChange: (value) => { //when the search value changes (by enter or selection of autcomplete results)
-                              setSearchValue(value);
-                              geocodeByPlaceId(value.value.place_id)
-                                  .then(results => getLatLng(results[0]))
-                                  .then(({ lat, lng }) => {
-                                  setSelectedLocation({ lat, lng });
-                                  });
-                          },
-                      }}
+                    selectProps={{
+                      search_value,
+                      onChange: (value) => {
+                        //when the search value changes (by enter or selection of autcomplete results)
+                        setSearchValue(value);
+                        geocodeByPlaceId(value.value.place_id)
+                          .then((results) => getLatLng(results[0]))
+                          .then(({ lat, lng }) => {
+                            setSelectedLocation({ lat, lng });
+                            setFilters({
+                              ...filters,
+                              latitude: lat,
+                              longitude: lng,
+                            });
+                          });
+                      },
+                    }}
                   />
                 </LoadScript>
                 <div className="mt-3">
                   <h1>Radius of travel: (km)</h1>
                   <TextForm //draws the radius input box and updates the radius state
-                      type="Distance"
-                      min="1"
-                      value={radius}
-                      // set the radius and log that it changed
-                      onChange={(e) => {
-                          setRadius(Number(e.target.value));
-                      }}
+                    type="Distance"
+                    min="0"
+                    value={radius}
+                    // set the radius and log that it changed
+                    onChange={(e) => {
+                      // Ignore non-numeric input
+                      if (!isNaN(e.target.value)) {
+                        setRadius(Number(e.target.value));
+                        setFilters({
+                          ...filters,
+                          radius: Number(e.target.value),
+                        });
+                      }
+                    }}
                   />
                 </div>
               </div>
@@ -265,7 +328,10 @@ export default function Browse() {
                 />
                 <div className="p-6 flex-grow rounded border border-gray-300">
                   <h2 className="text-3xl font-bold">Job Parameters</h2>
-                  <p className="text-gray-400 text-l font-bold">Please ensure your printer can handle the job specifications listed below</p>
+                  <p className="text-gray-400 text-l font-bold">
+                    Please ensure your printer can handle the job specifications
+                    listed below
+                  </p>
 
                   <table className="browse-table text-l mt-3">
                     <tr>
@@ -294,11 +360,19 @@ export default function Browse() {
                     </tr>
                     <tr>
                       <td>Completion Date:</td>
-                      <td>{selectedJob.completionDate !== "" ? selectedJob.completionDate : "None"}</td>
+                      <td>
+                        {selectedJob.completionDate !== ""
+                          ? selectedJob.completionDate
+                          : "None"}
+                      </td>
                     </tr>
                     <tr>
                       <td>Comment:</td>
-                      <td>{selectedJob.comment !== "" ? selectedJob.comment : "None"}</td>
+                      <td>
+                        {selectedJob.comment !== ""
+                          ? selectedJob.comment
+                          : "None"}
+                      </td>
                     </tr>
                   </table>
                 </div>
@@ -306,16 +380,18 @@ export default function Browse() {
               <div className="flex flex-row gap-5 h-[50%] w-full">
                 <div className="w-[50%] rounded border border-gray-300 p-6">
                   <h2 className="text-3xl font-bold">Customer Reviews</h2>
-                  <RatingStatsCard userId={selectedJob.cuid}/>
+                  <RatingStatsCard userId={selectedJob.cuid} />
                 </div>
                 <div className="w-[50%] rounded border border-gray-300 p-6">
-                  <BidSubmission jobId={selectedJob.doc} callback={onBidSubmit}/>
+                  <BidSubmission
+                    jobId={selectedJob.doc}
+                    callback={onBidSubmit}
+                  />
                 </div>
               </div>
             </div>
           )}
         </MultiStepFormPage>
-
       </MultiStepForm>
     </div>
   );

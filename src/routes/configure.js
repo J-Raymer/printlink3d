@@ -6,10 +6,12 @@ import { firebaseDb } from "../firebase/firebase";
 import { getMaterials } from "../backend";
 import TextArea from "../components/textArea";
 import { MAX_JOB_NAME_LENGTH } from "../constants";
-import GooglePlacesAutocomplete, { geocodeByPlaceId, getLatLng } from 'react-google-places-autocomplete';
-import { GoogleMap, LoadScript, Marker, Circle } from '@react-google-maps/api';
-const libraries = ['places'];
-
+import GooglePlacesAutocomplete, {
+  geocodeByPlaceId,
+  getLatLng,
+} from "react-google-places-autocomplete";
+import { GoogleMap, LoadScript, Marker, Circle } from "@react-google-maps/api";
+const libraries = ["places"];
 
 function StyledLine({ title, inputComponent, helpButtonComponent }) {
   return (
@@ -49,10 +51,11 @@ function MaterialSelector({ init, materials, changeMaterial }) {
                     onClick={() => handleItemClick(m)}
                     className={`shadow rounded border border-gray-300 text-gray-900 text-sm p-2 cursor-pointer transform transition-transform duration-200
                                     
-                                   ${selectedItem.Type === m.Type
-                        ? "bg-blue-200"
-                        : "bg-gray-50"
-                      }`}
+                                   ${
+                                     selectedItem.Type === m.Type
+                                       ? "bg-blue-200"
+                                       : "bg-gray-50"
+                                   }`}
                   >
                     <div className="relative group">
                       <div className="w-96 absolute rounded-sm hidden bg-white border border-gray-300 p-2 mt-8 group-hover:block z-10">
@@ -111,12 +114,13 @@ export default function Configure({ printJob, changePrintJob }) {
   }, []);
 
   const changeQuantity = (x) => {
-    const q = (x.target.value === "0") ? 1 : x.target.value;
-    changePrintJob("quantity", q)
-  }
+    const q = x.target.value === "0" ? 1 : x.target.value;
+    changePrintJob("quantity", q);
+  };
   const changeMaterial = (x) => changePrintJob("material", x);
   const changeColor = (x) => changePrintJob("color", x);
-  const changeCompletionDate = (x) => changePrintJob("completionDate", x.target.value);
+  const changeCompletionDate = (x) =>
+    changePrintJob("completionDate", x.target.value);
   const changeComment = (x) => changePrintJob("comment", x.target.value);
   const changeInfill = (x) => changePrintJob("infill", x);
   const changeLayerHeight = (x) => changePrintJob("layerHeight", x);
@@ -137,11 +141,11 @@ export default function Configure({ printJob, changePrintJob }) {
   const mapRef = useRef(null);
   const [circleRef, setCircleRef] = useState(null);
 
-  const apiKey = 'AIzaSyBN9FNice6SVThI5Yo_MmQS9Or-votMad8';
+  const apiKey = process.env.REACT_APP_GOOGLE_KEY;
 
   const mapContainerStyle = {
-    height: '500px',
-    width: '100%',
+    height: "500px",
+    width: "100%",
   };
 
   return (
@@ -182,7 +186,10 @@ export default function Configure({ printJob, changePrintJob }) {
                     onKeyDown={(e) => {
                       if (!/[0-9]/.test(e.key) && e.keyCode !== 8) {
                         e.preventDefault();
-                      } else if (e.target.value.length >= 3 && e.keyCode !== 8) {
+                      } else if (
+                        e.target.value.length >= 3 &&
+                        e.keyCode !== 8
+                      ) {
                         e.preventDefault();
                       }
                     }}
@@ -250,7 +257,9 @@ export default function Configure({ printJob, changePrintJob }) {
               <div className="p-5">
                 <button onClick={() => setShowAdvanced(!showAdvanced)}>
                   <div className="flex">
-                    <div className="pr-3 text-lg font-semibold">Advanced Options</div>
+                    <div className="pr-3 text-lg font-semibold">
+                      Advanced Options
+                    </div>
                     {showAdvanced ? (
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -348,31 +357,26 @@ export default function Configure({ printJob, changePrintJob }) {
                 )}
               </div>
             </div>
-
           </div>
 
           {/* Column 2 */}
           <div className="bg-white p-4">
-
             {/* Next two columns are nested in an API loader */}
-            <LoadScript
-              googleMapsApiKey={apiKey}
-              libraries={libraries}
-            >
+            <LoadScript googleMapsApiKey={apiKey} libraries={libraries}>
               {/* Second Column split */}
               <div className="grid  grid-cols-2 gap-2">
-
                 {/* Column 2.1 */}
-                <div className='mt-2 text-lg font-semibold'>
+                <div className="mt-2 text-lg font-semibold">
                   <div className="mt-20">
                     <h1>Location</h1>
                     <GooglePlacesAutocomplete //package for the google places API autocomplete search bar
                       selectProps={{
                         search_value,
-                        onChange: (value) => { //when the search value changes (by enter or selection of autcomplete results)
+                        onChange: (value) => {
+                          //when the search value changes (by enter or selection of autcomplete results)
                           setSearchValue(value);
                           geocodeByPlaceId(value.value.place_id)
-                            .then(results => getLatLng(results[0]))
+                            .then((results) => getLatLng(results[0]))
                             .then(({ lat, lng }) => {
                               setSelectedLocation({ lat, lng });
                               changeLatitude(lat);
@@ -385,15 +389,17 @@ export default function Configure({ printJob, changePrintJob }) {
                     <h1>Radius of travel (km)</h1>
                     <TextForm //draws the radius input box and updates the radius state
                       type="Distance"
-                      min="1"
+                      min="0"
                       value={radius}
                       // set the radius and log that it changed
                       onChange={(e) => {
-                        setRadius(Number(e.target.value));
-                        setCircleRef(Number(e.target.value));
-                        changeRadius(Number(e.target.value));
-                        // TODO come up with a better solution for rerendering the circle (instead of using keys)
-                        setCircleKey(1); // set the key to force a redraw
+                        if (!isNaN(e.target.value)) {
+                          setRadius(Number(e.target.value));
+                          setCircleRef(Number(e.target.value));
+                          changeRadius(Number(e.target.value));
+                          // TODO come up with a better solution for rerendering the circle (instead of using keys)
+                          setCircleKey(1); // set the key to force a redraw
+                        }
                       }}
                     />
                   </div>
@@ -401,7 +407,9 @@ export default function Configure({ printJob, changePrintJob }) {
                 {/* Column 2.2 */}
                 <div className="mt-2 text-lg font-semibold">
                   <GoogleMap
-                    onLoad={map => { (mapRef.current = map) }}
+                    onLoad={(map) => {
+                      mapRef.current = map;
+                    }}
                     mapContainerStyle={mapContainerStyle}
                     center={selectedLocation}
                     zoom={13}
@@ -409,16 +417,21 @@ export default function Configure({ printJob, changePrintJob }) {
                       disableDefaultUI: true,
                     }}
                   >
-                    <Marker position={selectedLocation} key={`marker-${selectedLocation.lat}-${selectedLocation.lng}`} />
+                    <Marker
+                      position={selectedLocation}
+                      key={`marker-${selectedLocation.lat}-${selectedLocation.lng}`}
+                    />
                     <Circle
                       center={selectedLocation}
                       radius={radius * 1000}
-                      key={circleKey} options={{
-                        fillColor: 'rgba(0, 128, 128, 0.5)',
-                        strokeColor: '#FFFFFF',
+                      key={circleKey}
+                      options={{
+                        fillColor: "rgba(0, 128, 128, 0.5)",
+                        strokeColor: "#FFFFFF",
                         strokeOpacity: 0.8,
                         strokeWeight: 2,
-                      }} />
+                      }}
+                    />
                   </GoogleMap>
                 </div>
               </div>
