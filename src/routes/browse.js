@@ -38,11 +38,7 @@ export default function Browse() {
   });
   const [radius, setRadius] = useState(50);
   const [search_value, setSearchValue] = useState(null);
-<<<<<<< HEAD
   const apiKey = process.env.REACT_APP_GOOGLE_KEY;
-=======
-  const apiKey = 'AIzaSyCe8pXdsTx4MXjIr0JSF10N08Y3oMxoFk8';
->>>>>>> 51aac63cfe34df08d24be5feb6d6805eb7842439
   // Other Constants
   const [availableColors, setAvailableColors] = useState([]);
   const [availableMaterials, setAvailableMaterials] = useState([]);
