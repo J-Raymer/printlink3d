@@ -19,8 +19,12 @@ jobs:
         run: |
           npm ci
           npm run build
+        env:
+          REACT_APP_FIREBASE_KEY: ${{ secrets.REACT_APP_FIREBASE_KEY}}
+          REACT_APP_GOOGLE_KEY: ${{ secrets.REACT_APP_GOOGLE_KEY }}
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: build # The folder the action should deploy.
+        env:
