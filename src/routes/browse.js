@@ -120,6 +120,7 @@ export default function Browse() {
                 radius: data.Radius,
                 lat: data.Latitude,
                 lng: data.Longitude,
+                cuid: data.CustomerUid,
               });
             } else {
               console.log("Not parsing: ", doc);
