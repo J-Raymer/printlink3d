@@ -5,6 +5,8 @@ import { collection, onSnapshot, or, and, query, where } from "firebase/firestor
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/authContext";
 import { getThumbnail } from "../backend";
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
+import 'react-tabs/style/react-tabs.css';
 
 export default function Orders({isPrinter=false}) {
     const [listedOrders, setListedOrders] = useState([]);
@@ -81,35 +83,53 @@ export default function Orders({isPrinter=false}) {
         unsubscribe();
       };
     }, [isPrinter, uid]);
-
-    return (
-        <div >
-            {(dataLoading)?
-              (<></>) :
-              (
-                <div>
-                    <div className="text-xl font-extrabold p-6">
+    
+    // ...
+return (  
+  <div>
+      {(dataLoading)?
+        (<></>) :
+        (
+          <div className="flex justify-center my-5">               
+            <div className="w-1/2 mx-auto">
+                <Tabs selectedTabClassName={(isPrinter) ? "brand-tab-selected-printer": "brand-tab-selected-customer"}>
+                  <TabList className="flex">
+                    <Tab className="w-1/3">
+                    <div className="text-xl font-extrabold p-3 text-center cursor-default">
                       {(isPrinter) ? (<>Bid Jobs</>) : (<>Listed Orders</>)}
                     </div>
+                    </Tab>
+                    <Tab className="w-1/3">
+                    <div className="text-xl font-extrabold p-3 text-center cursor-default">
+                      {(isPrinter) ? (<>Current Jobs</>) : (<>Accepted Orders</>)}
+                    </div>
+                    </Tab>    
+                    <Tab className="w-1/3">
+                    <div className="text-xl font-extrabold p-3 text-center cursor-default">
+                      {(isPrinter) ? (<>Complete Jobs</>) : (<>Complete Orders</>)}
+                    </div>
+                    </Tab>                     
+                  </TabList>
+                  <TabPanel>
                     <div className="grid grid-cols-1 gap-4">
                       {listedOrders.map((job) => (<BidJobCard job={job} isPrinter={isPrinter} onSelectJob={() => navigate(`/${(isPrinter)? "jobs": "orders"}/${job.id}`)} />))}
                     </div>
-                    <div className="text-xl font-extrabold p-6">
-                      {(isPrinter) ? (<>Current Jobs</>) : (<>Accepted Orders</>)}
-                    </div>
+                  </TabPanel>
+                  <TabPanel>
                     <div className="grid grid-cols-1 gap-4">
-                      {acceptedOrders.map((job) => (<JobCard job={job} onSelectJob={(job) => navigate(`/${(isPrinter)? "jobs": "orders"}/${job.id}`)} img={job.thumbnail}/>))}
+                    {acceptedOrders.map((job) => (<JobCard job={job} onSelectJob={(job) => navigate(`/${(isPrinter)? "jobs": "orders"}/${job.id}`)} img={job.thumbnail}/>))}  
                     </div>
-                    <div className="text-xl font-extrabold p-6">
-                      {(isPrinter) ? (<>Complete Jobs</>) : (<>Complete Orders</>)}
-                    </div>
+                  </TabPanel>
+                  <TabPanel>
                     <div className="grid grid-cols-1 gap-4">
                       {completeOrders.map((job) => (<JobCard job={job} onSelectJob={(job) => navigate(`/${(isPrinter)? "jobs": "orders"}/${job.id}`)} img={job.thumbnail}/>))}
                     </div>
-                </div>
-              )
-            }
-            
-        </div>
-    )
+                  </TabPanel>
+                </Tabs>
+            </div>
+          </div>
+        )
+      }    
+  </div>
+)
 }
