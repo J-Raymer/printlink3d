@@ -13,6 +13,14 @@ export async function addRating(db, rating) {
   return docRef;
 }
 
+export async function getReviewsForUser(db, targetUserUid) {
+  const docRef = collection(db, "Ratings");
+  const q = query(docRef, where("targetUserUid", "==", targetUserUid));
+  const querySnapshot = await getDocs(q);
+  const ratings = querySnapshot.docs.map(doc => doc.data());
+  return ratings;
+}
+
 // TODO remove this function (not used)
 export async function getAllJobs(db) {
   const jobCollectionRef = collection(db, "Jobs");

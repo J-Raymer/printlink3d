@@ -177,7 +177,6 @@ export function BidSelection( { jobId, history, onUpdate} ) {
               amount: data.Amount,
               timestamp: data.Timestamp
             }
-            console.log(data)
             bids.push(bid);
         });
         setBids(bids);

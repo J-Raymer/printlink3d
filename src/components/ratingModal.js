@@ -87,7 +87,6 @@ export default function RatingModal({ onClose, isModalVisible, isCustomer, targe
 
   // Only enable submit button if all ratings are selected
   React.useEffect(() => {
-    console.log(overallRating, selectedStarPrintQuality, selectedStarCommunication, selectedStarExchange)
     setCanSubmit(
       (isCustomer && overallRating && selectedStarPrintQuality !== null && selectedStarCommunication !== null && selectedStarExchange !== null) ||
       (!isCustomer && overallRating && selectedStarCommunication !== null && selectedStarExchange !== null)

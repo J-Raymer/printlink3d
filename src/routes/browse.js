@@ -13,7 +13,7 @@ import GooglePlacesAutocomplete, { geocodeByPlaceId, getLatLng} from 'react-goog
 import TextForm from "../components/textForm";
 import { LoadScript } from '@react-google-maps/api';
 import { BidSubmission } from "../components/bids";
-import { ReviewCard } from "../components/reviewCard";
+import { RatingStatsCard } from "../components/ratingStatsCard";
 const libraries = ['places'];
 
 
@@ -307,7 +307,7 @@ export default function Browse() {
               <div className="flex flex-row gap-5 h-[50%] w-full">
                 <div className="w-[50%] rounded border border-gray-300 p-6">
                   <h2 className="text-3xl font-bold">Customer Reviews</h2>
-                  <ReviewCard userId={selectedJob.cuid}/>
+                  <RatingStatsCard userId={selectedJob.cuid}/>
                 </div>
                 <div className="w-[50%] rounded border border-gray-300 p-6">
                   <BidSubmission jobId={selectedJob.doc} callback={onBidSubmit}/>
