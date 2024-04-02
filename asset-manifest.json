@@ -1,19 +1,18 @@
 {
   "files": {
-    "main.css": "/printlink3d/static/css/main.74e0d662.css",
-    "main.js": "/printlink3d/static/js/main.6f63aa20.js",
+    "main.css": "/printlink3d/static/css/main.4d45c218.css",
+    "main.js": "/printlink3d/static/js/main.40ec95f0.js",
     "static/js/453.a6a97343.chunk.js": "/printlink3d/static/js/453.a6a97343.chunk.js",
-    "static/media/3D_printing_home_photo_cropped.jpg": "/printlink3d/static/media/3D_printing_home_photo_cropped.5be437fdf546c4874ec4.jpg",
+    "static/media/homepage-main.jpg": "/printlink3d/static/media/homepage-main.2ba6cb0003c4389f40a7.jpg",
+    "static/media/homepage-sub-small.jpg": "/printlink3d/static/media/homepage-sub-small.b4ffe0a9094b6e26df45.jpg",
     "static/media/cube_icon_black.png": "/printlink3d/static/media/cube_icon_black.2813a89cf7a4e36e3ea5.png",
-    "static/media/boat.jpg": "/printlink3d/static/media/boat.fc75562663d8aa2c420b.jpg",
-    "static/media/3D_printer.jpg": "/printlink3d/static/media/3D_printer.95ad9e93bfbc6392e2ac.jpg",
     "index.html": "/printlink3d/index.html",
-    "main.74e0d662.css.map": "/printlink3d/static/css/main.74e0d662.css.map",
-    "main.6f63aa20.js.map": "/printlink3d/static/js/main.6f63aa20.js.map",
+    "main.4d45c218.css.map": "/printlink3d/static/css/main.4d45c218.css.map",
+    "main.40ec95f0.js.map": "/printlink3d/static/js/main.40ec95f0.js.map",
     "453.a6a97343.chunk.js.map": "/printlink3d/static/js/453.a6a97343.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.74e0d662.css",
-    "static/js/main.6f63aa20.js"
+    "static/css/main.4d45c218.css",
+    "static/js/main.40ec95f0.js"
   ]
 }
