@@ -53,7 +53,8 @@ export default function Orders({ isPrinter = false }) {
 
           const acceptedBid = (data.AcceptedBid !== undefined) ? data.AcceptedBid : true;
           const completeOrder = (data.Complete !== undefined) ? data.Complete : true;
-
+          const reviewRequired = (data.ReviewRequired !== undefined) ? data.ReviewRequired : false;
+          
           const order = {
             thumbnail: thumbnail,
             id: doc.id,
@@ -64,11 +65,11 @@ export default function Orders({ isPrinter = false }) {
             fileName: data.FileName,
             color: data.Color,
             jobName: data.JobName,
-            hasLeftReview: data.HasLeftReview,
+            reviewRequired: reviewRequired,
             printerUid: data.PrinterUid,
           };
 
-          if (completeOrder && order.hasLeftReview) {
+          if (completeOrder && !order.reviewRequired) {
             fetchedComplete.push(order)
           } else if (acceptedBid) {
             fetchedAccepted.push(order)
@@ -96,7 +97,7 @@ export default function Orders({ isPrinter = false }) {
     setPrinterUid(job.printerUid);
     setShowRatingModal(true);
     const docRef = doc(firebaseDb, `Jobs/${job.id}`);
-    updateDoc(docRef, { HasLeftReview: true })
+    updateDoc(docRef, { ReviewRequired: false })
     setAcceptedOrders(prevOrders => prevOrders.filter(order => order.id !== job.id));
     setCompleteOrders(prevOrders => [...prevOrders, job]);
   }
@@ -137,7 +138,7 @@ export default function Orders({ isPrinter = false }) {
                       job={job}
                       onSelectJob={(job) => navigate(`/${(isPrinter) ? "jobs" : "orders"}/${job.id}`)}
                       img={job.thumbnail}
-                      showLink={!isPrinter && !job.hasLeftReview}
+                      showLink={!isPrinter && job.reviewRequired}
                       linkText="Printer review required"
                       onLinkClicked={() => onRatingLinkClicked(job)}
                     />))}
