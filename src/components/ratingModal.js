@@ -107,7 +107,6 @@ export default function RatingModal({ onClose, isModalVisible, isCustomer, targe
         exchangeRating: selectedStarExchange,
         comment,
         date,
-        hasLeftReview: true
       };
     } else {
       averageRating = (overallRatingNumber + selectedStarCommunication + selectedStarExchange) / 3;
@@ -118,7 +117,6 @@ export default function RatingModal({ onClose, isModalVisible, isCustomer, targe
         exchangeRating: selectedStarExchange,
         comment,
         date,
-        hasLeftReview: true
       };
     }
     addRating(firebaseDb, rating);

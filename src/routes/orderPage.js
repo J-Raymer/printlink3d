@@ -43,18 +43,15 @@ function OrderStatus({ history, jobId, isPrinter, customerUid }) {
   }
 
   const ModifyStatus = (state) => {
-    if (state === "Exchanged") {
-      setRatingModalVisible(true);
-    }
-    
     var updatedHistory = history
     updatedHistory[state] = getDate();
     
     const docRef = doc(firebaseDb, `Jobs/${jobId}`);
     updateDoc(docRef, { History: updatedHistory })
-      .then(() => setEditState(false));
-
+    .then(() => setEditState(false));
+    
     if (state === "Exchanged") {
+      setRatingModalVisible(true);
       updateDoc(docRef, { Complete: true });
     }
   };

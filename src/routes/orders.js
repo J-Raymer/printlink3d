@@ -8,6 +8,7 @@ import { getThumbnail } from "../backend";
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 import 'react-tabs/style/react-tabs.css';
 import RatingModal from "../components/ratingModal";
+import { doc, getDoc, updateDoc} from "firebase/firestore"
 
 export default function Orders({ isPrinter = false }) {
   const [listedOrders, setListedOrders] = useState([]);
@@ -91,7 +92,10 @@ export default function Orders({ isPrinter = false }) {
 
   const onRatingLinkClicked = (job) => {
     setShowRatingModal(true);
+    console.log(job.id)
     printerUid = job.PrinterUid;
+    const docRef = doc(firebaseDb, `Jobs/${job.id}`);
+    updateDoc(docRef, { HasLeftReview: true })
     setAcceptedOrders(prevOrders => prevOrders.filter(order => order.id !== job.id));
     setCompleteOrders(prevOrders => [...prevOrders, job]);
   }
@@ -146,16 +150,14 @@ export default function Orders({ isPrinter = false }) {
               </Tabs>
             </div>
           </div>
-          {showRatingModal &&
-        (<RatingModal
+        )}
+        {showRatingModal &&
+          (<RatingModal
           isModalVisible={true}
           onClose={() => setShowRatingModal(false)}
           isCustomer={true}
           targetUserUid={printerUid}
-        />)
-      }
-      )
-      }
+        />)}
     </div>
   )
 }
