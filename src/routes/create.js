@@ -13,6 +13,7 @@ import { getDate } from "../utils";
 export default function Create() {
   const navigate = useNavigate();
   const userContext = useAuth();
+  const [uploadingData, setUploadingData] = useState(false);
 
   const emptyPrintJob = {
     thumbnail: null,
@@ -43,11 +44,11 @@ export default function Create() {
   const [printJob, setPrintJob] = useState(emptyPrintJob);
 
   const updatePrintJob = (property, value) => {
-    console.log(property, value);
     setPrintJob((prevState) => ({ ...prevState, [property]: value }));
   };
 
   const onJobSubmit = async () => {
+    setUploadingData(true);
     const db_entry = {
       CustomerUid: userContext.currUser.uid,
       PrinterUid: null,
@@ -82,9 +83,10 @@ export default function Create() {
       await uploadStl(printJob.file, printJob.jobName, Id);
       const docRef = doc(firebaseDb, `Jobs/${Id}`);
       await updateDoc(docRef, {UploadedFile: true});
-
-      navigate(`/Orders/${Id}`);
+      
+      navigate(`/Orders/${Id}`);   
     } catch (error) {
+      setUploadingData(false)
       console.error("Error uploading job data: ", error)
     };
   };
@@ -94,10 +96,10 @@ export default function Create() {
       {!userContext.userLoggedIn && <Navigate to={"/login"} replace={true} />}
 
       <MultiStepForm
-        submitText="Submit Job"
+        submitText={(uploadingData) ? "Uploading..." : "Submit Job"}
         showNext={printJob.file !== null}
         validDetails={printJob.email !== null && printJob.name !== null}
-        handleSubmit={onJobSubmit}
+        handleSubmit={(uploadingData) ? () => {} : onJobSubmit}
       >
         <MultiStepFormPage title="Upload">
           <Upload
