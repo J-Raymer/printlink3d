@@ -52,7 +52,7 @@ function OrderStatus({ history, jobId, isPrinter, customerUid, jobName }) {
     
     if (state === "Exchanged") {
       setRatingModalVisible(true);
-      updateDoc(docRef, { Complete: true });
+      updateDoc(docRef, { ReviewRequired: true, Complete: true });
     }
   };
 
