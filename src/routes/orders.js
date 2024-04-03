@@ -19,7 +19,8 @@ export default function Orders({ isPrinter = false }) {
   const userContext = useAuth();
   const uid = userContext.currUser.uid;
   const [dataLoading, setDataLoading] = useState(true);
-  let printerUid = null;
+  const [jobName, setJobName] = useState(null);
+  const [printerUid, setPrinterUid] = useState(null);
 
   useEffect(() => {
     setDataLoading(true);
@@ -91,9 +92,9 @@ export default function Orders({ isPrinter = false }) {
   }, [isPrinter, uid]);
 
   const onRatingLinkClicked = (job) => {
+    setJobName(job.jobName);
+    setPrinterUid(job.printerUid);
     setShowRatingModal(true);
-    console.log(job.id)
-    printerUid = job.PrinterUid;
     const docRef = doc(firebaseDb, `Jobs/${job.id}`);
     updateDoc(docRef, { HasLeftReview: true })
     setAcceptedOrders(prevOrders => prevOrders.filter(order => order.id !== job.id));
@@ -157,6 +158,7 @@ export default function Orders({ isPrinter = false }) {
           onClose={() => setShowRatingModal(false)}
           isCustomer={true}
           targetUserUid={printerUid}
+          jobName={jobName}
         />)}
     </div>
   )
