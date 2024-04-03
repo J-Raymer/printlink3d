@@ -71,6 +71,7 @@ export function BidSubmission({ jobId, callback }) {
     const [currentBid, setCurrentBid] = useState(null);
     const userContext = useAuth();
     const uid = userContext.currUser.uid;
+    const displayName = userContext.currUser.displayName.split(" ")[0];
     
     const handleBidChange = (value) => {
         setCurrentBid(value);
@@ -81,6 +82,7 @@ export function BidSubmission({ jobId, callback }) {
             const amount = Number(currentBid).toFixed(2);
 
             const bidDetails = {
+                PrinterName: displayName,
                 PrinterUid: uid,
                 Amount: amount,      
                 Timestamp: Timestamp.now(),
@@ -122,13 +124,13 @@ export function BidSubmission({ jobId, callback }) {
 }
 
 export function OrderBidCard( { bid, onAccept}) {
-    const bidder = bid.uid;
+    const bidder = (bid.name !== null) ? bid.name : bid.uid.substring(0, 10)
     const amount = bid.amount;
   
     return (
       <div className="border border-2 mt-2 p-3 rounded-md">
         <div className="text-lg font-semibold"> 
-            User {bidder.substring(0, 10)}...
+            Printer: {bidder}
         </div>
         <div className="m-2 flex gap-2 justify-between">
             <div className="py-2 px-4 text-lg font-semibold">
@@ -153,6 +155,7 @@ export function BidSelection( { jobId, history, onUpdate} ) {
         snapshot.docs.forEach((doc) => {
             const data = doc.data();
             const bid = {
+              name: (data.PrinterName !== undefined) ? data.PrinterName : null,
               id: doc.id,
               uid: data.PrinterUid,
               amount: data.Amount,
@@ -214,6 +217,7 @@ export function BidStatus ({jobId}) {
     const navigate = useNavigate();
     const userContext = useAuth();
     const uid = userContext.currUser.uid;
+    const displayName = userContext.currUser.displayName.split(" ")[0];
     
     const updateBidCallback = (snapshot) => {
         snapshot.docs.forEach((doc) => {
@@ -252,6 +256,7 @@ export function BidStatus ({jobId}) {
         }
 
         const bidDetails = {
+            PrinterName: displayName,
             PrinterUid: uid,
             Amount: bidAmount,      
             Timestamp: Timestamp.now(),

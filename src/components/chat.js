@@ -32,7 +32,7 @@ export function ChatRoom({ jobId }) {
         timestamp: Date.now(),
         author: userContext.currUser.uid,
         // TODO fetch username from user context
-        username: "Jasper"
+        username: userContext.currUser.displayName.split(" ")[0]
       };
       setNewMessage('');
   
