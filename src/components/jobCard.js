@@ -9,7 +9,10 @@ export default function JobCard({
   onSelectJob,
   onUnselectJob,
   img,
-  showBidStats = false
+  showBidStats = false,
+  showLink = false,
+  linkText,
+  onLinkClicked,
 }) {
   const [bidStats, setBidStats] = useState(null);
 
@@ -79,6 +82,23 @@ export default function JobCard({
             )}
           </p>
         ) : (<> </>)}
+        {
+          showLink && (
+            <div className="mt-1">
+              <a
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onLinkClicked();
+                }}
+                className="text-blue-500 cursor-pointer font-bold underline hover:text-blue-700"
+              >
+                {linkText}
+              </a>
+            </div>
+          )
+        }
       </div>
     </div>
   );

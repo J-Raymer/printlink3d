@@ -9,7 +9,7 @@ import RatingModal from "../components/ratingModal";
 import { ChatRoom } from "../components/chat"
 import { getDate } from "../utils";
 
-function OrderStatus({ history, jobId, isPrinter, customerUid }) {
+function OrderStatus({ history, jobId, isPrinter, customerUid, jobName }) {
   const [editState, setEditState] = useState(false);
   const [ratingModalVisible, setRatingModalVisible] = useState(false);
 
@@ -43,18 +43,15 @@ function OrderStatus({ history, jobId, isPrinter, customerUid }) {
   }
 
   const ModifyStatus = (state) => {
-    if (state === "Exchanged") {
-      setRatingModalVisible(true);
-    }
-    
     var updatedHistory = history
     updatedHistory[state] = getDate();
     
     const docRef = doc(firebaseDb, `Jobs/${jobId}`);
     updateDoc(docRef, { History: updatedHistory })
-      .then(() => setEditState(false));
-
+    .then(() => setEditState(false));
+    
     if (state === "Exchanged") {
+      setRatingModalVisible(true);
       updateDoc(docRef, { Complete: true });
     }
   };
@@ -131,7 +128,8 @@ function OrderStatus({ history, jobId, isPrinter, customerUid }) {
         onClose={() => onRatingModalClose()}
         isModalVisible={ratingModalVisible}
         isCustomer={false}
-        targetUserUid={customerUid}/>
+        targetUserUid={customerUid}
+        jobName={jobName}/>
     }
     </>
   )
@@ -171,6 +169,7 @@ export default function OrderPage({ isPrinter = false }) {
           quantity: data.Quantity,
           color: data.Color,
           CustomerUid: data.CustomerUid,
+          jobName: data.JobName,
         });
 
         setShowBids(data.AcceptedBid == null)
@@ -210,7 +209,7 @@ export default function OrderPage({ isPrinter = false }) {
                   <div className="text-lg font-semibold">
                     Status
                   </div>
-                  <OrderStatus history={jobData.history} jobId={Id} customerUid={jobData.CustomerUid} isPrinter={isPrinter} />
+                  <OrderStatus history={jobData.history} jobId={Id} customerUid={jobData.CustomerUid} isPrinter={isPrinter} jobName={jobData.jobName}/>
                 </div>
               </div>
               <div className="w-1/3">

@@ -74,6 +74,7 @@ export default function Create() {
       Radius: printJob.radius,
       Latitude: printJob.latitude,
       Longitude: printJob.longitude,
+      HasLeftReview: false,
     };
 
     try {
