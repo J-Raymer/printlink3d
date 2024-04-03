@@ -55,8 +55,14 @@ export default function Browse() {
   });
   const [bidIsValid, setBidIsValid] = useState(null);
   const userContext = useAuth();
-  const uid = userContext.currUser.uid;
   const navigate = useNavigate();
+
+  let uid = "";
+  if (userContext.currUser != null) {
+    const uid = userContext.currUser.uid;
+  } else {
+    navigate("/login");
+  }
 
   useEffect(() => {
     async function fetchColors() {
