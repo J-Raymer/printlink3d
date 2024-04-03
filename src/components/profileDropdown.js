@@ -32,7 +32,7 @@ function ProfileDropdown() {
     {
       icon: logoutIcon,
       text: "Log out",
-      onClick: () => doSignOut(),
+      onClick: () => { doSignOut(); navigate("/"); },
     }
   ];
 
