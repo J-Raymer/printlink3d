@@ -164,12 +164,12 @@ export async function uploadThumbnail(thumbnail, id) {
   var storageRef = ref(firebaseStorage, `images/${id}.png`)
   const thumbnailResource = await fetch(thumbnail);
   const thumbnailBlob = await thumbnailResource.blob();
-  uploadBytes(storageRef, thumbnailBlob);
+  return uploadBytes(storageRef, thumbnailBlob);
 };
 
 export async function uploadStl(file, jobName, jobId) {
   var storageRef = ref(firebaseStorage, `print-files/${jobName + "_" + jobId}.stl`);
-  uploadBytes(storageRef, file);
+  return uploadBytes(storageRef, file);
 }
 
 export async function getUserRatingStats(userId) {

@@ -13,6 +13,7 @@ import { getDate } from "../utils";
 export default function Create() {
   const navigate = useNavigate();
   const userContext = useAuth();
+  const [uploadingData, setUploadingData] = useState(false);
 
   const emptyPrintJob = {
     thumbnail: null,
@@ -43,11 +44,11 @@ export default function Create() {
   const [printJob, setPrintJob] = useState(emptyPrintJob);
 
   const updatePrintJob = (property, value) => {
-    console.log(property, value);
     setPrintJob((prevState) => ({ ...prevState, [property]: value }));
   };
 
-  const onJobSubmit = () => {
+  const onJobSubmit = async () => {
+    setUploadingData(true);
     const db_entry = {
       CustomerUid: userContext.currUser.uid,
       PrinterUid: null,
@@ -75,32 +76,19 @@ export default function Create() {
       Longitude: printJob.longitude,
     };
 
-    addJob(firebaseDb, db_entry)
-      .then((jobRef) => {
-        const Id = jobRef.id;
-
-        //upload thumbnail. Needs to be done before navigating to order page
-        uploadThumbnail(printJob.thumbnail, Id)
-        .then(() => {
-          // upload stl file. On completion, make listing available on jobs page
-          uploadStl(printJob.file, printJob.jobName, Id)
-          .then(() => {
-            const docRef = doc(firebaseDb, `Jobs/${Id}`);
-            updateDoc(docRef, {UploadedFile: true})
-          })
-          .catch(error => {
-            console.error("Error uploading stl file: ", error);
-          })
-
-          navigate(`/Orders/${Id}`);
-        })
-        .catch(error => {
-          console.error("Error uploading thumbnail: ", error);
-        })
-      })
-      .catch(error => {
-        console.error("Error uploading job data: ", error);
-      })      
+    try {
+      const jobRef = await addJob(firebaseDb, db_entry);
+      const Id = jobRef.id;
+      await uploadThumbnail(printJob.thumbnail, Id);
+      await uploadStl(printJob.file, printJob.jobName, Id);
+      const docRef = doc(firebaseDb, `Jobs/${Id}`);
+      await updateDoc(docRef, {UploadedFile: true});
+      
+      navigate(`/Orders/${Id}`);   
+    } catch (error) {
+      setUploadingData(false)
+      console.error("Error uploading job data: ", error)
+    };
   };
 
   return (
@@ -108,10 +96,10 @@ export default function Create() {
       {!userContext.userLoggedIn && <Navigate to={"/login"} replace={true} />}
 
       <MultiStepForm
-        submitText="Submit Job"
+        submitText={(uploadingData) ? "Uploading..." : "Submit Job"}
         showNext={printJob.file !== null}
         validDetails={printJob.email !== null && printJob.name !== null}
-        handleSubmit={onJobSubmit}
+        handleSubmit={(uploadingData) ? () => {} : onJobSubmit}
       >
         <MultiStepFormPage title="Upload">
           <Upload
