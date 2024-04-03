@@ -47,7 +47,7 @@ export default function Create() {
     setPrintJob((prevState) => ({ ...prevState, [property]: value }));
   };
 
-  const onJobSubmit = () => {
+  const onJobSubmit = async () => {
     const db_entry = {
       CustomerUid: userContext.currUser.uid,
       PrinterUid: null,
@@ -75,32 +75,18 @@ export default function Create() {
       Longitude: printJob.longitude,
     };
 
-    addJob(firebaseDb, db_entry)
-      .then((jobRef) => {
-        const Id = jobRef.id;
+    try {
+      const jobRef = await addJob(firebaseDb, db_entry);
+      const Id = jobRef.id;
+      await uploadThumbnail(printJob.thumbnail, Id);
+      await uploadStl(printJob.file, printJob.jobName, Id);
+      const docRef = doc(firebaseDb, `Jobs/${Id}`);
+      await updateDoc(docRef, {UploadedFile: true});
 
-        //upload thumbnail. Needs to be done before navigating to order page
-        uploadThumbnail(printJob.thumbnail, Id)
-        .then(() => {
-          // upload stl file. On completion, make listing available on jobs page
-          uploadStl(printJob.file, printJob.jobName, Id)
-          .then(() => {
-            const docRef = doc(firebaseDb, `Jobs/${Id}`);
-            updateDoc(docRef, {UploadedFile: true})
-          })
-          .catch(error => {
-            console.error("Error uploading stl file: ", error);
-          })
-
-          navigate(`/Orders/${Id}`);
-        })
-        .catch(error => {
-          console.error("Error uploading thumbnail: ", error);
-        })
-      })
-      .catch(error => {
-        console.error("Error uploading job data: ", error);
-      })      
+      navigate(`/Orders/${Id}`);
+    } catch (error) {
+      console.error("Error uploading job data: ", error)
+    };
   };
 
   return (

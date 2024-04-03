@@ -155,20 +155,10 @@ export default function OrderPage({ isPrinter = false }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const snapshot = await getDoc(doc(firebaseDb, `/Jobs/${Id}`));
-        let thumbnail = null;
-        let file = null;
-
+        const [snapshot, thumbnail] = await Promise.all([getDoc(doc(firebaseDb, `/Jobs/${Id}`)), 
+                                                         getThumbnail(Id)]);
         const data = snapshot.data();
-
-        try {
-          thumbnail = await getThumbnail(Id);
-          file = await getFile(data.JobName, Id);
-        } catch (error) {
-          console.error("Error fetching thumbnail: ", error)
-          thumbnail = null;
-          file = null;
-        }
+        const file = await getFile(data.JobName, Id);
 
         setJobData({
           thumbnail: thumbnail,
