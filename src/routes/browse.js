@@ -346,11 +346,7 @@ export default function Browse() {
 
                   <table className="browse-table text-l mt-3">
                     <tr>
-                      <td className="w-[160px]">File Name: </td>
-                      <td>{selectedJob.fileName}</td>
-                    </tr>
-                    <tr>
-                      <td>Infill:</td>
+                      <td className="w-[160px]">Infill:</td>
                       <td>{selectedJob.infill}</td>
                     </tr>
                     <tr>
