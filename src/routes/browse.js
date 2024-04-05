@@ -46,7 +46,7 @@ export default function Browse() {
   const [selectedJob, setSelectedJob] = useState(null);
   const [jobs, setJobs] = useState([]);
   const [filters, setFilters] = useState({
-    materials: availableMaterials,
+    materials: ["PLA", "ABS", "PETG"],
     colors: availableColors,
     radius: radius,
     latitude: selectedLocation.lat,
@@ -75,7 +75,10 @@ export default function Browse() {
 
   useEffect(() => {
     async function fetchMaterials() {
-      setAvailableMaterials(await getMaterials(firebaseDb));
+      const materials = await getMaterials(firebaseDb);
+      setAvailableMaterials(materials);
+      let base_materials = ["PLA", "ABS", "PETG"]
+      setFilters((filters) => ({ ...filters, materials: base_materials }));
     }
     fetchMaterials();
   }, []);
@@ -161,6 +164,7 @@ export default function Browse() {
       t.push(label);
     }
     setFilters({ ...filters, [category]: t });
+    console.log(filters);
   };
 
   const isFilterSelected = (category, label) => {

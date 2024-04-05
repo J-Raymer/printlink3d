@@ -56,7 +56,7 @@ export default function Home() {
           <Link to="/create" className="mt-8 bg-brand-blue text-white p-4 px-6 rounded">Get Started</Link>
         </div>
         <div id="ihaveprinter">
-          <div className="flex flex-col w-[90%] md:flex-row items-center p-12 rounded" style={{backgroundColor: '#F7F7F7'}}>
+          <div className="flex flex-col md:flex-row items-center p-12 rounded" style={{backgroundColor: '#F7F7F7'}}>
             <div className=" w-[100%] md:w-[40%] pr-12">
               <h2 className="font-bold text-5xl mb-8">I Have a 3D Printer</h2>
               <p className="text-xl mb-8">Select a job in your local area and start making extra money! It’s as easy as that.
