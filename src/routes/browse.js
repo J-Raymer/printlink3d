@@ -266,14 +266,6 @@ export default function Browse() {
                 {renderColorSelector()}
               </div>
               <div className="mt-3">
-                <h3>Sort Bid:</h3>
-                <Selector
-                  label="Bid"
-                  options={["Lowest to highest", "Highest to lowest"]}
-                  padding={1}
-                />
-              </div>
-              <div className="mt-3">
                 <h1>Location:</h1>
                 <LoadScript googleMapsApiKey={apiKey} libraries={libraries}>
                   <GooglePlacesAutocomplete //package for the google places API autocomplete search bar
