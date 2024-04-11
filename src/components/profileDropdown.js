@@ -25,11 +25,6 @@ function ProfileDropdown() {
       onClick: () => navigate("/jobs"),
     },
     {
-      icon: settingsIcon,
-      text: "Settings",
-      onClick: () => navigate("/settings"),
-    },
-    {
       icon: logoutIcon,
       text: "Log out",
       onClick: () => { doSignOut(); navigate("/"); },
