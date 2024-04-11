@@ -10,8 +10,7 @@ The homepage's goal is to attract and inform users about the application service
 Besides this, the homepage acts as a central hub for the application allowing the user access to all other features.
 We decided on a clean minimalistic look for the homepage making it easy for the user to focus on the relevant features.
 If that is the ones with printing needs or a printer.
-
-![Homepage](https://github.com/J-Raymer/printlink3d/assets/156377663/c26c2e16-c3e8-420f-94b3-c56b1b282dc4)
+![Homepage](https://github.com/J-Raymer/printlink3d/assets/44129402/78f8c5b6-59af-4598-a982-bade8de560bc)
 
 ## Create Order Page
 The Create Order page's purpose is to allow users to create new Orders. The Create Order page is split up into two parts.
