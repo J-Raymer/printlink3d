@@ -113,6 +113,6 @@ You can find a live version at https://j-raymer.github.io/printlink3d.
 Opening the website in incognito mode is recommended, as some cookies interact negatively with the website.
 
 ## Logging In
-Please use the google login button to authenticate to get full access to PrintLink3d's features. Our main login system currently does not work properly.
+Please use the google login button to authenticate to get full access to PrintLink3d's features. Our main login system currently contains a few bugs.
 
 
