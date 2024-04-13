@@ -110,9 +110,12 @@ This project is licensed under the Apache version 2.0
 ## Hosting
 This project is currently hosted using Github pages. The current version is still a prototype and bugs are to be expected.
 You can find a live version at https://j-raymer.github.io/printlink3d.
-Opening the website in incognito mode is recommended, as some cookies interact negatively with the website.
+
+Opening the website in incognito mode is recommended, as some cookies interact negatively with the website. 
+
+## Wiki
+More information such as Use Cases can be found in the Wiki.
 
 ## Logging In
 Please use the google login button to authenticate to get full access to PrintLink3d's features. Our main login system currently contains a few bugs.
-
 
